@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Analysis - Code Metrics Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 2rem;
+            color: #333;
+        }
+
+        .dependency-list {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .dependency {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-left: 5px solid #0078d4;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .dependency .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dependency h2 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .dependency a {
+            color: #0078d4;
+            text-decoration: none;
+        }
+
+        .dependency a:hover {
+            text-decoration: underline;
+        }
+
+        .status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status.latest {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status.outdated {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .description {
+            margin: 0.5rem 0 1rem;
+            font-style: italic;
+        }
+
+        .details {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .details li {
+            margin-bottom: 0.25rem;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Metripy</h2>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Overview</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="files.html" class="nav-link">
+                            <i class="fas fa-file-code"></i>
+                            <span>Files</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="git_analysis.html" class="nav-link">
+                            <i class="fab fa-git-alt"></i>
+                            <span>Git Analysis</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="dependencies.html" class="nav-link">
+                            <i class="fas fa-cubes"></i>
+                            <span>Dependencies</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="project-info">
+                    <h4>Project: {{project_name}}</h4>
+                    <p>Last updated: {{last_updated}}</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div class="header-content">
+                    <h1>Dependency Details</h1>
+                    <p class="subtitle">Dependency details and stats</p>
+                </div>
+            </header>
+            
+            <div class="info-card">
+                <div>
+                    {{#EACH dependencies AS dependency}}
+                    
+                        <div class="dependency">
+                            <div class="header">
+                              <h2><a href="{{dependency.repository}}">{{dependency.name}}</a></h2>
+                              <span class="status outdated">{{dependency.status}}</span>
+                            </div>
+                            <p class="description">{{dependency.description}}</p>
+                            <ul class="details">
+                              <li><strong>Type:</strong> {{dependency.type}}</li>
+                              <li><strong>Required Version:</strong> {{dependency.version}}</li>
+                              <li><strong>Latest Version:</strong> {{dependency.latest}}</li>
+                              <li><strong>GitHub Stars:</strong> ⭐ {{dependency.github_stars}}</li>
+                              <li><strong>Monthly Downloads:</strong> 📦 {{dependency.downloads_monthly}}</li>
+                              <li><strong>License:</strong> {{dependency.licenses}}</li>
+                            </ul>
+                          </div>
+                    {{/EACH}}
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Embed data directly from template engine
+    </script>
+</body>
+</html>

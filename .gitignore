@@ -1,0 +1,7 @@
+.venv
+__pycache__
+test
+.ruff_cache
+build
+.python-version
+*.egg-info
