@@ -1,3 +1,7 @@
+# v0.2.8
+- Fix version status in pip analysis
+- Add json report
+
 # v0.2.7
 - fix files
 
