@@ -8,7 +8,7 @@ class TypescriptAstParser:
         self.parser = get_parser("typescript")
 
     def _get_node_text(self, code: str, node) -> str:
-        return code[node.start_byte:node.end_byte].decode("utf-8")
+        return code[node.start_byte : node.end_byte].decode("utf-8")
 
     def extract_structure(self, code: str) -> dict:
         tree = self.parser.parse(bytes(code, "utf8"))

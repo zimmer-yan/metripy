@@ -16,6 +16,7 @@ class PyPi:
             print(f"Package '{dependency.name}' has no info section")
             return dependency
 
+        dependency.type = "pip"
         dependency.description = info.get("summary")
         dependency.repository = info.get("project_url") or info.get("home_page")
         if info.get("license"):

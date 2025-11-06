@@ -5,6 +5,7 @@ from radon.visitors import Class, Function
 
 from metripy.Component.Output.ProgressBar import ProgressBar
 from metripy.LangAnalyzer.AbstractLangAnalyzer import AbstractLangAnalyzer
+from metripy.LangAnalyzer.Python.PythonHalSteadAnalyzer import PythonHalSteadAnalyzer
 from metripy.Metric.Code.FileMetrics import FileMetrics
 from metripy.Tree.ClassNode import ClassNode
 from metripy.Tree.FunctionNode import FunctionNode
@@ -15,6 +16,7 @@ class PythonAnalyzer(AbstractLangAnalyzer):
 
     def __init__(self):
         super().__init__()
+        self.fallback_halstead_analyzer = PythonHalSteadAnalyzer()
 
     def get_lang_name(self) -> str:
         return "Python"
@@ -62,6 +64,7 @@ class PythonAnalyzer(AbstractLangAnalyzer):
                 function_node = FunctionNode(
                     full_name, item.name, item.lineno, item.col_offset, item.complexity
                 )
+                function_node.line_end = item.endline
                 if item.is_method:
                     class_node = classes.get(full_class_name)
                     if class_node is not None:
@@ -117,8 +120,35 @@ class PythonAnalyzer(AbstractLangAnalyzer):
                 function_node.effort = report.effort
                 function_node.bugs = report.bugs
                 function_node.time = report.time
+                function_node.calc_mi()
             else:
                 raise ValueError(f"Function node not found for function {full_name}")
+
+        code_lines = code.split("\n")
+        for func_name, function_node in functions.items():
+            if function_node.maintainability_index != 0:
+                continue
+            # if MI is 0, we want to take another look, radon does not like boring functions
+
+            lines = code_lines[function_node.lineno : function_node.line_end]
+            function_metrics = (
+                self.fallback_halstead_analyzer.calculate_halstead_metrics(
+                    "\n".join(lines)
+                )
+            )
+            function_node.h1 = function_metrics["n1"]
+            function_node.h2 = function_metrics["n2"]
+            function_node.N1 = function_metrics["N1"]
+            function_node.N2 = function_metrics["N2"]
+            function_node.vocabulary = function_metrics["vocabulary"]
+            function_node.length = function_metrics["length"]
+            function_node.volume = function_metrics["volume"]
+            function_node.difficulty = function_metrics["difficulty"]
+            function_node.effort = function_metrics["effort"]
+            function_node.calculated_length = function_metrics["calculated_length"]
+            function_node.bugs = function_metrics["bugs"]
+            function_node.time = function_metrics["time"]
+            function_node.calc_mi()
 
         maintainability_index = mi_visit(code, True)
         module_node.maintainability_index = maintainability_index

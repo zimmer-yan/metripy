@@ -7,10 +7,10 @@ from py_template_engine import TemplateEngine
 
 from metripy.Application.Config.ReportConfig import ReportConfig
 from metripy.Component.Output.CliOutput import CliOutput
+from metripy.Dependency.Dependency import Dependency
 from metripy.Metric.FileTree.FileTreeParser import FileTreeParser
 from metripy.Metric.ProjectMetrics import ProjectMetrics
 from metripy.Report.ReporterInterface import ReporterInterface
-from metripy.Dependency.Dependency import Dependency
 
 
 class Reporter(ReporterInterface):
@@ -88,6 +88,8 @@ class Reporter(ReporterInterface):
 
         self.render_dependencies_page(metrics)
 
+        self.render_top_offenders_page(metrics)
+
         self.output.writeln(
             f"<success>HTML report generated in {self.config.path} directory</success>"
         )
@@ -97,6 +99,128 @@ class Reporter(ReporterInterface):
         content = engine.render(**data)
         with open(os.path.join(self.config.path, template_name), "w") as file:
             file.write(content)
+
+    def render_top_offenders_page(self, metrics: ProjectMetrics):
+        self.output.writeln("<info>Rendering top offenders page</info>")
+
+        orderedByTotalCc = sorted(
+            metrics.file_metrics, key=lambda x: x.totalCc, reverse=True
+        )[:10]
+        orderedByMI = sorted(
+            metrics.file_metrics, key=lambda x: x.maintainabilityIndex, reverse=False
+        )[:10]
+        orderedByLoc = sorted(metrics.file_metrics, key=lambda x: x.loc, reverse=True)[
+            :10
+        ]
+
+        all_functions: list = []
+        for fm in metrics.file_metrics:
+            # if fm.full_name == "./metripy/LangAnalyzer/AbstractLangAnalyzer.py":
+            #    print([x.to_dict() for x in fm.function_nodes])
+            #    exit()
+            all_functions.extend(fm.function_nodes)
+
+        functionsOrderedByCc = sorted(
+            all_functions, key=lambda x: x.complexity, reverse=True
+        )[:10]
+        functionsOrderedByMi = sorted(
+            all_functions, key=lambda x: x.maintainability_index, reverse=False
+        )[:10]
+        functionsOrderedByLoc = sorted(
+            all_functions, key=lambda x: x.get_loc(), reverse=True
+        )[:10]
+
+        # TODO maintainability index per function, we dont calc yet
+
+        a = {
+            "bar": [x.to_dict() for x in functionsOrderedByCc],
+            "baz": list(set([x.h1 for x in functionsOrderedByCc])),
+            "soos": list(set([x.maintainability_index for x in functionsOrderedByMi])),
+            "ff": [x.to_dict() for x in all_functions],
+            "loc": [x.loc for x in orderedByLoc],
+            "m_loc": [x.get_loc() for x in functionsOrderedByLoc],
+            # "foo": [{"full_name": x.full_name, "totalCc": x.totalCc} for x in orderedByTotalCc]
+        }
+
+        print(json.dumps(a, indent=2))
+
+        def get_cc_status(cc: int) -> str:
+            if cc <= 5:
+                return "good"
+            if cc <= 10:
+                return "ok"
+            if cc <= 15:
+                return "warning"
+            return "critical"
+
+        def get_mi_status(mi: int) -> str:
+            if mi > 80:
+                return "good"
+            if mi > 60:
+                return "ok"
+            if mi > 40:
+                return "warning"
+            return "critical"
+
+        def get_file_loc_status(loc: int) -> str:
+            if loc <= 200:
+                return "good"
+            elif loc <= 500:
+                return "ok"
+            elif loc <= 1000:
+                return "warning"
+            else:
+                return "critical"
+
+        def get_method_size_status(loc: int) -> str:
+            if loc <= 15:
+                return "good"
+            elif loc <= 30:
+                return "ok"
+            elif loc <= 50:
+                return "warning"
+            else:
+                return "critical"
+
+        self.render_template(
+            "top_offenders.html",
+            Reporter._stringify_values(
+                {
+                    "file_loc_offenders": [
+                        {**e.to_dict(), "status": get_file_loc_status(e.loc)}
+                        for e in orderedByLoc
+                    ],
+                    "file_cc_offenders": [
+                        {**e.to_dict(), "status": get_cc_status(e.totalCc)}
+                        for e in orderedByTotalCc
+                    ],
+                    "file_mi_offenders": [
+                        {**e.to_dict(), "status": get_mi_status(e.maintainabilityIndex)}
+                        for e in orderedByMI
+                    ],
+                    "function_size_offenders": [
+                        {**e.to_dict(), "status": get_method_size_status(e.get_loc())}
+                        for e in functionsOrderedByLoc
+                    ],
+                    "function_cc_offenders": [
+                        {**e.to_dict(), "status": get_cc_status(e.complexity)}
+                        for e in functionsOrderedByCc
+                    ],  # [e.to_dict() for e in functionsOrderedByCc],#[{**e.to_dict(), "status": get_cc_status(e.complexity)} for e in functionsOrderedByCc],
+                    "function_mi_offenders": [
+                        {
+                            **e.to_dict(),
+                            "status": get_mi_status(e.maintainability_index),
+                        }
+                        for e in functionsOrderedByMi
+                    ],
+                    "project_name": "Metripy",
+                    "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                }
+            ),
+        )
+        self.output.writeln(
+            "<success>Top offenders page generated successfully</success>"
+        )
 
     def render_dependencies_page(self, metrics: ProjectMetrics):
         """Render the dependencies page with dependency details and stats"""
@@ -149,26 +273,29 @@ class Reporter(ReporterInterface):
         )
         self.output.writeln("<success>Files page generated successfully</success>")
 
+    @staticmethod
+    def _stringify_values(obj):
+        if isinstance(obj, dict):
+            return {
+                key: Reporter._stringify_values(value) for key, value in obj.items()
+            }
+        elif isinstance(obj, list):
+            return [Reporter._stringify_values(item) for item in obj]
+        else:
+            return str(obj)
+
     def render_git_analysis_page(self, metrics: ProjectMetrics):
         """Render the git analysis page with comprehensive git data"""
         if not metrics.git_metrics:
             self.output.writeln("<success>No git metrics to render</success>")
             return
 
-        def stringify_values(obj):
-            if isinstance(obj, dict):
-                return {key: stringify_values(value) for key, value in obj.items()}
-            elif isinstance(obj, list):
-                return [stringify_values(item) for item in obj]
-            else:
-                return str(obj)
-
         self.output.writeln("<info>Rendering git analysis page</info>")
         try:
             # Render git analysis template
             self.render_template(
                 "git_analysis.html",
-                stringify_values(
+                Reporter._stringify_values(
                     {
                         "git_analysis": metrics.git_metrics.to_dict(),
                         "git_analysis_json": json.dumps(

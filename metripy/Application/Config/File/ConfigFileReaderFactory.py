@@ -1,10 +1,10 @@
 import os
 import pathlib
 
-from metripy.Application.Config.File.ConfigFileReaderInterface import \
-    ConfigFileReaderInterface
-from metripy.Application.Config.File.JsonConfigFileReader import \
-    JsonConfigFileReader
+from metripy.Application.Config.File.ConfigFileReaderInterface import (
+    ConfigFileReaderInterface,
+)
+from metripy.Application.Config.File.JsonConfigFileReader import JsonConfigFileReader
 
 
 class ConfigFileReaderFactory:

@@ -19,4 +19,6 @@ class GitJsonReporter(AbstractJsonReporter):
         }
 
         self.put_data(data)
-        self.output.writeln(f"<success>Create git json report in {self.config.path}</success>")
+        self.output.writeln(
+            f"<success>Create git json report in {self.config.path}</success>"
+        )

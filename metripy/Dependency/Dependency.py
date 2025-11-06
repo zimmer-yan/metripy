@@ -1,7 +1,8 @@
 from typing import Self
 
+
 class Dependency:
-    def __init__(self, name: str, version: str|None):
+    def __init__(self, name: str, version: str | None):
         self.name = name
         self.version = version
         self.latest: str = ""

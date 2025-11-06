@@ -3,7 +3,6 @@ from metripy.Metric.Code.AggregatedMetrics import AggregatedMetrics
 from metripy.Metric.Code.FileMetrics import FileMetrics
 from metripy.Metric.Code.SegmentedMetrics import SegmentedMetrics
 from metripy.Metric.Git.GitMetrics import GitMetrics
-from metripy.Dependency.Dependency import Dependency
 
 
 class ProjectMetrics:
@@ -65,5 +64,7 @@ class ProjectMetrics:
             data["git_metrics"] = self.git_metrics.to_dict()
         if self.dependencies:
             data["dependencies"] = [d.to_dict() for d in self.dependencies]
-            data["license_distribution"] = Dependency.get_lisence_distribution(self.dependencies)
+            data["license_distribution"] = Dependency.get_lisence_distribution(
+                self.dependencies
+            )
         return data

@@ -2,8 +2,9 @@ import json
 import os
 
 from metripy.Application.Config.Config import Config
-from metripy.Application.Config.File.ConfigFileReaderInterface import \
-    ConfigFileReaderInterface
+from metripy.Application.Config.File.ConfigFileReaderInterface import (
+    ConfigFileReaderInterface,
+)
 from metripy.Application.Config.GitConfig import GitConfig
 from metripy.Application.Config.ProjectConfig import ProjectConfig
 from metripy.Application.Config.ReportConfig import ReportConfig

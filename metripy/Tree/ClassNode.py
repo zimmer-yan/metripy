@@ -1,3 +1,4 @@
+from metripy.Metric.Code.Segmentor import Segmentor
 from metripy.Tree.FunctionNode import FunctionNode
 
 
@@ -25,6 +26,9 @@ class ClassNode:
             "lineno": self.lineno,
             "col_offset": self.col_offset,
             "real_complexity": self.real_complexity,
+            "complexity_segment": Segmentor.get_complexity_segment(
+                self.real_complexity
+            ),
             "functions": [func.to_dict() for func in self.functions],
         }
 

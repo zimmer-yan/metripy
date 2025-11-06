@@ -529,6 +529,9 @@ body {
 /* ===== CHART SECTION ===== */
 .chart-section {
     margin-bottom: var(--spacing-2xl);
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--spacing-xl);
 }
 
 .chart-container {
@@ -566,6 +569,22 @@ body {
 .chart-content {
     height: 300px;
     position: relative;
+}
+
+.chart-container.small .chart-content {
+    height: 250px;
+}
+
+.chart-container.small {
+    padding: var(--spacing-lg);
+}
+
+.chart-container.small .chart-header h3 {
+    font-size: 1.125rem;
+}
+
+.chart-container.small .chart-header p {
+    font-size: 0.8125rem;
 }
 
 /* ===== ADDITIONAL CONTENT SECTIONS ===== */
@@ -645,6 +664,10 @@ body {
     }
     
     .section-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-section {
         grid-template-columns: 1fr;
     }
     

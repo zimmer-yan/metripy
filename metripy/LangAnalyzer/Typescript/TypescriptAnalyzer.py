@@ -4,14 +4,16 @@ import lizard
 
 from metripy.Component.Output.ProgressBar import ProgressBar
 from metripy.LangAnalyzer.AbstractLangAnalyzer import AbstractLangAnalyzer
-from metripy.LangAnalyzer.Typescript.TypescriptAstParser import \
-    TypescriptAstParser
-from metripy.LangAnalyzer.Typescript.TypescriptBasicComplexityAnalyzer import \
-    TypescriptBasicComplexityAnalzyer
-from metripy.LangAnalyzer.Typescript.TypescriptBasicLocAnalyzer import \
-    TypescriptBasicLocAnalyzer
-from metripy.LangAnalyzer.Typescript.TypescriptHalSteadAnalyzer import \
-    TypeScriptHalSteadAnalyzer
+from metripy.LangAnalyzer.Typescript.TypescriptAstParser import TypescriptAstParser
+from metripy.LangAnalyzer.Typescript.TypescriptBasicComplexityAnalyzer import (
+    TypescriptBasicComplexityAnalzyer,
+)
+from metripy.LangAnalyzer.Typescript.TypescriptBasicLocAnalyzer import (
+    TypescriptBasicLocAnalyzer,
+)
+from metripy.LangAnalyzer.Typescript.TypescriptHalSteadAnalyzer import (
+    TypeScriptHalSteadAnalyzer,
+)
 from metripy.Tree.ClassNode import ClassNode
 from metripy.Tree.FunctionNode import FunctionNode
 from metripy.Tree.ModuleNode import ModuleNode
@@ -146,7 +148,7 @@ class TypescriptAnalyzer(AbstractLangAnalyzer):
 
         code_lines = code.split("\n")
         for func_name, function_node in functions.items():
-            lines = code_lines[function_node.lineno:function_node.line_end]
+            lines = code_lines[function_node.lineno : function_node.line_end]
             function_metrics = self.halstead_analyzer.calculate_halstead_metrics(
                 "\n".join(lines)
             )
@@ -162,6 +164,7 @@ class TypescriptAnalyzer(AbstractLangAnalyzer):
             function_node.calculated_length = function_metrics["calculated_length"]
             function_node.bugs = function_metrics["bugs"]
             function_node.time = function_metrics["time"]
+            function_node.calc_mi()
 
         maintainability_index = self._calculate_maintainability_index(
             functions.values(), module_node

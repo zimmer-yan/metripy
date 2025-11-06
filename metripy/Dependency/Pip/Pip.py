@@ -1,5 +1,4 @@
 import os
-import re
 
 import toml
 
@@ -39,7 +38,7 @@ class Pip:
                 return self._parse_dependencies(deps)
 
         return []
-    
+
     def _parse_dependencies(self, lines: list[str]) -> list[Dependency]:
         dependencies = []
         for dep in lines:

@@ -131,7 +131,7 @@ class PhpAnalyzer(AbstractLangAnalyzer):
 
         code_lines = code.split("\n")
         for func_name, function_node in functions.items():
-            lines = code_lines[function_node.lineno:function_node.line_end]
+            lines = code_lines[function_node.lineno : function_node.line_end]
             function_metrics = self.halstead_analyzer.calculate_halstead_metrics(
                 "\n".join(lines)
             )
@@ -147,6 +147,7 @@ class PhpAnalyzer(AbstractLangAnalyzer):
             function_node.calculated_length = function_metrics["calculated_length"]
             function_node.bugs = function_metrics["bugs"]
             function_node.time = function_metrics["time"]
+            function_node.calc_mi()
 
         maintainability_index = self._calculate_maintainability_index(
             functions.values(), module_node

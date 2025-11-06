@@ -40,13 +40,13 @@ class AbstractLangAnalyzer(ABC):
             full_name = module.full_name
 
             if len(module.functions) > 0:
-                avgCcPerFunction = sum(
-                    function.complexity for function in module.functions
-                ) / len(module.functions)
+                totalCc = sum(function.complexity for function in module.functions)
+                avgCcPerFunction = totalCc / len(module.functions)
                 avgLocPerFunction = (
                     module.lloc - module.comments - len(module.functions)
                 ) / len(module.functions)
             else:
+                totalCc = 0
                 avgCcPerFunction = 0
                 avgLocPerFunction = 0
             maintainabilityIndex = module.maintainability_index
@@ -54,6 +54,7 @@ class AbstractLangAnalyzer(ABC):
             file_metric = FileMetrics(
                 full_name=full_name,
                 loc=module.loc,
+                totalCc=totalCc,
                 avgCcPerFunction=avgCcPerFunction,
                 maintainabilityIndex=maintainabilityIndex,
                 avgLocPerFunction=avgLocPerFunction,
