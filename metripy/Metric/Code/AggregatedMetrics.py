@@ -1,4 +1,5 @@
 from metripy.Metric.Code.SegmentedMetrics import SegmentedMetrics
+from metripy.Metric.Trend.AggregatedTrendMetric import AggregatedTrendMetric
 
 
 class AggregatedMetrics:
@@ -29,13 +30,19 @@ class AggregatedMetrics:
             "methodSize": segmented_method_size,
         }
 
+        self.trend: AggregatedTrendMetric | None = None
+
     def to_dict(self) -> dict:
         return {
-            "loc": str(self.loc),
-            "avgCcPerFunction": f"{self.avgCcPerFunction:.2f}",
-            "maintainabilityIndex": f"{self.maintainabilityIndex:.2f}",
-            "avgLocPerFunction": f"{self.avgLocPerFunction:.2f}",
-            "num_files": str(self.num_files),
+            "loc": self.loc,
+            "avgCcPerFunction": round(self.avgCcPerFunction, 2),
+            "maintainabilityIndex": round(self.maintainabilityIndex, 2),
+            "avgLocPerFunction": round(self.avgLocPerFunction, 2),
+            "num_files": self.num_files,
+            "trend": self.trend.to_dict() if self.trend else None,
+            "trend_segmentation": (
+                self.trend.to_dict_segmentation() if self.trend else None
+            ),
         }
 
     def to_dict_segmentation(self) -> dict:

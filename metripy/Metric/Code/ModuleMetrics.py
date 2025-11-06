@@ -22,11 +22,11 @@ class ModuleMetrics:
 
     def to_dict(self) -> dict:
         return {
-            "loc": str(self.loc),
-            "avgCcPerFunction": f"{self.avgCcPerFunction:.2f}",
-            "maintainabilityIndex": f"{self.maintainabilityIndex:.2f}",
-            "avgLocPerFunction": f"{self.avgLocPerFunction:.2f}",
-            "num_files": str(self.num_files),
+            "loc": self.loc,
+            "avgCcPerFunction": round(self.avgCcPerFunction, 2),
+            "maintainabilityIndex": round(self.maintainabilityIndex, 2),
+            "avgLocPerFunction": round(self.avgLocPerFunction, 2),
+            "num_files": self.num_files,
             "class_nodes": [node.to_dict() for node in self.class_nodes],
             "function_nodes": [node.to_dict() for node in self.function_nodes],
         }

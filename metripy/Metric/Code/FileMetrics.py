@@ -1,4 +1,7 @@
+from typing import Self
+
 from metripy.Metric.Code.Segmentor import Segmentor
+from metripy.Metric.Trend.FileTrendMetric import FileTrendMetric
 from metripy.Tree.ClassNode import ClassNode
 from metripy.Tree.FunctionNode import FunctionNode
 
@@ -23,6 +26,7 @@ class FileMetrics:
         self.avgLocPerFunction = avgLocPerFunction
         self.class_nodes = class_nodes
         self.function_nodes = function_nodes
+        self.trend: FileTrendMetric | None = None
 
     def to_dict(self) -> dict:
         return {
@@ -34,7 +38,7 @@ class FileMetrics:
                 self.avgCcPerFunction
             ),
             "avgCcPerFunction": self.avgCcPerFunction,
-            "maintainabilityIndex": f"{self.maintainabilityIndex:.2f}",
+            "maintainabilityIndex": round(self.maintainabilityIndex, 2),
             "maintainability_segment": Segmentor.get_maintainability_segment(
                 self.maintainabilityIndex
             ),
@@ -45,3 +49,16 @@ class FileMetrics:
             "class_nodes": [node.to_dict() for node in self.class_nodes],
             "function_nodes": [node.to_dict() for node in self.function_nodes],
         }
+
+    @staticmethod
+    def from_dict(data: dict) -> Self:
+        return FileMetrics(
+            full_name=data["full_name"],
+            loc=data["loc"],
+            totalCc=data["totalCc"],
+            avgCcPerFunction=data["avgCcPerFunction"],
+            maintainabilityIndex=data["maintainabilityIndex"],
+            avgLocPerFunction=data["avgLocPerFunction"],
+            class_nodes=[ClassNode.from_dict(d) for d in data["class_nodes"]],
+            function_nodes=[FunctionNode.from_dict(d) for d in data["function_nodes"]],
+        )

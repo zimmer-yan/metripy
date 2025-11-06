@@ -9,8 +9,6 @@ from metripy.Metric.Git.GitMetrics import GitMetrics
 
 class GitAnalyzer:
     def __init__(self, git_config: GitConfig):
-        print(git_config.repo)
-        print(git_config.branch)
         self.repo = Repo(git_config.repo)
         self.branch_name = git_config.branch
 
@@ -22,7 +20,6 @@ class GitAnalyzer:
         first_of_month_last_year = datetime(now.year - 1, now.month, 1)
         # first_of_month_last_year = datetime(now.year, now.month, 1)
         after_date = first_of_month_last_year.strftime("%Y-%m-%d")
-        print(f"analyzing from {after_date}")
 
         return self.get_metrics(after_date)
 

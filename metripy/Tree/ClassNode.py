@@ -1,4 +1,7 @@
+from typing import Self
+
 from metripy.Metric.Code.Segmentor import Segmentor
+from metripy.Metric.Trend.ClassTrendMetric import ClassTrendMetric
 from metripy.Tree.FunctionNode import FunctionNode
 
 
@@ -18,6 +21,8 @@ class ClassNode:
         self.real_complexity = real_complexity
         self.functions: list[FunctionNode] = []
 
+        self.trend: ClassTrendMetric | None = None
+
     def to_dict(self) -> dict:
         """Convert ClassNode to a dictionary for JSON serialization."""
         return {
@@ -34,3 +39,15 @@ class ClassNode:
 
     def __dict__(self) -> dict:
         return self.to_dict()
+
+    @staticmethod
+    def from_dict(data: dict) -> Self:
+        node = ClassNode(
+            full_name=data["full_name"],
+            name=data["name"],
+            lineno=data["lineno"],
+            col_offset=data["col_offset"],
+            real_complexity=data["real_complexity"],
+        )
+        node.functions = [FunctionNode.from_dict(d) for d in data["functions"]]
+        return node

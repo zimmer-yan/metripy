@@ -18,6 +18,33 @@ class SegmentedMetrics:
             "critical": self.critical,
         }
 
+    def to_dict_with_percent(self) -> dict:
+        return {
+            "good": self.good,
+            "good_percent": round(
+                self.good / (self.good + self.ok + self.warning + self.critical) * 100,
+                2,
+            ),
+            "ok": self.ok,
+            "ok_percent": round(
+                self.ok / (self.good + self.ok + self.warning + self.critical) * 100, 2
+            ),
+            "warning": self.warning,
+            "warning_percent": round(
+                self.warning
+                / (self.good + self.ok + self.warning + self.critical)
+                * 100,
+                2,
+            ),
+            "critical": self.critical,
+            "critical_percent": round(
+                self.critical
+                / (self.good + self.ok + self.warning + self.critical)
+                * 100,
+                2,
+            ),
+        }
+
     def _set_values(self, values: dict[str, int]) -> Self:
         self.good = values["good"]
         self.ok = values["ok"]

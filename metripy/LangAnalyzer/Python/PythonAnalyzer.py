@@ -77,11 +77,6 @@ class PythonAnalyzer(AbstractLangAnalyzer):
             else:
                 raise ValueError(f"Unknown item type: {type(item)}")
 
-        # print("--------------------------------")
-        # print(json.dumps([c.__dict__() for c in classes.values()], indent=4))
-        # print("--------------------------------")
-        # print(json.dumps([f.__dict__() for f in functions.values()], indent=4))
-        # exit()
         module = analyze(code)
         full_name = self.full_name(filename)
         module_node = ModuleNode(
@@ -96,12 +91,9 @@ class PythonAnalyzer(AbstractLangAnalyzer):
         )
         module_node.classes.extend(classes.values())
         module_node.functions.extend(functions.values())
-        # print(module)
-        # print(json.dumps([m.to_dict() for m in modules.values()], indent=4))
-        # exit()
+
         h = h_visit(code)
         assert isinstance(h, Halstead)
-        # print(h.total)
         function_name: str
         report: HalsteadReport
         for function_name, report in h.functions:
@@ -130,7 +122,7 @@ class PythonAnalyzer(AbstractLangAnalyzer):
                 continue
             # if MI is 0, we want to take another look, radon does not like boring functions
 
-            lines = code_lines[function_node.lineno : function_node.line_end]
+            lines = code_lines[function_node.lineno:function_node.line_end]
             function_metrics = (
                 self.fallback_halstead_analyzer.calculate_halstead_metrics(
                     "\n".join(lines)

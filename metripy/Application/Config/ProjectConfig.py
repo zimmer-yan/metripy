@@ -14,6 +14,7 @@ class ProjectConfig:
         self.pip: bool = False
         self.npm: bool = False
         self.reports: list[ReportConfig] = []
+        self.history_path: str | None = None
 
     def to_dict(self) -> dict:
         return {
@@ -24,4 +25,5 @@ class ProjectConfig:
             "extensions": self.extensions,
             "git": self.git.to_dict() if self.git else None,
             "reports": [report.to_dict() for report in self.reports],
+            "history_path": self.history_path,
         }

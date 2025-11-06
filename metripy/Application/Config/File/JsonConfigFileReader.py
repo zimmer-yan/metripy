@@ -80,4 +80,8 @@ class JsonConfigFileReader(ConfigFileReaderInterface):
         if npm := json_data.get("npm"):
             project_config.npm = npm
 
+        # trends
+        if history_path := json_data.get("trends"):
+            project_config.history_path = self.resolve_path(history_path)
+
         return project_config

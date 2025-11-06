@@ -8,6 +8,8 @@ from py_template_engine import TemplateEngine
 from metripy.Application.Config.ReportConfig import ReportConfig
 from metripy.Component.Output.CliOutput import CliOutput
 from metripy.Dependency.Dependency import Dependency
+from metripy.Metric.Code.FileMetrics import FileMetrics
+from metripy.Metric.Code.Segmentor import Segmentor
 from metripy.Metric.FileTree.FileTreeParser import FileTreeParser
 from metripy.Metric.ProjectMetrics import ProjectMetrics
 from metripy.Report.ReporterInterface import ReporterInterface
@@ -54,41 +56,20 @@ class Reporter(ReporterInterface):
             os.path.join(self.config.path, "css"),
             dirs_exist_ok=True,
         )
-        # shutil.copytree(os.path.join(self.template_dir, "images"), os.path.join(self.config.path, "images"), dirs_exist_ok=True)
+        shutil.copytree(
+            os.path.join(self.template_dir, "images"),
+            os.path.join(self.config.path, "images"),
+            dirs_exist_ok=True,
+        )
         # shutil.copytree(os.path.join(self.template_dir, "fonts"), os.path.join(self.config.path, "fonts"), dirs_exist_ok=True)
 
-        # render templates
-        git_stats_data = {}
-        if metrics.git_metrics:
-            git_stats_data = metrics.git_metrics.get_commit_stats_per_month()
-
-        self.output.writeln("<info>Rendering index page</info>")
-        # Render main index page
-        self.render_template(
-            "index.html",
-            {
-                "git_stats_data": json.dumps(git_stats_data, indent=4),
-                "total_code_metrics": metrics.total_code_metrics.to_dict(),
-                "segmentation_data": json.dumps(
-                    metrics.total_code_metrics.to_dict_segmentation(), indent=4
-                ),
-                "project_name": "Metripy",
-                "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "author": "Metripy",
-                "version": "1.0.0",
-            },
-        )
-        self.output.writeln("<success>Done rendering index page</success>")
-
-        # Render files page
+        # Render main pages
+        self.render_index_page(metrics)
         self.render_files_page(metrics)
-        # Render git analysis page
         self.render_git_analysis_page(metrics)
-
         self.render_dependencies_page(metrics)
-
         self.render_top_offenders_page(metrics)
+        self.render_trends_page(metrics)
 
         self.output.writeln(
             f"<success>HTML report generated in {self.config.path} directory</success>"
@@ -99,6 +80,154 @@ class Reporter(ReporterInterface):
         content = engine.render(**data)
         with open(os.path.join(self.config.path, template_name), "w") as file:
             file.write(content)
+
+    def render_trends_page(self, metrics: ProjectMetrics):
+        def compile(file: FileMetrics) -> dict:
+            return {
+                "name": file.full_name,
+                "path": file.full_name,
+                "complexity_current": file.totalCc,
+                "complexity_prev": round(file.trend.historical_totalCc, 2),
+                "complexity_delta": round(file.trend.totalCc_delta, 2),
+                "maintainability_current": round(file.maintainabilityIndex, 2),
+                "maintainability_prev": round(
+                    file.trend.historical_maintainabilityIndex, 2
+                ),
+                "maintainability_delta": round(
+                    file.trend.maintainabilityIndex_delta, 2
+                ),
+            }
+
+        # Top improved complexity (complexity went down - negative delta)
+        top_improved_complexity = [
+            x
+            for x in metrics.file_metrics
+            if x.trend is not None and x.trend.totalCc_delta < 0
+        ]
+        top_improved_complexity = sorted(
+            top_improved_complexity, key=lambda x: x.trend.totalCc_delta
+        )[:10]
+
+        # Top worsened complexity (complexity went up - positive delta)
+        top_worsened_complexity = [
+            x
+            for x in metrics.file_metrics
+            if x.trend is not None and x.trend.totalCc_delta > 0
+        ]
+        top_worsened_complexity = sorted(
+            top_worsened_complexity, key=lambda x: x.trend.totalCc_delta, reverse=True
+        )[:10]
+
+        # Top improved maintainability (maintainability went up - positive delta)
+        top_improved_maintainability = [
+            x
+            for x in metrics.file_metrics
+            if x.trend is not None and round(x.trend.maintainabilityIndex_delta, 2) > 0
+        ]
+        top_improved_maintainability = sorted(
+            top_improved_maintainability,
+            key=lambda x: x.trend.maintainabilityIndex_delta,
+            reverse=True,
+        )[:10]
+
+        # Top worsened maintainability (maintainability went down - negative delta)
+        top_worsened_maintainability = [
+            x
+            for x in metrics.file_metrics
+            if x.trend is not None and round(x.trend.maintainabilityIndex_delta, 2) < 0
+        ]
+        top_worsened_maintainability = sorted(
+            top_worsened_maintainability,
+            key=lambda x: x.trend.maintainabilityIndex_delta,
+        )[:10]
+
+        trend_data = {
+            # Segment distributions for each metric
+            "loc_segments_current": metrics.total_code_metrics.segmentation_data[
+                "loc"
+            ].to_dict_with_percent(),
+            "loc_segments_prev": metrics.total_code_metrics.trend.historical_segmentation_data[
+                "loc"
+            ].to_dict_with_percent(),
+            "complexity_segments_current": metrics.total_code_metrics.segmentation_data[
+                "complexity"
+            ].to_dict_with_percent(),
+            "complexity_segments_prev": metrics.total_code_metrics.trend.historical_segmentation_data[
+                "complexity"
+            ].to_dict_with_percent(),
+            "maintainability_segments_current": metrics.total_code_metrics.segmentation_data[
+                "maintainability"
+            ].to_dict_with_percent(),
+            "maintainability_segments_prev": metrics.total_code_metrics.trend.historical_segmentation_data[
+                "maintainability"
+            ].to_dict_with_percent(),
+            "method_size_segments_current": metrics.total_code_metrics.segmentation_data[
+                "methodSize"
+            ].to_dict_with_percent(),
+            "method_size_segments_prev": metrics.total_code_metrics.trend.historical_segmentation_data[
+                "methodSize"
+            ].to_dict_with_percent(),
+            "top_improved_complexity": [compile(x) for x in top_improved_complexity],
+            "top_improved_maintainability": [
+                compile(x) for x in top_improved_maintainability
+            ],
+            "top_worsened_complexity": [compile(x) for x in top_worsened_complexity],
+            "top_worsened_maintainability": [
+                compile(x) for x in top_worsened_maintainability
+            ],
+        }
+
+        self.output.writeln("<info>Rendering trends page</info>")
+        self.render_template(
+            "trends.html",
+            {
+                "has_trend_data": metrics.total_code_metrics.trend is not None,
+                "trend_data": trend_data,
+                "project_name": "Metripy",
+                "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "author": "Metripy",
+                "version": "1.0.0",
+            },
+        )
+
+    def render_index_page(self, metrics: ProjectMetrics):
+        git_stats_data = {}
+        if metrics.git_metrics:
+            git_stats_data = metrics.git_metrics.get_commit_stats_per_month()
+
+        self.output.writeln("<info>Rendering index page</info>")
+        self.render_template(
+            "index.html",
+            {
+                "git_stats_data": json.dumps(git_stats_data, indent=4),
+                "total_code_metrics": metrics.total_code_metrics.to_dict(),
+                "has_total_code_metrics_trend": metrics.total_code_metrics.trend
+                is not None,
+                "total_code_metrics_trend": (
+                    metrics.total_code_metrics.trend.to_dict()
+                    if metrics.total_code_metrics.trend
+                    else None
+                ),
+                "segmentation_data": json.dumps(
+                    metrics.total_code_metrics.to_dict_segmentation(), indent=4
+                ),
+                "segmentation_data_trend": (
+                    json.dumps(
+                        metrics.total_code_metrics.trend.to_dict_segmentation(),
+                        indent=4,
+                    )
+                    if metrics.total_code_metrics.trend
+                    else None
+                ),
+                "project_name": "Metripy",
+                "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "author": "Metripy",
+                "version": "1.0.0",
+            },
+        )
+        self.output.writeln("<success>Done rendering index page</success>")
 
     def render_top_offenders_page(self, metrics: ProjectMetrics):
         self.output.writeln("<info>Rendering top offenders page</info>")
@@ -115,9 +244,6 @@ class Reporter(ReporterInterface):
 
         all_functions: list = []
         for fm in metrics.file_metrics:
-            # if fm.full_name == "./metripy/LangAnalyzer/AbstractLangAnalyzer.py":
-            #    print([x.to_dict() for x in fm.function_nodes])
-            #    exit()
             all_functions.extend(fm.function_nodes)
 
         functionsOrderedByCc = sorted(
@@ -132,84 +258,50 @@ class Reporter(ReporterInterface):
 
         # TODO maintainability index per function, we dont calc yet
 
-        a = {
-            "bar": [x.to_dict() for x in functionsOrderedByCc],
-            "baz": list(set([x.h1 for x in functionsOrderedByCc])),
-            "soos": list(set([x.maintainability_index for x in functionsOrderedByMi])),
-            "ff": [x.to_dict() for x in all_functions],
-            "loc": [x.loc for x in orderedByLoc],
-            "m_loc": [x.get_loc() for x in functionsOrderedByLoc],
-            # "foo": [{"full_name": x.full_name, "totalCc": x.totalCc} for x in orderedByTotalCc]
-        }
-
-        print(json.dumps(a, indent=2))
-
-        def get_cc_status(cc: int) -> str:
-            if cc <= 5:
-                return "good"
-            if cc <= 10:
-                return "ok"
-            if cc <= 15:
-                return "warning"
-            return "critical"
-
-        def get_mi_status(mi: int) -> str:
-            if mi > 80:
-                return "good"
-            if mi > 60:
-                return "ok"
-            if mi > 40:
-                return "warning"
-            return "critical"
-
-        def get_file_loc_status(loc: int) -> str:
-            if loc <= 200:
-                return "good"
-            elif loc <= 500:
-                return "ok"
-            elif loc <= 1000:
-                return "warning"
-            else:
-                return "critical"
-
-        def get_method_size_status(loc: int) -> str:
-            if loc <= 15:
-                return "good"
-            elif loc <= 30:
-                return "ok"
-            elif loc <= 50:
-                return "warning"
-            else:
-                return "critical"
-
         self.render_template(
             "top_offenders.html",
             Reporter._stringify_values(
                 {
                     "file_loc_offenders": [
-                        {**e.to_dict(), "status": get_file_loc_status(e.loc)}
+                        {**e.to_dict(), "status": Segmentor.get_loc_segment(e.loc)}
                         for e in orderedByLoc
                     ],
                     "file_cc_offenders": [
-                        {**e.to_dict(), "status": get_cc_status(e.totalCc)}
+                        {
+                            **e.to_dict(),
+                            "status": Segmentor.get_complexity_segment(e.totalCc),
+                        }
                         for e in orderedByTotalCc
                     ],
                     "file_mi_offenders": [
-                        {**e.to_dict(), "status": get_mi_status(e.maintainabilityIndex)}
+                        {
+                            **e.to_dict(),
+                            "status": Segmentor.get_maintainability_segment(
+                                e.maintainabilityIndex
+                            ),
+                        }
                         for e in orderedByMI
                     ],
                     "function_size_offenders": [
-                        {**e.to_dict(), "status": get_method_size_status(e.get_loc())}
+                        {
+                            **e.to_dict(),
+                            "status": Segmentor.get_method_size_segment(e.get_loc()),
+                        }
                         for e in functionsOrderedByLoc
                     ],
                     "function_cc_offenders": [
-                        {**e.to_dict(), "status": get_cc_status(e.complexity)}
+                        {
+                            **e.to_dict(),
+                            "status": Segmentor.get_complexity_segment(e.complexity),
+                        }
                         for e in functionsOrderedByCc
-                    ],  # [e.to_dict() for e in functionsOrderedByCc],#[{**e.to_dict(), "status": get_cc_status(e.complexity)} for e in functionsOrderedByCc],
+                    ],
                     "function_mi_offenders": [
                         {
                             **e.to_dict(),
-                            "status": get_mi_status(e.maintainability_index),
+                            "status": Segmentor.get_maintainability_segment(
+                                e.maintainability_index
+                            ),
                         }
                         for e in functionsOrderedByMi
                     ],
@@ -232,10 +324,7 @@ class Reporter(ReporterInterface):
 
         dependencies = metrics.dependencies if metrics.dependencies is not None else []
 
-        # TODO render a pie chart
         license_by_type = Dependency.get_lisence_distribution(dependencies)
-
-        print(json.dumps(license_by_type, indent=2))
 
         self.render_template(
             "dependencies.html",

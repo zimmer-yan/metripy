@@ -136,7 +136,7 @@ class GitMetrics:
     def to_dict(self) -> dict[str, any]:
         return {
             "analysis_start_date": self.analysis_start_date,
-            "avg_commit_size": f"{self.get_avg_commit_size():.2f}",
+            "avg_commit_size": round(self.get_avg_commit_size(), 2),
             "commit_stats_per_month": self.get_commit_stats_per_month(),
             "churn_per_month": self.get_churn_per_month(),
             "total_commits": self.total_commits,

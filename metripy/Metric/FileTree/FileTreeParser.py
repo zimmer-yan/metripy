@@ -36,7 +36,3 @@ class FileTreeParser:
 
         for child in node.children:
             FileTreeParser._shorten_tree(child)
-
-        # print(json.dumps(root.to_dict(), indent=4))
-        # exit()
-        # return root

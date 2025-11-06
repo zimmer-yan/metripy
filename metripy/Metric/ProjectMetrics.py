@@ -1,3 +1,5 @@
+from typing import Self
+
 from metripy.Dependency.Dependency import Dependency
 from metripy.Metric.Code.AggregatedMetrics import AggregatedMetrics
 from metripy.Metric.Code.FileMetrics import FileMetrics
@@ -68,3 +70,15 @@ class ProjectMetrics:
                 self.dependencies
             )
         return data
+
+    @staticmethod
+    def from_dict(data: dict) -> Self:
+        # TODO: not needed yet
+        # git_metrics = GitMetrics.from_dict(data["git_metrics"]) if "git_metrics" in data.keys() else None
+        # dependencies = [Dependency.from_dict(d) for d in data["dependencies"]] if "dependencies" in data.keys() else None
+
+        return ProjectMetrics(
+            file_metrics=[FileMetrics.from_dict(m) for m in data["file_metrics"]],
+            git_metrics=None,
+            dependencies=None,
+        )

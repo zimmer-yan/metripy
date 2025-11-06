@@ -7,6 +7,7 @@ from metripy.Dependency.Dependency import Dependency
 from metripy.Dependency.Npm.Npm import Npm
 from metripy.Dependency.Pip.Pip import Pip
 from metripy.Git.GitAnalyzer import GitAnalyzer
+from metripy.Import.Json.JsonImporter import JsonImporter
 from metripy.LangAnalyzer.AbstractLangAnalyzer import AbstractLangAnalyzer
 from metripy.LangAnalyzer.Php.PhpAnalyzer import PhpAnalyzer
 from metripy.LangAnalyzer.Python.PythonAnalyzer import PythonAnalyzer
@@ -14,6 +15,7 @@ from metripy.LangAnalyzer.Typescript.TypescriptAnalyzer import TypescriptAnalyze
 from metripy.Metric.Code.FileMetrics import FileMetrics
 from metripy.Metric.Git.GitMetrics import GitMetrics
 from metripy.Metric.ProjectMetrics import ProjectMetrics
+from metripy.Trend.TrendAnalyzer import TrendAnalyzer
 
 
 class Analyzer:
@@ -84,6 +86,18 @@ class Analyzer:
 
         return dependencies
 
+    def add_trends(self, project_metrics: ProjectMetrics):
+        self.output.writeln("<info>Analyzing trends...</info>")
+        importer = JsonImporter(self.output)
+        historical_project_metrics = importer.import_data(self.config.history_path)
+        TrendAnalyzer().add_historical_file_trends(
+            project_metrics.file_metrics, historical_project_metrics.file_metrics
+        )
+        TrendAnalyzer().add_historical_project_trends(
+            project_metrics, historical_project_metrics
+        )
+        self.output.writeln("<success>Trends analyzed</success>")
+
     def run(self, files: list[str]) -> ProjectMetrics:
         git_stats = None
         if self.config.git:
@@ -102,4 +116,11 @@ class Analyzer:
         elif self.config.npm:
             packages = self.analyze_npm()
 
-        return ProjectMetrics(file_metrics, git_stats, packages)
+        if not self.config.history_path:
+            return ProjectMetrics(file_metrics, git_stats, packages)
+
+        # analyze trends
+        project_metrics = ProjectMetrics(file_metrics, git_stats, packages)
+        self.add_trends(project_metrics)
+
+        return project_metrics

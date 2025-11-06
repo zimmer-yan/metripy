@@ -11,7 +11,7 @@
         /* File Tree Styling */
         .file-tree {
             max-height: 600px;
-            overflow-y: auto;
+  overflow-y: auto;
             padding: var(--spacing-lg);
             background: linear-gradient(135deg, var(--bg-primary) 0%, rgba(255, 255, 255, 0.95) 100%);
             border: 1px solid var(--border-light);
@@ -75,7 +75,7 @@
         .filter-btn .filter-count {
             background: rgba(0,0,0,0.1);
             padding: 0.0625rem 0.25rem;
-            border-radius: 6px;
+  border-radius: 6px;
             font-size: 0.625rem;
             margin-left: 0.125rem;
             min-width: 1.25rem;
@@ -171,21 +171,21 @@
 
         .file-tree::-webkit-scrollbar-thumb:hover {
             background: var(--text-secondary);
-        }
+}
 
-        .file-tree ul {
-            list-style: none;
+.file-tree ul {
+  list-style: none;
             padding-left: 1.5rem;
             margin: 0.25rem 0;
-            position: relative;
-        }
+  position: relative;
+}
 
-        .file-tree ul::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0.5rem;
-            bottom: 0;
+.file-tree ul::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0.5rem;
+  bottom: 0;
             width: 2px;
             background: linear-gradient(180deg, var(--border-light), transparent);
         }
@@ -196,20 +196,20 @@
 
         .file-tree > ul::before {
             display: none;
-        }
+}
 
-        .file-tree li {
-            position: relative;
+.file-tree li {
+  position: relative;
             margin: 0.125rem 0;
-            padding-left: 1rem;
-        }
+  padding-left: 1rem;
+}
 
-        .file-tree li::before {
-            content: '';
-            position: absolute;
+.file-tree li::before {
+  content: '';
+  position: absolute;
             top: 0.875rem;
-            left: 0.5rem;
-            width: 0.75rem;
+  left: 0.5rem;
+  width: 0.75rem;
             height: 2px;
             background: var(--border-light);
         }
@@ -223,12 +223,12 @@
             color: var(--text-secondary);
             font-size: 0.875rem;
             transition: color var(--transition-fast);
-        }
+}
 
-        .file-tree .folder,
-        .file-tree .file {
-            display: inline-block;
-            cursor: pointer;
+.file-tree .folder,
+.file-tree .file {
+  display: inline-block;
+  cursor: pointer;
             padding: 0.375rem 0.625rem;
             padding-left: 0.75rem;
             border-radius: var(--radius-md);
@@ -254,11 +254,11 @@
 
         .file-tree .file.health-critical {
             border-left-color: #ef4444;
-        }
+}
 
-        .file-tree .folder {
+.file-tree .folder {
             color: var(--primary-color);
-            font-weight: 600;
+  font-weight: 600;
         }
 
         .file-tree .folder:hover {
@@ -514,9 +514,9 @@
             height: 1px;
             background: linear-gradient(90deg, transparent, var(--border-light), transparent);
             margin: var(--spacing-xl) 0 var(--spacing-lg) 0;
-        }
+}
 
-        .file-details h3 {
+.file-details h3 {
             font-size: 1.125rem;
             font-weight: 600;
             color: var(--text-primary);
@@ -532,10 +532,10 @@
             height: 1.125rem;
             background: linear-gradient(180deg, var(--primary-color), var(--info-color));
             border-radius: 2px;
-        }
+}
 
-        .file-details ul {
-            list-style: none;
+.file-details ul {
+  list-style: none;
             padding-left: 0;
             margin: var(--spacing-md) 0;
         }
@@ -685,7 +685,7 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
-                    <i class="fas fa-chart-line"></i>
+                    <img src="images/logo.svg" alt="Metripy Logo" class="logo-icon">
                     <h2>Metripy</h2>
                 </div>
             </div>
@@ -714,6 +714,12 @@
                         <a href="dependencies.html" class="nav-link">
                             <i class="fas fa-cubes"></i>
                             <span>Dependencies</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="trends.html" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Trends</span>
                         </a>
                     </li>
                 </ul>
@@ -864,7 +870,7 @@
         }
 
         const healthCounts = countFilesByHealth();
-        
+
         const fileTree = document.getElementById('filetree');
         const legendHTML = `
             <div class="file-tree-legend">

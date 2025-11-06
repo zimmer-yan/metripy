@@ -1,6 +1,8 @@
 import math
+from typing import Self
 
 from metripy.Metric.Code.Segmentor import Segmentor
+from metripy.Metric.Trend.FunctionTrendMetric import FunctionTrendMetric
 
 
 class FunctionNode:
@@ -26,6 +28,7 @@ class FunctionNode:
         self.time = 0
         self.bugs = 0
         self.maintainability_index = 0
+        self.trend: FunctionTrendMetric | None = None
 
     def get_loc(self) -> int:
         return self.line_end - self.lineno
@@ -79,7 +82,7 @@ class FunctionNode:
             "effort": self.effort,
             "time": self.time,
             "bugs": self.bugs,
-            "maintainability_index": f"{self.maintainability_index:.2f}",
+            "maintainability_index": round(self.maintainability_index, 2),
             "maintainability_segment": Segmentor.get_maintainability_segment(
                 self.maintainability_index
             ),
@@ -87,3 +90,25 @@ class FunctionNode:
 
     def __dict__(self) -> dict:
         return self.to_dict()
+
+    @staticmethod
+    def from_dict(data: dict) -> Self:
+        node = FunctionNode(
+            full_name=data["full_name"],
+            name=data["name"],
+            lineno=data["lineno"],
+            col_offset=data["col_offset"],
+            complexity=data["complexity"],
+        )
+        node.line_end = data["line_end"]
+        node.vocabulary = data["vocabulary"]
+        node.length = data["length"]
+        node.calculated_length = data["calculated_length"]
+        node.volume = data["volume"]
+        node.difficulty = data["difficulty"]
+        node.effort = data["effort"]
+        node.time = data["time"]
+        node.bugs = data["bugs"]
+        node.maintainability_index = data["maintainability_index"]
+
+        return node

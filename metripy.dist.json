@@ -19,7 +19,8 @@
                 "html": "./build/report/metripy",
                 "json": "./build/json-report/metripy.json",
                 "json-git": "./build/json-report/metripy-git.json"
-            }
+            },
+            "trends": "./build/historical-json-report/metripy.json"
         }
     }
 }
