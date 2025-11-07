@@ -32,6 +32,11 @@ class TestApplicationRun(TestCase):
         mock_project_config.name = "TestProject"
         mock_project_config.reports = [MagicMock()]
         mock_config.project_configs = [mock_project_config]
+        # Ensure version and help are False to avoid early returns
+        mock_config.version = False
+        mock_config.help = False
+        mock_config.quiet = False
+        mock_config.debug = False
         mock_parser.return_value.parse.return_value = mock_config
         mock_finder.return_value.fetch.return_value = {
             "TestProject": ["file1.py", "file2.py"]

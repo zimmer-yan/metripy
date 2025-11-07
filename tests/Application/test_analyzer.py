@@ -92,10 +92,11 @@ class TestAnalyzer(TestCase):
             "<success>Npm packages analyzed</success>"
         )
 
+    @patch.object(Analyzer, "add_trends")
     @patch.object(Analyzer, "analyze_git")
     @patch.object(Analyzer, "analyze_code")
     @patch.object(Analyzer, "analyze_pip")
-    def test_run(self, mock_analyze_pip, mock_analyze_code, mock_analyze_git):
+    def test_run(self, mock_analyze_pip, mock_analyze_code, mock_analyze_git, mock_add_trends):
         mock_git_metrics = MagicMock(spec=GitMetrics)
         mock_file_metric = MagicMock(spec=FileMetrics)
         mock_file_metric.loc = 123
@@ -108,6 +109,8 @@ class TestAnalyzer(TestCase):
         mock_analyze_git.return_value = mock_git_metrics
         mock_analyze_code.return_value = mock_file_metrics
         mock_analyze_pip.return_value = mock_dependencies
+        # Mock add_trends to avoid trying to read historical data
+        mock_add_trends.return_value = None
 
         files = ["file1.py", "file2.py"]
         result = self.analyzer.run(files)

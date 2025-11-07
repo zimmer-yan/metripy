@@ -8,15 +8,30 @@ from metripy.Component.Output.CliOutput import CliOutput
 from metripy.Report.ReporterFactory import ReporterFactory
 from metripy.Report.ReporterInterface import ReporterInterface
 
+from metripy.Application.Info import Info
+
 
 class Application:
     def run(self, argv) -> None:
         output = CliOutput()
 
         # issues and debug
-        debugger = Debugger(output).enable()
+        debugger = Debugger(output)
 
         config = Parser().parse(argv)
+        if config.debug:
+            debugger.enable()
+
+        if config.version:
+            output.writeln(Info().get_version_info())
+            return
+
+        if config.help:
+            output.writeln(Info().get_help())
+            return
+
+        if config.quiet:
+            output.set_quiet(True)
 
         finder = Finder()
         files = finder.fetch(config.project_configs)

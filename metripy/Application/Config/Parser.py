@@ -9,14 +9,16 @@ from metripy.Application.Config.File.ConfigFileReaderFactory import (
 class Parser:
     def parse(self, argv: list[str]) -> Config:
         config = Config()
+        print(argv)
 
-        if argv[0] == "metripy.py" or argv[0] == "metripy":
-            # TODO, fix when path ends with metripy.py
-            pass
-        argv.pop(0)
+        if argv[0].endswith("metripy.py") or argv[0].endswith("metripy"):
+            argv.pop(0)
 
         # check for a config file
-        for key, arg in enumerate(argv):
+        key = 0
+        while key < len(argv):
+            arg = argv[key]
+            print(f"Key: {key} Arg: '{arg}'")
             if matches := re.search(r"^--config=(.+)$", arg):
                 fileReader = ConfigFileReaderFactory.createFromFileName(
                     matches.group(1)
@@ -24,9 +26,21 @@ class Parser:
                 fileReader.read(config)
                 argv.pop(key)
 
-        # TODO: add the following
-        # arguments with options
-        # arguments without options
-        # last argument
+            # arguments with options
+            elif matches := re.search(r"^--([\w]+(?:\.[\w]+)*)=(.*)$", arg):
+                param = matches.group(1)
+                value = matches.group(2)
+                config.set(param, value)
+                argv.pop(key)
+
+            # arguments without options
+            elif matches := re.search(r"^--([\w]+(?:\.[\w]+)*)$", arg):
+                param = matches.group(1)
+                config.set(param, True)
+                argv.pop(key)
+            else:
+                key += 1
+
+        # TODO handle remaining arguments
 
         return config

@@ -63,6 +63,9 @@ class Reporter(ReporterInterface):
         )
         # shutil.copytree(os.path.join(self.template_dir, "fonts"), os.path.join(self.config.path, "fonts"), dirs_exist_ok=True)
 
+        # copy logo, lies 2 down from the templates directory
+        shutil.copy(os.path.join(self.template_dir, "../..", "logo.svg"), os.path.join(self.config.path, "images", "logo.svg"))
+
         # Render main pages
         self.render_index_page(metrics)
         self.render_files_page(metrics)
