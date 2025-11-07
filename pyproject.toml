@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metripy"
-version = "0.2.8"
+version = "0.3.0"
 description = "A Python tool to generate multi project, multi language code metric reports"
 authors = [
     {name = "Yannick Zimmermann", email = "yannick.zimmermann@proton.me"}
@@ -59,9 +59,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/zimmer-yan/metripy"
+Homepage = "https://zimmer-yan.github.io/metripy/"
 Repository = "https://github.com/zimmer-yan/metripy"
-Documentation = "https://github.com/zimmer-yan/metripy#readme"
+Documentation = "https://zimmer-yan.github.io/metripy/"
 "Bug Tracker" = "https://github.com/zimmer-yan/metripy/issues"
 
 [project.scripts]
