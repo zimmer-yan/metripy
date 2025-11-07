@@ -251,6 +251,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="top_offenders.html" class="nav-link">
+                            <i class="fa-solid fa-stethoscope"></i>
+                            <span>Top Offenders</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="git_analysis.html" class="nav-link">
                             <i class="fab fa-git-alt"></i>
                             <span>Git Analysis</span>
@@ -288,6 +294,8 @@
                 </div>
             </header>
 
+            {{#IF has_dependencies_data}}
+
             <!-- License Chart Section -->
             <section class="chart-section" style="grid-template-columns: 1fr; max-width: 600px;">
                 <div class="chart-container">
@@ -323,6 +331,16 @@
                     {{/EACH}}
                 </div>
             </div>
+
+            <!-- No Dependencies Data State -->
+            {{#ELSE}}
+            <div class="empty-state">
+                <i class="fas fa-chart-line"></i>
+                <h3>No Dependency Data Available</h3>
+                <p>Enable analysis of dependencies in your config file.</p>
+            </div>
+            {{/IF}}
+
         </main>
     </div>
 

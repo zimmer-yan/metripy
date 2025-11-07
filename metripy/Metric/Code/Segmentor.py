@@ -40,3 +40,5 @@ class Segmentor:
             return "ok"
         elif method_size <= 50:
             return "warning"
+        else:
+            return "critical"

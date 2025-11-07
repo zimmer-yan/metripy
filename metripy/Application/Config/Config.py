@@ -17,7 +17,6 @@ class Config:
         }
 
     def set(self, param: str, value: any) -> None:
-        print(f"Setting {param} to {value}")
         if param == "quiet":
             self.quiet = value
         elif param == "version":

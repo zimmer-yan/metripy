@@ -61,7 +61,7 @@ class Application:
             )
             for report_config in project_config.reports:
                 reporter: ReporterInterface = ReporterFactory.create(
-                    report_config, output
+                    report_config, output, project_config.name
                 )
                 reporter.generate(project_metrics)
             output.writeln(

@@ -9,7 +9,6 @@ from metripy.Application.Config.File.ConfigFileReaderFactory import (
 class Parser:
     def parse(self, argv: list[str]) -> Config:
         config = Config()
-        print(argv)
 
         if argv[0].endswith("metripy.py") or argv[0].endswith("metripy"):
             argv.pop(0)
@@ -18,7 +17,6 @@ class Parser:
         key = 0
         while key < len(argv):
             arg = argv[key]
-            print(f"Key: {key} Arg: '{arg}'")
             if matches := re.search(r"^--config=(.+)$", arg):
                 fileReader = ConfigFileReaderFactory.createFromFileName(
                     matches.group(1)

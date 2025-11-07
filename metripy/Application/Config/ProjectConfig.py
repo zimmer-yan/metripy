@@ -41,7 +41,6 @@ class ProjectConfig:
         if len(keys) == 0:
             return
         primary_key = keys[0]
-        print(f"Setting primary {primary_key} to {value}")
         # single value
         if primary_key == "base_path":
             self.base_path = value

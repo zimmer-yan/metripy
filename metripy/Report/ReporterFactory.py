@@ -8,9 +8,9 @@ from metripy.Report.Json.JsonReporter import JsonReporter
 
 class ReporterFactory:
     @staticmethod
-    def create(config: ReportConfig, output: CliOutput) -> ReporterInterface:
+    def create(config: ReportConfig, output: CliOutput, project_name: str) -> ReporterInterface:
         if config.type == "html":
-            return HtmlReporter(config, output)
+            return HtmlReporter(config, output, project_name)
         elif config.type == "json":
             return JsonReporter(config, output)
         elif config.type == "csv":

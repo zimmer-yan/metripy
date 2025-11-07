@@ -11,9 +11,12 @@ class Info:
             data = toml.load(file)
         return data
 
+    def get_version(self) -> str:
+        return self.version
+
     def get_version_info(self) -> str:
         return f"""
-Metripy {self.version}
+Metripy {self.get_version()}
 {self.url}
 """
 

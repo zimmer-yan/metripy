@@ -33,6 +33,12 @@
                             <span>Files</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="top_offenders.html" class="nav-link">
+                            <i class="fa-solid fa-stethoscope"></i>
+                            <span>Top Offenders</span>
+                        </a>
+                    </li>
                     <li class="nav-item active">
                         <a href="git_analysis.html" class="nav-link">
                             <i class="fab fa-git-alt"></i>
@@ -70,6 +76,8 @@
                     <p class="subtitle">Repository insights, code hotspots, and team collaboration patterns</p>
                 </div>
             </header>
+
+            {{#IF has_git_analysis_data}}
 
             <!-- Git Metrics Cards Row -->
             <section class="git-metrics-grid">
@@ -289,6 +297,18 @@
                     </div>
                 </div>
             </section>
+
+
+
+            <!-- No Git Analysis Data State -->
+            {{#ELSE}}
+            <div class="empty-state">
+                <i class="fas fa-chart-line"></i>
+                <h3>No Git Analysis Data Available</h3>
+                <p>Enable analysis of git history in your config file.</p>
+            </div>
+            {{/IF}}
+
         </main>
     </div>
 
