@@ -1,0 +1,26 @@
+title: Metripy
+description: A multi-language, multi-project code metrics analysis tool
+theme: jekyll-theme-cayman
+show_downloads: true
+
+github:
+  repository_url: https://github.com/zimmer-yan/metripy
+  is_project_page: true
+
+navigation:
+  - title: Home
+    url: /
+  - title: Installation
+    url: /installation
+  - title: Features
+    url: /features
+  - title: Configuration
+    url: /configuration
+  - title: Getting Started
+    url: /getting-started
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+
