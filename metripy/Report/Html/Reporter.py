@@ -1,6 +1,8 @@
 import os
 import shutil
+import sys
 from datetime import datetime
+from pathlib import Path
 
 
 from metripy.Application.Config.ReportConfig import ReportConfig
@@ -16,7 +18,16 @@ class Reporter(ReporterInterface):
     ):
         self.config: ReportConfig = config
         self.output = output
-        self.template_dir = os.path.join(os.getcwd(), "templates/html_report")
+        
+        # Find templates directory - works both in development and when installed
+        template_dir = self._find_template_dir()
+        if not template_dir.exists():
+            raise FileNotFoundError(
+                f"Could not find templates directory. Searched in: "
+                f"{template_dir}"
+            )
+            
+        self.template_dir = str(template_dir)
         self.project_name = project_name
 
         self.page_renderer_factory = PageRendererFactory(
@@ -27,6 +38,28 @@ class Reporter(ReporterInterface):
             "project_name": project_name,
             "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         }
+    
+    def _find_template_dir(self) -> Path:
+        """Find the templates directory, checking multiple possible locations"""
+        package_dir = Path(__file__).parent.parent.parent  # metripy package root
+        
+        # List of possible locations to check
+        possible_locations = [
+            # Development: templates at project root
+            package_dir.parent / "templates" / "html_report",
+            # Alternative: templates inside metripy package
+            package_dir / "templates" / "html_report",
+            # System install location
+            Path(sys.prefix) / "share" / "metripy" / "templates" / "html_report",
+            # Fallback to cwd (for development)
+            Path.cwd() / "metripy" / "templates" / "html_report",
+        ]
+        
+        for location in possible_locations:
+            if location.exists() and (location / "index.html").exists():
+                return location
+        
+        return possible_locations[0]
 
     def generate(self, metrics: ProjectMetrics):
 
@@ -62,12 +95,6 @@ class Reporter(ReporterInterface):
             dirs_exist_ok=True,
         )
         # shutil.copytree(os.path.join(self.template_dir, "fonts"), os.path.join(self.config.path, "fonts"), dirs_exist_ok=True)
-
-        # copy logo, lies 2 down from the templates directory
-        shutil.copy(
-            os.path.join(self.template_dir, "../..", "logo.svg"),
-            os.path.join(self.config.path, "images", "logo.svg"),
-        )
 
         # Render main pages
         self.render_index_page(metrics)
