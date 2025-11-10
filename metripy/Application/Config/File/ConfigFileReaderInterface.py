@@ -16,7 +16,7 @@ class ConfigFileReaderInterface(ABC):
         pass
 
     def resolve_path(self, path: str) -> str:
-        return os.path.join(os.path.dirname(self.filename), path)
+        return path
 
     def parse_data(self, data: dict, config: Config) -> None:
         # configs

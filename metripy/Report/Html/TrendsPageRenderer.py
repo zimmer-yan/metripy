@@ -22,6 +22,29 @@ class TrendsPageRenderer(PageRenderer):
         }
 
     def render(self, metrics: ProjectMetrics):
+        if metrics.total_code_metrics.trend is None:
+            self.render_template(
+                "trends.html",
+                {
+                    "has_trend_data": False,
+                    "trend_data": {
+                        "top_improved_complexity": [],
+                        "top_improved_maintainability": [],
+                        "top_worsened_complexity": [],
+                        "top_worsened_maintainability": [],
+                        "loc_segments_current": {},
+                        "loc_segments_prev": {},
+                        "complexity_segments_current": {},
+                        "complexity_segments_prev": {},
+                        "maintainability_segments_current": {},
+                        "maintainability_segments_prev": {},
+                        "method_size_segments_current": {},
+                        "method_size_segments_prev": {},
+                    },
+                },
+            )
+            return
+
         # Top improved complexity (complexity went down - negative delta)
         top_improved_complexity = [
             x

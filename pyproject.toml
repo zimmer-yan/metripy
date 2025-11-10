@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metripy"
-version = "0.3.4"
+version = "0.3.5"
 description = "A Python tool to generate multi project, multi language code metric reports"
 authors = [
     {name = "Yannick Zimmermann", email = "yannick.zimmermann@proton.me"}
@@ -37,7 +37,7 @@ classifiers = [
 dependencies = [
     "lizard==1.18.0",
     "GitPython==3.1.45",
-    "py-template-engine>=0.1.0",
+    "py-template-engine>=0.2.6",
     "radon==6.0.1",
     "requests==2.32.5",
     "packaging==25.0",

@@ -1,3 +1,8 @@
+# v0.3.5
+- Bump templater version
+- Fix path resolving
+- Fix error during trends rendering
+
 # v0.3.4
 - Fix version info after install
 
