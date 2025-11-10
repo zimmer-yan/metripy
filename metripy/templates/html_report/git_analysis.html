@@ -186,7 +186,7 @@
                             <tbody id="hotspots-table-body">
                                 {{#EACH git_hotspots_data AS hotspot}}
                                     <tr>
-                                        <td><strong>{{hotspot.file_path}}</strong></td>
+                                        <td title="{{hotspot.file_path}}"><strong>{{hotspot.file_path}}</strong></td>
                                         <td><span class="stat-highlight">{{hotspot.changes_count}}</span></td>
                                         <td><span class="risk-badge risk-{{hotspot.risk_level}}">{{hotspot.risk_label}}</span></td>
                                         <td>{{hotspot.contributors_count}}</td>
@@ -216,8 +216,8 @@
                             <tbody id="silos-table-body">
                                 {{#EACH git_silos_data AS silo}}
                                     <tr>
-                                        <td><strong>{{silo.file_path}}</strong></td>
-                                        <td>{{silo.owner}}</td>
+                                        <td title="{{silo.file_path}}"><strong>{{silo.file_path}}</strong></td>
+                                        <td title="{{silo.owner}}">{{silo.owner}}</td>
                                         <td><span class="stat-highlight">{{silo.commits_count}}</span></td>
                                         <td><span class="risk-badge risk-{{silo.risk_level}}">{{silo.risk_label}}</span></td>
                                     </tr>
@@ -251,7 +251,7 @@
                             <tbody id="contributors-table-body">
                                 {{#EACH git_contributors AS contributor}}
                                     <tr>
-                                        <td>
+                                        <td title="{{contributor.name}}">
                                             <div class="author-avatar">{{contributor.initials}}</div>
                                             <strong>{{contributor.name}}</strong>
                                         </td>

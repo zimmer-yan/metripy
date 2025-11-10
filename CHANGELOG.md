@@ -1,3 +1,7 @@
+# v0.3.9
+- Fix styling in git_analysis so tables are readable
+- Add variables in paths
+
 # v0.3.8
 - Fix MI for empty functions
 - Circumventing bug in lizard regarding use function statements in PHP

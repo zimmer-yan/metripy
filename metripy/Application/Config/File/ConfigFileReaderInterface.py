@@ -4,7 +4,7 @@ from metripy.Application.Config.Config import Config
 from metripy.Application.Config.GitConfig import GitConfig
 from metripy.Application.Config.ProjectConfig import ProjectConfig
 from metripy.Application.Config.ReportConfig import ReportConfig
-
+from metripy.Application.Config.File.PathResolver import PathResolver
 
 class ConfigFileReaderInterface(ABC):
     def __init__(self, filename: str):
@@ -15,7 +15,7 @@ class ConfigFileReaderInterface(ABC):
         pass
 
     def resolve_path(self, path: str) -> str:
-        return path
+        return PathResolver.resolve(path)
 
     def parse_data(self, data: dict, config: Config) -> None:
         # configs

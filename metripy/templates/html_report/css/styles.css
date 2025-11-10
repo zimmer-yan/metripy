@@ -758,7 +758,7 @@ body {
     width: 100%;
     border-collapse: collapse;
     margin-top: var(--spacing-md);
-    table-layout: fixed; /* Prevents table from expanding beyond container */
+    table-layout: auto; /* Allow table to expand for content */
 }
 
 .hotspot-table th, .hotspot-table td,
@@ -782,13 +782,35 @@ body {
     color: var(--text-secondary);
 }
 
-/* File path column should be flexible */
+/* First column (file path/name) should be wider and show tooltip */
 .hotspot-table td:first-child,
 .contributor-table td:first-child {
-    max-width: 0;
+    min-width: 250px;
+    max-width: 400px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: help;
+}
+
+.hotspot-table th:first-child,
+.contributor-table th:first-child {
+    min-width: 250px;
+    max-width: 400px;
+}
+
+/* Owner column in Knowledge Silos table should also be wider */
+.hotspot-table td:nth-child(2) {
+    min-width: 150px;
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: help;
+}
+
+.hotspot-table th:nth-child(2) {
+    min-width: 150px;
 }
 
 .risk-badge {

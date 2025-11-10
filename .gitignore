@@ -5,3 +5,4 @@ test
 build
 .python-version
 *.egg-info
+.coverage
