@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metripy"
-version = "0.3.1"
+version = "0.3.2"
 description = "A Python tool to generate multi project, multi language code metric reports"
 authors = [
     {name = "Yannick Zimmermann", email = "yannick.zimmermann@proton.me"}
@@ -43,7 +43,8 @@ dependencies = [
     "packaging==25.0",
     "toml==0.10.2",
     "tree-sitter==0.21.3",
-    "tree-sitter-languages==1.10.2"
+    "tree-sitter-languages==1.10.2",
+    "PyYAML==6.0.3"
 ]
 
 [project.optional-dependencies]

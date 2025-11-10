@@ -1,3 +1,6 @@
+# v0.3.2
+- Add missing dependency
+
 # v0.3.1
 - Add yaml config support
 - Clean up html page rendering
