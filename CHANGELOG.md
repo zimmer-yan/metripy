@@ -1,3 +1,7 @@
+# v0.3.7
+- Added Favicon
+- Circumventing bug in lizard regarding traits in PHP
+
 # v0.3.6
 - Fix dependency license distribution chart 
 

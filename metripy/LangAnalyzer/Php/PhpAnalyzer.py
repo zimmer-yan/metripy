@@ -1,7 +1,10 @@
 import math
+import os
 from pathlib import Path
 
 import lizard
+import tempfile
+import re
 
 from metripy.Component.Output.ProgressBar import ProgressBar
 from metripy.LangAnalyzer.AbstractLangAnalyzer import AbstractLangAnalyzer
@@ -46,9 +49,28 @@ class PhpAnalyzer(AbstractLangAnalyzer):
             return f"{filename}:{item_name}"
         return f"{filename}:{class_name}:{item_name}"
 
+    def _create_lizard_analyzable_file(self, filename: str) -> str:
+        """
+        Because of a bug in lizard it cannot correctly analyze traits. 
+        See https://github.com/terryyin/lizard/issues/441
+        """
+        tmp_file = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.php')
+        with open(filename, "r") as f:
+            code = f.readlines()
+            code = [re.sub(r'^(\s*)trait\s+', r'\1class ', line) for line in code]
+            tmp_file.writelines(code)
+            tmp_file.close()
+        return tmp_file.name
+
     def analyze(self, code: str, filename: str) -> None:
         file_stem = Path(filename).stem
         structure = PhpBasicAstParser.parse_php_structure(code)
+
+
+        is_tmp_file = False
+        if "trait" in filename.lower():
+            filename = self._create_lizard_analyzable_file(filename)
+            is_tmp_file = True
 
         lizard_result = lizard.analyze_file(filename)
         complexity_data = {
@@ -59,6 +81,9 @@ class PhpAnalyzer(AbstractLangAnalyzer):
             }
             for func in lizard_result.function_list
         }
+
+        if is_tmp_file:
+            os.unlink(filename)
 
         classes: dict[str, ClassNode] = {}
         functions: dict[str, FunctionNode] = {}
