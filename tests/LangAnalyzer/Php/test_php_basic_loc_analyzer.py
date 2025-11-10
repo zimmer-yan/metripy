@@ -1,5 +1,7 @@
 from unittest import TestCase
+
 from metripy.LangAnalyzer.Php.PhpBasicLocAnalyzer import PhpBasicLocAnalyzer
+
 
 class TestPhpBasicLocAnalyzer(TestCase):
 

@@ -1,4 +1,5 @@
-from importlib.metadata import version, metadata
+from importlib.metadata import metadata, version
+
 import toml
 
 
@@ -19,7 +20,7 @@ class Info:
         except Exception:
             # Fallback for development if not installed
             return self._get_pyproject_data()["project"]["version"]
-    
+
     def _get_homepage_url(self) -> str:
         """Get homepage URL from installed package metadata"""
         try:

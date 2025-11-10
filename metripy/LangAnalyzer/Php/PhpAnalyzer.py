@@ -1,10 +1,10 @@
 import math
 import os
+import re
+import tempfile
 from pathlib import Path
 
 import lizard
-import tempfile
-import re
 
 from metripy.Component.Output.ProgressBar import ProgressBar
 from metripy.LangAnalyzer.AbstractLangAnalyzer import AbstractLangAnalyzer
@@ -51,13 +51,19 @@ class PhpAnalyzer(AbstractLangAnalyzer):
 
     def _create_lizard_analyzable_file(self, filename: str) -> str:
         """
-        Because of a bug in lizard it cannot correctly analyze traits. 
+        Because of a bug in lizard it cannot correctly analyze traits.
         See https://github.com/terryyin/lizard/issues/441
+        Because of a bug in lizard we need to replace use function statements.
+        See https://github.com/terryyin/lizard/issues/442
         """
-        tmp_file = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.php')
+        tmp_file = tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".php")
         with open(filename, "r") as f:
             code = f.readlines()
-            code = [re.sub(r'^(\s*)trait\s+', r'\1class ', line) for line in code]
+            code = [re.sub(r"^(\s*)trait\s+", r"\1class ", line) for line in code]
+            # use remove the function keyword, so it gets counted the same way and dont increate blank lines / lower loc
+            code = [
+                re.sub(r"^(\s*)use\s+function\s+", r"\1use ", line) for line in code
+            ]
             tmp_file.writelines(code)
             tmp_file.close()
         return tmp_file.name
@@ -66,13 +72,13 @@ class PhpAnalyzer(AbstractLangAnalyzer):
         file_stem = Path(filename).stem
         structure = PhpBasicAstParser.parse_php_structure(code)
 
-
         is_tmp_file = False
-        if "trait" in filename.lower():
-            filename = self._create_lizard_analyzable_file(filename)
+        filename_to_analyze = filename
+        if "trait" in filename.lower() or "use function" in code:
+            filename_to_analyze = self._create_lizard_analyzable_file(filename)
             is_tmp_file = True
 
-        lizard_result = lizard.analyze_file(filename)
+        lizard_result = lizard.analyze_file(filename_to_analyze)
         complexity_data = {
             func.name: {
                 "complexity": func.cyclomatic_complexity,
@@ -83,7 +89,7 @@ class PhpAnalyzer(AbstractLangAnalyzer):
         }
 
         if is_tmp_file:
-            os.unlink(filename)
+            os.unlink(filename_to_analyze)
 
         classes: dict[str, ClassNode] = {}
         functions: dict[str, FunctionNode] = {}

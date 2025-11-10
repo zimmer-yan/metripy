@@ -1,7 +1,9 @@
+import json
+
 from metripy.Dependency.Dependency import Dependency
 from metripy.Metric.ProjectMetrics import ProjectMetrics
 from metripy.Report.Html.PageRenderer import PageRenderer
-import json
+
 
 class DependencyPageRenderer(PageRenderer):
     def __init__(self, template_dir: str, output_dir: str, project_name: str):

@@ -1,3 +1,7 @@
+# v0.3.8
+- Fix MI for empty functions
+- Circumventing bug in lizard regarding use function statements in PHP
+
 # v0.3.7
 - Added Favicon
 - Circumventing bug in lizard regarding traits in PHP

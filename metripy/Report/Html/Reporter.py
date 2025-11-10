@@ -4,7 +4,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 from metripy.Application.Config.ReportConfig import ReportConfig
 from metripy.Component.Output.CliOutput import CliOutput
 from metripy.Metric.ProjectMetrics import ProjectMetrics
@@ -18,15 +17,14 @@ class Reporter(ReporterInterface):
     ):
         self.config: ReportConfig = config
         self.output = output
-        
+
         # Find templates directory - works both in development and when installed
         template_dir = self._find_template_dir()
         if not template_dir.exists():
             raise FileNotFoundError(
-                f"Could not find templates directory. Searched in: "
-                f"{template_dir}"
+                f"Could not find templates directory. Searched in: " f"{template_dir}"
             )
-            
+
         self.template_dir = str(template_dir)
         self.project_name = project_name
 
@@ -38,11 +36,11 @@ class Reporter(ReporterInterface):
             "project_name": project_name,
             "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         }
-    
+
     def _find_template_dir(self) -> Path:
         """Find the templates directory, checking multiple possible locations"""
         package_dir = Path(__file__).parent.parent.parent  # metripy package root
-        
+
         # List of possible locations to check
         possible_locations = [
             # Development: templates at project root
@@ -54,11 +52,11 @@ class Reporter(ReporterInterface):
             # Fallback to cwd (for development)
             Path.cwd() / "metripy" / "templates" / "html_report",
         ]
-        
+
         for location in possible_locations:
             if location.exists() and (location / "index.html").exists():
                 return location
-        
+
         return possible_locations[0]
 
     def generate(self, metrics: ProjectMetrics):

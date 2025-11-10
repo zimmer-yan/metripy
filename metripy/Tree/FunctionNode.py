@@ -31,16 +31,22 @@ class FunctionNode:
         self.trend: FunctionTrendMetric | None = None
 
     def get_loc(self) -> int:
+        if self.name == "safeSanitizeArray":
+            print("line_end", self.line_end)
+            print("lineno", self.lineno)
+            print("get_loc", self.line_end - self.lineno)
+            print("--------------------------------")
         return self.line_end - self.lineno
 
-    def calc_mi(self):
+    def calc_mi(self) -> None:
 
         total_volume = self.volume
         total_complexity = self.complexity
         total_length = self.length
 
         if total_volume == 0 or total_length == 0:
-            return 100.0
+            self.maintainability_index = 100.0
+            return
 
         # PHP maintainability index calculation
         mi_base = max(

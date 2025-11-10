@@ -19,6 +19,10 @@ class Finder:
                     self._search(
                         path, project_config.extensions, project_config.excludes, files
                     )
+                elif path not in project_config.excludes and path.endswith(
+                    tuple(project_config.extensions)
+                ):
+                    files.append(path)
             project_files[project_config.name] = files
 
         return project_files

@@ -1,9 +1,8 @@
 import json
 
+from metripy.Dependency.Dependency import Dependency
 from metripy.Metric.ProjectMetrics import ProjectMetrics
 from metripy.Report.Html.PageRenderer import PageRenderer
-
-from metripy.Dependency.Dependency import Dependency
 
 
 class IndexPageRenderer(PageRenderer):
@@ -14,7 +13,6 @@ class IndexPageRenderer(PageRenderer):
         git_stats_data = {}
         if metrics.git_metrics:
             git_stats_data = metrics.git_metrics.get_commit_stats_per_month()
-
 
         dependencies = metrics.dependencies if metrics.dependencies is not None else []
         license_by_type = Dependency.get_lisence_distribution(dependencies)
