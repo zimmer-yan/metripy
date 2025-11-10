@@ -1,5 +1,6 @@
 import toml
 
+
 class Info:
     def __init__(self):
         data = self._get_data()
@@ -21,7 +22,9 @@ Metripy {self.get_version()}
 """
 
     def get_help(self) -> str:
-        return self.get_version_info() + f"""
+        return (
+            self.get_version_info()
+            + """
 Usage: metripy [options]
 Options:
  --config=<file>    Use a custom config file
@@ -30,3 +33,4 @@ Options:
  --debug              Enable debug mode
  --quiet              Disable output
 """
+        )

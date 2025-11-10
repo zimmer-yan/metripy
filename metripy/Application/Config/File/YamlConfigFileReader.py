@@ -1,4 +1,4 @@
-import json
+import yaml
 
 from metripy.Application.Config.Config import Config
 from metripy.Application.Config.File.ConfigFileReaderInterface import (
@@ -6,12 +6,12 @@ from metripy.Application.Config.File.ConfigFileReaderInterface import (
 )
 
 
-class JsonConfigFileReader(ConfigFileReaderInterface):
+class YamlConfigFileReader(ConfigFileReaderInterface):
     def __init__(self, filename: str):
         super().__init__(filename)
 
     def read(self, config: Config) -> None:
         with open(self.filename, "r") as file:
-            json_data = json.load(file)
+            yaml_data = yaml.safe_load(file)
 
-        self.parse_data(json_data, config)
+        self.parse_data(yaml_data, config)

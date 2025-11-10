@@ -1,6 +1,8 @@
-from metripy.Report.Html.PageRenderer import PageRenderer
-from metripy.Metric.ProjectMetrics import ProjectMetrics
 import json
+
+from metripy.Metric.ProjectMetrics import ProjectMetrics
+from metripy.Report.Html.PageRenderer import PageRenderer
+
 
 class GitAnalysisPageRenderer(PageRenderer):
     def __init__(self, template_dir: str, output_dir: str, project_name: str):
@@ -18,7 +20,7 @@ class GitAnalysisPageRenderer(PageRenderer):
                 "git_silos_data": [],
                 "git_contributors": [],
                 "git_hotspots_data": [],
-            }
+            },
         )
 
     def render(self, metrics: ProjectMetrics):
@@ -49,5 +51,5 @@ class GitAnalysisPageRenderer(PageRenderer):
                 "git_hotspots_data": metrics.git_metrics.get_hotspots_list()[
                     :10
                 ],  # hotspots list
-            }
+            },
         )

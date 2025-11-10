@@ -1,6 +1,7 @@
-from metripy.Report.Html.PageRenderer import PageRenderer
-from metripy.Metric.ProjectMetrics import ProjectMetrics
 from metripy.Metric.Code.Segmentor import Segmentor
+from metripy.Metric.ProjectMetrics import ProjectMetrics
+from metripy.Report.Html.PageRenderer import PageRenderer
+
 
 class TopOffendersPageRenderer(PageRenderer):
     def __init__(self, template_dir: str, output_dir: str, project_name: str):
@@ -79,5 +80,5 @@ class TopOffendersPageRenderer(PageRenderer):
                     }
                     for e in functionsOrderedByMi
                 ],
-            }
+            },
         )

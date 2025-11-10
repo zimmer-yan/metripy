@@ -1,18 +1,11 @@
-import json
 import os
 import shutil
 from datetime import datetime
 
-from py_template_engine import TemplateEngine
 
 from metripy.Application.Config.ReportConfig import ReportConfig
 from metripy.Component.Output.CliOutput import CliOutput
-from metripy.Dependency.Dependency import Dependency
-from metripy.Metric.Code.FileMetrics import FileMetrics
-from metripy.Metric.Code.Segmentor import Segmentor
-from metripy.Metric.FileTree.FileTreeParser import FileTreeParser
 from metripy.Metric.ProjectMetrics import ProjectMetrics
-from metripy.Report.Html.IndexPageRenderer import IndexPageRenderer
 from metripy.Report.Html.PageRendererFactory import PageRendererFactory
 from metripy.Report.ReporterInterface import ReporterInterface
 
@@ -26,7 +19,9 @@ class Reporter(ReporterInterface):
         self.template_dir = os.path.join(os.getcwd(), "templates/html_report")
         self.project_name = project_name
 
-        self.page_renderer_factory = PageRendererFactory(self.template_dir, self.config.path, self.project_name)
+        self.page_renderer_factory = PageRendererFactory(
+            self.template_dir, self.config.path, self.project_name
+        )
 
         self.global_template_args = {
             "project_name": project_name,
@@ -69,7 +64,10 @@ class Reporter(ReporterInterface):
         # shutil.copytree(os.path.join(self.template_dir, "fonts"), os.path.join(self.config.path, "fonts"), dirs_exist_ok=True)
 
         # copy logo, lies 2 down from the templates directory
-        shutil.copy(os.path.join(self.template_dir, "../..", "logo.svg"), os.path.join(self.config.path, "images", "logo.svg"))
+        shutil.copy(
+            os.path.join(self.template_dir, "../..", "logo.svg"),
+            os.path.join(self.config.path, "images", "logo.svg"),
+        )
 
         # Render main pages
         self.render_index_page(metrics)

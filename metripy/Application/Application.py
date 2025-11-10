@@ -2,13 +2,12 @@ import json
 
 from metripy.Application.Analyzer import Analyzer
 from metripy.Application.Config.Parser import Parser
+from metripy.Application.Info import Info
 from metripy.Component.Debug.Debugger import Debugger
 from metripy.Component.File.Finder import Finder
 from metripy.Component.Output.CliOutput import CliOutput
 from metripy.Report.ReporterFactory import ReporterFactory
 from metripy.Report.ReporterInterface import ReporterInterface
-
-from metripy.Application.Info import Info
 
 
 class Application:

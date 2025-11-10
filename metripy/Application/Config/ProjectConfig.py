@@ -83,7 +83,9 @@ class ProjectConfig:
             if value != "":
                 self.reports.append(ReportConfig(report_type, report_path))
             else:
-                report_config = next((rc for rc in self.reports if rc.type == report_type), None)
+                report_config = next(
+                    (rc for rc in self.reports if rc.type == report_type), None
+                )
                 if not report_config:
                     return
                 self.reports.remove(report_config)

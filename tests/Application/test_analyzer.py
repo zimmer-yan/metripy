@@ -96,7 +96,9 @@ class TestAnalyzer(TestCase):
     @patch.object(Analyzer, "analyze_git")
     @patch.object(Analyzer, "analyze_code")
     @patch.object(Analyzer, "analyze_pip")
-    def test_run(self, mock_analyze_pip, mock_analyze_code, mock_analyze_git, mock_add_trends):
+    def test_run(
+        self, mock_analyze_pip, mock_analyze_code, mock_analyze_git, mock_add_trends
+    ):
         mock_git_metrics = MagicMock(spec=GitMetrics)
         mock_file_metric = MagicMock(spec=FileMetrics)
         mock_file_metric.loc = 123

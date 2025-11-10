@@ -1,3 +1,10 @@
+# v0.3.1
+- Add yaml config support
+- Clean up html page rendering
+
+# v0.3.0
+- Add trends
+
 # v0.2.8
 - Fix version status in pip analysis
 - Add json report

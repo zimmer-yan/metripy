@@ -26,7 +26,7 @@ class Config:
         elif param == "debug":
             self.debug = value
         elif param.startswith("configs."):
-            self._set_project_value(param[len("configs."):], value)
+            self._set_project_value(param[len("configs.") :], value)
         else:
             # ignore unknown parameters
             return
@@ -34,7 +34,9 @@ class Config:
     def _set_project_value(self, param: str, value: any) -> None:
         keys = param.split(".")
         project_name = keys[0]
-        project_config = next((pc for pc in self.project_configs if pc.name == project_name), None)
+        project_config = next(
+            (pc for pc in self.project_configs if pc.name == project_name), None
+        )
         if not project_config:
             project_config = ProjectConfig(project_name)
             self.project_configs.append(project_config)

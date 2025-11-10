@@ -1,7 +1,10 @@
 import os
-from py_template_engine import TemplateEngine
 from datetime import datetime
+
+from py_template_engine import TemplateEngine
+
 from metripy.Application.Info import Info
+
 
 class PageRenderer:
     def __init__(self, template_dir: str, output_dir: str, project_name: str):
@@ -28,12 +31,13 @@ class PageRenderer:
             return str(obj)
 
     def render_template(self, template_name: str, data: dict):
-        data = self._stringify_values({
-            **self.global_template_args,
-            **data,
-        })
+        data = self._stringify_values(
+            {
+                **self.global_template_args,
+                **data,
+            }
+        )
         engine = TemplateEngine(os.path.join(self.template_dir, template_name))
         content = engine.render(**data)
         with open(os.path.join(self.output_dir, template_name), "w") as file:
             file.write(content)
-        

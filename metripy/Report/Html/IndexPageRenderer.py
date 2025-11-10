@@ -1,6 +1,8 @@
-from metripy.Report.Html.PageRenderer import PageRenderer
-from metripy.Metric.ProjectMetrics import ProjectMetrics
 import json
+
+from metripy.Metric.ProjectMetrics import ProjectMetrics
+from metripy.Report.Html.PageRenderer import PageRenderer
+
 
 class IndexPageRenderer(PageRenderer):
     def __init__(self, template_dir: str, output_dir: str, project_name: str):

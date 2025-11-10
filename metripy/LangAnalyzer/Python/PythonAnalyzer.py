@@ -122,7 +122,7 @@ class PythonAnalyzer(AbstractLangAnalyzer):
                 continue
             # if MI is 0, we want to take another look, radon does not like boring functions
 
-            lines = code_lines[function_node.lineno:function_node.line_end]
+            lines = code_lines[function_node.lineno : function_node.line_end]
             function_metrics = (
                 self.fallback_halstead_analyzer.calculate_halstead_metrics(
                     "\n".join(lines)

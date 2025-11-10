@@ -1,6 +1,7 @@
-from metripy.Report.Html.PageRenderer import PageRenderer
-from metripy.Metric.ProjectMetrics import ProjectMetrics
 from metripy.Metric.Code.FileMetrics import FileMetrics
+from metripy.Metric.ProjectMetrics import ProjectMetrics
+from metripy.Report.Html.PageRenderer import PageRenderer
+
 
 class TrendsPageRenderer(PageRenderer):
     def __init__(self, template_dir: str, output_dir: str, project_name: str):
@@ -17,9 +18,7 @@ class TrendsPageRenderer(PageRenderer):
             "maintainability_prev": round(
                 file.trend.historical_maintainabilityIndex, 2
             ),
-            "maintainability_delta": round(
-                file.trend.maintainabilityIndex_delta, 2
-            ),
+            "maintainability_delta": round(file.trend.maintainabilityIndex_delta, 2),
         }
 
     def render(self, metrics: ProjectMetrics):
@@ -92,11 +91,15 @@ class TrendsPageRenderer(PageRenderer):
             "method_size_segments_prev": metrics.total_code_metrics.trend.historical_segmentation_data[
                 "methodSize"
             ].to_dict_with_percent(),
-            "top_improved_complexity": [self._compile_trend_item(x) for x in top_improved_complexity],
+            "top_improved_complexity": [
+                self._compile_trend_item(x) for x in top_improved_complexity
+            ],
             "top_improved_maintainability": [
                 self._compile_trend_item(x) for x in top_improved_maintainability
             ],
-            "top_worsened_complexity": [self._compile_trend_item(x) for x in top_worsened_complexity],
+            "top_worsened_complexity": [
+                self._compile_trend_item(x) for x in top_worsened_complexity
+            ],
             "top_worsened_maintainability": [
                 self._compile_trend_item(x) for x in top_worsened_maintainability
             ],
