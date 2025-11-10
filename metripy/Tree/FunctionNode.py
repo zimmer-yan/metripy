@@ -31,11 +31,6 @@ class FunctionNode:
         self.trend: FunctionTrendMetric | None = None
 
     def get_loc(self) -> int:
-        if self.name == "safeSanitizeArray":
-            print("line_end", self.line_end)
-            print("lineno", self.lineno)
-            print("get_loc", self.line_end - self.lineno)
-            print("--------------------------------")
         return self.line_end - self.lineno
 
     def calc_mi(self) -> None:
