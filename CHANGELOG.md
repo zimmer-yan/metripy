@@ -1,3 +1,6 @@
+# v0.3.4
+- Fix version info after install
+
 # v0.3.3
 - Fix missing templates after install
 

@@ -1,16 +1,41 @@
+from importlib.metadata import version, metadata
 import toml
 
 
 class Info:
     def __init__(self):
-        data = self._get_data()
-        self.version = data["project"]["version"]
-        self.url = data["project"]["urls"]["Homepage"]
+        self.version = self._get_version()
+        self.url = self._get_homepage_url()
 
-    def _get_data(self) -> dict:
+    def _get_pyproject_data(self) -> dict:
         with open("pyproject.toml", "r") as file:
             data = toml.load(file)
         return data
+
+    def _get_version(self) -> str:
+        """Get version from installed package metadata"""
+        try:
+            return version("metripy")
+        except Exception:
+            # Fallback for development if not installed
+            return self._get_pyproject_data()["project"]["version"]
+    
+    def _get_homepage_url(self) -> str:
+        """Get homepage URL from installed package metadata"""
+        try:
+            meta = metadata("metripy")
+            # Try to get Home-Page from metadata
+            homepage = meta.get("Home-Page")
+            if not homepage:
+                # Try Project-URL field
+                for line in meta.get_all("Project-URL") or []:
+                    if line.startswith("Homepage"):
+                        homepage = line.split(",", 1)[1].strip()
+                        break
+            return homepage or "no homepage found"
+        except Exception:
+            # Fallback
+            return self._get_pyproject_data()["project"]["urls"]["Homepage"]
 
     def get_version(self) -> str:
         return self.version
