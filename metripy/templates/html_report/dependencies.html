@@ -360,36 +360,7 @@
 
             const ctx = canvas.getContext('2d');
             
-            // Extract and aggregate license data from dependencies
-            const licenseCounts = {};
-            
-            if (window.DEPENDENCIES_DATA && Array.isArray(window.DEPENDENCIES_DATA)) {
-                window.DEPENDENCIES_DATA.forEach(dep => {
-                    if (dep.licenses) {
-                        const licenses = Array.isArray(dep.licenses) ? dep.licenses : [dep.licenses];
-                        licenses.forEach(license => {
-                            if (license && license !== 'Unknown' && license !== 'N/A') {
-                                licenseCounts[license] = (licenseCounts[license] || 0) + 1;
-                            }
-                        });
-                    }
-                });
-            }
-
-            // If no license data found, use sample data
-            const chartData = Object.keys(licenseCounts).length > 0 ? licenseCounts : {
-                "MIT": 3,
-                "BSD-3-Clause": 1,
-                "Apache-2.0": 1,
-                "Apache 2.0": 1
-            };
-
-            // Generate colors for the chart
-            const colors = [
-                '#3b82f6', '#10b981', '#f59e0b', '#ef4444',
-                '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16',
-                '#f97316', '#14b8a6', '#6366f1', '#a855f7'
-            ];
+            const chartData = {{license_distribution_json}};
 
             new Chart(ctx, {
                 type: 'pie',
@@ -398,7 +369,6 @@
                     datasets: [{
                         label: "License Types",
                         data: Object.values(chartData),
-                        backgroundColor: colors.slice(0, Object.keys(chartData).length),
                         hoverOffset: 4
                     }]
                 },

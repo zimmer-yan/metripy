@@ -1,3 +1,6 @@
+# v0.3.6
+- Fix dependency license distribution chart 
+
 # v0.3.5
 - Bump templater version
 - Fix path resolving

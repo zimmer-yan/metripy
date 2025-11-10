@@ -335,12 +335,7 @@
         }
         console.log("creating licenses chart")
         const ctx = canvas.getContext('2d');
-        const chartData = {
-            "MIT": 3,
-            "BSD-3-Clause": 1,
-            "Apache-2.0": 1,
-            "Apache 2.0": 1
-        };
+        const chartData = {{license_distribution_json}};
         console.log(Chart.version);
         this.charts.licenseTypes = new Chart(ctx, {
             type: 'pie',
@@ -349,12 +344,6 @@
                 datasets: [{
                     label: "License Types",
                     data: Object.values(chartData),
-                    backgroundColor: [
-                        '#FF6384',
-                        '#36A2EB',
-                        '#FFCE56',
-                        '#4BC0C0'
-                    ],
                     hoverOffset: 4
                 }]
             },

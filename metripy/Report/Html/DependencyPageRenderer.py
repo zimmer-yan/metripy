@@ -1,7 +1,7 @@
 from metripy.Dependency.Dependency import Dependency
 from metripy.Metric.ProjectMetrics import ProjectMetrics
 from metripy.Report.Html.PageRenderer import PageRenderer
-
+import json
 
 class DependencyPageRenderer(PageRenderer):
     def __init__(self, template_dir: str, output_dir: str, project_name: str):
@@ -16,6 +16,6 @@ class DependencyPageRenderer(PageRenderer):
             {
                 "has_dependencies_data": bool(metrics.dependencies),
                 "dependencies": [d.to_dict() for d in dependencies],
-                "license_distribution": license_by_type,
+                "license_distribution_json": json.dumps(license_by_type, indent=2),
             },
         )
