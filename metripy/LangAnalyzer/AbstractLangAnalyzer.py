@@ -42,9 +42,7 @@ class AbstractLangAnalyzer(ABC):
             if len(module.functions) > 0:
                 totalCc = sum(function.complexity for function in module.functions)
                 avgCcPerFunction = totalCc / len(module.functions)
-                avgLocPerFunction = (
-                    module.lloc - module.comments - len(module.functions)
-                ) / len(module.functions)
+                avgLocPerFunction = sum(function.get_loc() for function in module.functions) / len(module.functions)
             else:
                 totalCc = 0
                 avgCcPerFunction = 0

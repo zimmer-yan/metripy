@@ -67,7 +67,7 @@ class FunctionNode:
             "lineno": self.lineno,
             "line_end": self.line_end,
             "loc": self.get_loc(),
-            "loc_segment": Segmentor.get_loc_segment(self.get_loc()),
+            "loc_segment": Segmentor.get_method_size_segment(self.get_loc()),
             "col_offset": self.col_offset,
             "complexity": self.complexity,
             "complexity_segment": Segmentor.get_complexity_segment(self.complexity),

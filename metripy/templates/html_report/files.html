@@ -21,6 +21,37 @@
             box-shadow: var(--shadow-sm);
         }
 
+        .file-search-bar {
+            position: relative;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .file-search-bar input {
+            width: 100%;
+            padding: 0.625rem 0.875rem 0.625rem 2.5rem;
+            border: 1.5px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            background: white;
+            transition: all var(--transition-fast);
+            font-family: inherit;
+        }
+
+        .file-search-bar input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .file-search-bar i {
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
         .file-tree-legend {
             display: flex;
             align-items: center;
@@ -879,7 +910,11 @@
         const healthCounts = countFilesByHealth();
 
         const fileTree = document.getElementById('filetree');
-        const legendHTML = `
+        const searchAndLegendHTML = `
+            <div class="file-search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="fileSearchInput" placeholder="Search files by name..." />
+            </div>
             <div class="file-tree-legend">
                 <span class="legend-title">Filter:</span>
                 <div class="filter-controls">
@@ -906,39 +941,43 @@
                 </div>
             </div>
         `;
-        fileTree.innerHTML = legendHTML + `<ul>${renderTree(fileTreeData)}</ul>`
+        fileTree.innerHTML = searchAndLegendHTML + `<ul>${renderTree(fileTreeData)}</ul>`
 
         // Set up filtering functionality
         const activeFilters = new Set(['good', 'ok', 'warning', 'critical']);
+        let searchTerm = '';
         
         function applyFilters() {
-            const allFiles = fileTree.querySelectorAll('li');
+            const allItems = fileTree.querySelectorAll('li');
+            const lowerSearchTerm = searchTerm.toLowerCase();
             
-            allFiles.forEach(li => {
+            // First pass: Filter only FILES based on search term and health filters
+            allItems.forEach(li => {
                 const fileSpan = li.querySelector('.file');
-                if (!fileSpan) {
-                    // It's a folder or has no file, check if it has visible children
-                    li.classList.remove('filtered-out');
-                    return;
-                }
-                
-                // Get the health class from the file span
-                let fileHealth = null;
-                if (fileSpan.classList.contains('health-good')) fileHealth = 'good';
-                else if (fileSpan.classList.contains('health-ok')) fileHealth = 'ok';
-                else if (fileSpan.classList.contains('health-warning')) fileHealth = 'warning';
-                else if (fileSpan.classList.contains('health-critical')) fileHealth = 'critical';
-                
-                // Show or hide based on active filters
-                if (fileHealth && activeFilters.has(fileHealth)) {
-                    li.classList.remove('filtered-out');
-                } else {
-                    li.classList.add('filtered-out');
+                if (fileSpan) {
+                    // It's a file, apply search and health filters
+                    const fileName = fileSpan.textContent.toLowerCase();
+                    const matchesSearch = !searchTerm || fileName.includes(lowerSearchTerm);
+                    
+                    // Get the health class from the file span
+                    let fileHealth = null;
+                    if (fileSpan.classList.contains('health-good')) fileHealth = 'good';
+                    else if (fileSpan.classList.contains('health-ok')) fileHealth = 'ok';
+                    else if (fileSpan.classList.contains('health-warning')) fileHealth = 'warning';
+                    else if (fileSpan.classList.contains('health-critical')) fileHealth = 'critical';
+                    
+                    // Show or hide based on active filters AND search term
+                    if (fileHealth && activeFilters.has(fileHealth) && matchesSearch) {
+                        li.classList.remove('filtered-out');
+                    } else {
+                        li.classList.add('filtered-out');
+                    }
                 }
             });
             
-            // Hide empty folders
-            const allFolders = fileTree.querySelectorAll('li');
+            // Second pass: Hide folders that have no visible children (process from bottom to top)
+            // Convert to array and reverse to process deepest folders first
+            const allFolders = Array.from(fileTree.querySelectorAll('li')).reverse();
             allFolders.forEach(li => {
                 const folderSpan = li.querySelector('.folder');
                 if (folderSpan) {
@@ -957,9 +996,39 @@
             });
         }
         
-        // Add click handlers to filter buttons
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
+        // Debounce helper function
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Add search input handler with debouncing
+        const searchInput = document.getElementById('fileSearchInput');
+        const debouncedFilter = debounce((value) => {
+            searchTerm = value;
+            applyFilters();
+        }, 150);
+        
+        searchInput.addEventListener('input', (e) => {
+            debouncedFilter(e.target.value);
+        });
+
+        // Use event delegation for ALL clicks in fileTree (more efficient)
+        const fileView = document.getElementById('fileview');
+        
+        fileTree.addEventListener('click', (e) => {
+            const target = e.target;
+            
+            // Handle filter button clicks
+            const btn = target.closest('.filter-btn');
+            if (btn) {
                 const filter = btn.dataset.filter;
                 
                 // Toggle individual filter
@@ -972,27 +1041,24 @@
                 }
                 
                 applyFilters();
-            });
-        });
-
-        document.querySelectorAll('.folder').forEach(folder => {
-            folder.addEventListener('click', () => {
-                const nextUl = folder.nextElementSibling;
+                return;
+            }
+            
+            // Handle folder clicks
+            if (target.classList.contains('folder')) {
+                const nextUl = target.nextElementSibling;
                 if (nextUl && nextUl.tagName === 'UL') {
                     nextUl.style.display = nextUl.style.display === 'none' ? 'block' : 'none';
                 }
-            });
-        });
-
-        const fileView = document.getElementById('fileview');
-        document.querySelectorAll('.file').forEach(file => {
-            file.addEventListener('click', () => {
-                console.log('file clicked', file.id);
-                const details = fileDetails[file.id];
-                console.log(details);
+                return;
+            }
+            
+            // Handle file clicks
+            if (target.classList.contains('file')) {
+                const details = fileDetails[target.id];
 
                 // Extract file name from full path
-                const fileName = file.id.split('/').pop();
+                const fileName = target.id.split('/').pop();
 
                 // Collect all method names to filter from global functions
                 const methodNames = new Set();
@@ -1042,13 +1108,26 @@
                 `;
 
                 details.class_nodes.forEach(node => {
-                const classComplexitySegment = node.real_complexity;
-                html += `<li><strong>${node.name}</strong> — Complexity: ${node.real_complexity}<span class="complexity-indicator ${classComplexitySegment}">${getSegmentLabel(classComplexitySegment)}</span>`;
+                const complexity = node.real_complexity;
+                const classComplexitySegment = node.complexity_segment;
+                html += `<li><strong>${node.name}</strong> <span class="complexity-indicator ${classComplexitySegment}">Complexity: ${node.real_complexity}</span>`;
                 if (node.functions && node.functions.length > 0) {
                     html += `<ul class="methods">`;
                     node.functions.forEach(method => {
+                        const complexity = method.complexity;
+                        const maintainability = method.maintainability_index;
+                        const loc = method.loc;
                         const methodComplexitySegment = method.complexity_segment;
-                        html += `<li>${method.name}() — Complexity: ${method.complexity}<span class="complexity-indicator ${methodComplexitySegment}">${getSegmentLabel(methodComplexitySegment)}</span></li>`;
+                        const methodMaintainabilitySegment = method.maintainability_segment;
+                        const methodLocSegment = method.loc_segment;
+                        html += `<li>
+                            <strong>${method.name}()</strong><br/>
+                            <span style="margin-left: 1rem; font-size: 0.9em; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                                <span class="complexity-indicator ${methodComplexitySegment}">Complexity: ${complexity}</span>
+                                <span class="complexity-indicator ${methodMaintainabilitySegment}">MI: ${maintainability !== undefined ? maintainability.toFixed(1) : 'N/A'}</span>
+                                <span class="complexity-indicator ${methodLocSegment}">LOC: ${loc}</span>
+                            </span>
+                        </li>`;
                         methodNames.add(method.name)
                     });
                     html += `</ul>`;
@@ -1066,15 +1145,23 @@
                 details.function_nodes.forEach(node => {
                 if (!methodNames.has(node.name)) {
                     const functionComplexitySegment = node.complexity_segment;
-                    html += `<li><strong>${node.name}</strong> — Complexity: ${node.complexity}<span class="complexity-indicator ${functionComplexitySegment}">${getSegmentLabel(functionComplexitySegment)}</span></li>`;
+                    const functionMaintainabilitySegment = node.maintainability_segment;
+                    const functionLocSegment = node.loc_segment;
+                    html += `<li>
+                        <strong>${node.name}()</strong><br/>
+                        <span style="margin-left: 1rem; font-size: 0.9em; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                            <span class="complexity-indicator ${functionComplexitySegment}">Complexity: ${node.complexity}</span>
+                            <span class="complexity-indicator ${functionMaintainabilitySegment}">MI: ${node.maintainability !== undefined ? node.maintainability.toFixed(1) : 'N/A'}</span>
+                            <span class="complexity-indicator ${functionLocSegment}">LOC: ${node.loc}</span>
+                        </span>
+                    </li>`;
                 }
                 });
 
                 html += `</ul></div>`;
 
                 fileView.innerHTML = html;
-
-            });
+            }
         });
     </script>
 </body>

@@ -8,6 +8,82 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="images/logo.svg" sizes="any" type="image/svg+xml">
+    <style>
+        /* Fix table overflow issues */
+        .table-container {
+            overflow-x: auto;
+            max-width: 100%;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        }
+
+        .hotspot-table,
+        .contributor-table {
+            width: 100%;
+            table-layout: fixed; /* Forces columns to respect width constraints */
+            border-collapse: collapse;
+        }
+
+        /* File path column - allow text to wrap and break */
+        .hotspot-table td:first-child,
+        .hotspot-table th:first-child {
+            width: 40%; /* Take up 40% of table width */
+            max-width: 300px;
+            word-break: break-word; /* Break long paths */
+            overflow-wrap: break-word;
+            white-space: normal; /* Allow wrapping */
+        }
+
+        /* Owner/Developer column */
+        .hotspot-table td:nth-child(2),
+        .hotspot-table th:nth-child(2) {
+            width: 30%;
+            max-width: 200px;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Numeric columns - keep them compact */
+        .hotspot-table td:nth-child(3),
+        .hotspot-table th:nth-child(3),
+        .hotspot-table td:nth-child(4),
+        .hotspot-table th:nth-child(4) {
+            width: 15%;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        /* Contributor table columns */
+        .contributor-table td:first-child,
+        .contributor-table th:first-child {
+            width: 40%;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .contributor-table td,
+        .contributor-table th {
+            text-align: left;
+            padding: 0.75rem;
+        }
+
+        /* Ensure tables don't overflow their containers */
+        .info-card {
+            overflow: hidden;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hotspot-table td:first-child,
+            .hotspot-table th:first-child {
+                max-width: 150px;
+            }
+            
+            .hotspot-table,
+            .contributor-table {
+                font-size: 0.875rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard">

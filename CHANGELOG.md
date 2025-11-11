@@ -1,3 +1,9 @@
+# v0.3.10
+- Fix avg function loc for file
+- Fix method size segment in file view
+- Improve visuals of file view
+- Fix width issue in git view
+
 # v0.3.9
 - Fix styling in git_analysis so tables are readable
 - Add variables in paths
