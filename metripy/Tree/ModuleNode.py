@@ -25,6 +25,8 @@ class ModuleNode:
         self.maintainability_index = 0
         self.classes: list[ClassNode] = []
         self.functions: list[FunctionNode] = []
+        self.imports: list[str]|None = None
+        self.import_name: str|None = None
 
     def to_dict(self) -> dict:
         return {
@@ -39,4 +41,6 @@ class ModuleNode:
             "maintainability_index": self.maintainability_index,
             "classes": [c.to_dict() for c in self.classes],
             "functions": [f.to_dict() for f in self.functions],
+            "imports": self.imports,
+            "import_name": self.import_name,
         }

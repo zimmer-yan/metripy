@@ -17,6 +17,8 @@ class FileMetrics:
         avgLocPerFunction: float,
         class_nodes: list[ClassNode],
         function_nodes: list[FunctionNode],
+        import_name: str|None,
+        imports: list[str]|None,
     ):
         self.full_name = full_name
         self.loc = loc
@@ -27,6 +29,12 @@ class FileMetrics:
         self.class_nodes = class_nodes
         self.function_nodes = function_nodes
         self.trend: FileTrendMetric | None = None
+        self.import_name = import_name
+        self.imports: list[str]|None = imports
+        self.imported_by: list[str]|None = None
+        self.afferent_coupling: int = 0
+        self.efferent_coupling: int = 0
+        self.instability: float = 0
 
     def to_dict(self) -> dict:
         return {
@@ -48,11 +56,16 @@ class FileMetrics:
             ),
             "class_nodes": [node.to_dict() for node in self.class_nodes],
             "function_nodes": [node.to_dict() for node in self.function_nodes],
+            "import_name": self.import_name,
+            "imports": self.imports,
+            "afferent_coupling": self.afferent_coupling,
+            "efferent_coupling": self.efferent_coupling,
+            "instability": round(self.instability, 2)
         }
 
     @staticmethod
     def from_dict(data: dict) -> Self:
-        return FileMetrics(
+        metrics = FileMetrics(
             full_name=data["full_name"],
             loc=data["loc"],
             totalCc=data["totalCc"],
@@ -61,4 +74,10 @@ class FileMetrics:
             avgLocPerFunction=data["avgLocPerFunction"],
             class_nodes=[ClassNode.from_dict(d) for d in data["class_nodes"]],
             function_nodes=[FunctionNode.from_dict(d) for d in data["function_nodes"]],
+            import_name=data.get("import_name"),
+            imports=data.get("imports"),
         )
+        metrics.afferent_coupling = data.get("afferent_coupling", 0)
+        metrics.efferent_coupling = data.get("efferent_coupling", 0)
+        metrics.instability = data.get("instability", 0)
+        return metrics

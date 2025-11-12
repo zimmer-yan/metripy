@@ -2,10 +2,12 @@ from radon.complexity import cc_visit
 from radon.metrics import Halstead, HalsteadReport, h_visit, mi_visit
 from radon.raw import analyze
 from radon.visitors import Class, Function
+from pathlib import Path
 
 from metripy.Component.Output.ProgressBar import ProgressBar
 from metripy.LangAnalyzer.AbstractLangAnalyzer import AbstractLangAnalyzer
 from metripy.LangAnalyzer.Python.PythonHalSteadAnalyzer import PythonHalSteadAnalyzer
+from metripy.LangAnalyzer.Python.PythonImportsAnalyzer import PythonImportsAnalyzer
 from metripy.Metric.Code.FileMetrics import FileMetrics
 from metripy.Tree.ClassNode import ClassNode
 from metripy.Tree.FunctionNode import FunctionNode
@@ -43,6 +45,36 @@ class PythonAnalyzer(AbstractLangAnalyzer):
                 return filename
             return f"{filename}:{item_name}"
         return f"{filename}:{class_name}:{item_name}"
+
+    @staticmethod
+    def extract_project_root(filename: str) -> str:
+        """Extract the project root package name from a file path.
+        
+        For example:
+            ./metripy/Tree/ModuleNode.py -> "metripy"
+            /path/to/metripy/LangAnalyzer/Python/PythonAnalyzer.py -> "metripy"
+        
+        Args:
+            filename: The file path
+            
+        Returns:
+            The project root package name
+        """
+        path = Path(filename)
+        parts = path.parts
+        
+        # Find the first part that looks like a Python package
+        # Skip common prefixes like '.', '..', absolute path components
+        for part in parts:
+            # Skip current/parent directory markers and common non-package directories
+            if part in ('.', '..', '/'):
+                continue
+            # Check if it's likely a Python package (contains letters and possibly underscores)
+            if part and not part.startswith('.') and any(c.isalpha() for c in part):
+                return part
+        
+        # Fallback: just return the first non-special directory
+        return parts[0] if parts else "metripy"
 
     def analyze(self, code: str, filename: str) -> None:
         classes: dict[str, ClassNode] = {}
@@ -144,6 +176,11 @@ class PythonAnalyzer(AbstractLangAnalyzer):
 
         maintainability_index = mi_visit(code, True)
         module_node.maintainability_index = maintainability_index
+
+        # Extract same-project imports and the import name of this module
+        project_root = [p for p in Path(filename).parts if p.isalpha() and not p.startswith('.')][0]
+        module_node.import_name = PythonImportsAnalyzer.extract_import_name(filename, project_root)
+        module_node.imports = PythonImportsAnalyzer.extract_imports(code, project_root)
 
         self.modules[full_name] = module_node
 

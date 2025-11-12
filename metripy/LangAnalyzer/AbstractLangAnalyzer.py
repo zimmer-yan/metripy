@@ -35,7 +35,11 @@ class AbstractLangAnalyzer(ABC):
 
     @abstractmethod
     def get_metrics(self) -> list[FileMetrics]:
-        metrics = []
+        metrics: dict[str, FileMetrics] = {}
+
+        efferent_coupling = {}
+        afferent_coupling = {}
+
         for module in self.modules.values():
             full_name = module.full_name
 
@@ -58,7 +62,26 @@ class AbstractLangAnalyzer(ABC):
                 avgLocPerFunction=avgLocPerFunction,
                 class_nodes=module.classes,
                 function_nodes=module.functions,
+                import_name=module.import_name,
+                imports=module.imports,
             )
-            metrics.append(file_metric)
+            metrics[full_name] = file_metric
 
-        return metrics
+            if not module.import_name or not module.imports:
+                continue
+            efferent_coupling[module.import_name] = len(module.imports)
+            for import_name in module.imports:
+                if import_name not in afferent_coupling:
+                    afferent_coupling[import_name] = []
+                afferent_coupling[import_name].append(module.import_name)
+
+        for file_metric in metrics.values():
+            imported_by = afferent_coupling.get(file_metric.import_name, [])
+            ca = len(imported_by)
+            ce = efferent_coupling.get(file_metric.import_name, 0)
+            file_metric.imported_by = imported_by
+            file_metric.afferent_coupling = ca
+            file_metric.efferent_coupling = ce
+            file_metric.instability = (ce / (ca + ce)) if (ca + ce) > 0 else 0
+
+        return list(metrics.values())

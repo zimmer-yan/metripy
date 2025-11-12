@@ -99,6 +99,7 @@ class Reporter(ReporterInterface):
         self.render_files_page(metrics)
         self.render_top_offenders_page(metrics)
         self.render_git_analysis_page(metrics)
+        self.render_coupling_page(metrics)
         self.render_dependencies_page(metrics)
         self.render_trends_page(metrics)
 
@@ -147,3 +148,11 @@ class Reporter(ReporterInterface):
         self.output.writeln("<info>Rendering trends page</info>")
         self.page_renderer_factory.create_trends_page_renderer().render(metrics)
         self.output.writeln("<success>Trends page generated successfully</success>")
+
+    def render_coupling_page(self, metrics: ProjectMetrics):
+        """Render the coupling analysis page with dependency graph"""
+        self.output.writeln("<info>Rendering coupling analysis page</info>")
+        self.page_renderer_factory.create_coupling_page_renderer().render(metrics)
+        self.output.writeln(
+            "<success>Coupling analysis page generated successfully</success>"
+        )
