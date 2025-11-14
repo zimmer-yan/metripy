@@ -1,3 +1,6 @@
+# v0.4.2
+- Fix issue in test case
+
 # v0.4.1
 - Add simhash to dependenies
 

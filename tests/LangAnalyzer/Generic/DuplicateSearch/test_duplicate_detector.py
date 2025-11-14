@@ -579,7 +579,7 @@ line 5"""
         self.assertEqual(extracted, "")
 
 
-class TestCodeChunk:
+class TestCodeChunk(TestCase):
     """Test cases for CodeChunk class"""
 
     def test_code_chunk_creation(self):
@@ -602,7 +602,6 @@ class TestCodeChunk:
 
     def test_code_chunk_repr(self):
         """Test CodeChunk string representation"""
-        from simhash import Simhash
 
         hash_value = Simhash("test")
         chunk = CodeChunk("file.py", 5, 10, "code", hash_value)
