@@ -1,3 +1,6 @@
+# v0.4.1
+- Add simhash to dependenies
+
 # v0.4.0
 - Added Coupling and instability calculation (fine for python, buggy for php, untested for typescript)
 - Added skeleton for file duplication detection
