@@ -2,18 +2,17 @@ import math
 
 import lizard
 
+from metripy.Application.Config.ProjectConfig import ProjectConfig
 from metripy.Component.Output.ProgressBar import ProgressBar
 from metripy.LangAnalyzer.AbstractLangAnalyzer import AbstractLangAnalyzer
-from metripy.LangAnalyzer.Typescript.TypescriptAstParser import TypescriptAstParser
-from metripy.LangAnalyzer.Typescript.TypescriptBasicComplexityAnalyzer import (
-    TypescriptBasicComplexityAnalzyer,
-)
-from metripy.LangAnalyzer.Typescript.TypescriptBasicLocAnalyzer import (
-    TypescriptBasicLocAnalyzer,
-)
-from metripy.LangAnalyzer.Typescript.TypescriptHalSteadAnalyzer import (
-    TypeScriptHalSteadAnalyzer,
-)
+from metripy.LangAnalyzer.Typescript.TypescriptAstParser import \
+    TypescriptAstParser
+from metripy.LangAnalyzer.Typescript.TypescriptBasicComplexityAnalyzer import \
+    TypescriptBasicComplexityAnalzyer
+from metripy.LangAnalyzer.Typescript.TypescriptBasicLocAnalyzer import \
+    TypescriptBasicLocAnalyzer
+from metripy.LangAnalyzer.Typescript.TypescriptHalSteadAnalyzer import \
+    TypeScriptHalSteadAnalyzer
 from metripy.Tree.ClassNode import ClassNode
 from metripy.Tree.FunctionNode import FunctionNode
 from metripy.Tree.ModuleNode import ModuleNode
@@ -21,7 +20,7 @@ from metripy.Tree.ModuleNode import ModuleNode
 
 class TypescriptAnalyzer(AbstractLangAnalyzer):
 
-    def __init__(self):
+    def __init__(self, project_config: ProjectConfig):
         super().__init__()
         self.ast_parser = TypescriptAstParser()
         self.halstead_analyzer = TypeScriptHalSteadAnalyzer()

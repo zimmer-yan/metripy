@@ -102,6 +102,7 @@ class Reporter(ReporterInterface):
         self.render_coupling_page(metrics)
         self.render_dependencies_page(metrics)
         self.render_trends_page(metrics)
+        self.render_code_smells_page(metrics)
 
         self.output.writeln(
             f"<success>HTML report generated in {self.config.path} directory</success>"
@@ -155,4 +156,11 @@ class Reporter(ReporterInterface):
         self.page_renderer_factory.create_coupling_page_renderer().render(metrics)
         self.output.writeln(
             "<success>Coupling analysis page generated successfully</success>"
+        )
+
+    def render_code_smells_page(self, metrics: ProjectMetrics):
+        self.output.writeln("<info>Rendering code smells page</info>")
+        self.page_renderer_factory.create_code_smells_page_renderer().render(metrics)
+        self.output.writeln(
+            "<success>Code smells page generated successfully</success>"
         )

@@ -1,3 +1,8 @@
+# v0.4.0
+- Added Coupling and instability calculation (fine for python, buggy for php, untested for typescript)
+- Added skeleton for file duplication detection
+- Added Basic Code smell detection & html reporting (fine for python, buggy for php, untested for typescript)
+
 # v0.3.10
 - Fix avg function loc for file
 - Fix method size segment in file view

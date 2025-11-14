@@ -16,7 +16,9 @@ class CouplingPageRenderer(PageRenderer):
                 "full_name": file_metric.full_name,
                 "import_name": file_metric.import_name,
                 "imports": file_metric.imports if file_metric.imports else [],
-                "imported_by": file_metric.imported_by if file_metric.imported_by else [],
+                "imported_by": (
+                    file_metric.imported_by if file_metric.imported_by else []
+                ),
                 "afferent_coupling": file_metric.afferent_coupling,
                 "efferent_coupling": file_metric.efferent_coupling,
                 "instability": file_metric.instability,
@@ -29,4 +31,3 @@ class CouplingPageRenderer(PageRenderer):
                 "metrics_json": json.dumps(metrics_list, indent=2),
             },
         )
-

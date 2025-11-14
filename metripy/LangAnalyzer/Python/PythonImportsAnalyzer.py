@@ -1,15 +1,16 @@
 import ast
 from pathlib import Path
 
+
 class PythonImportsAnalyzer:
     @staticmethod
     def extract_imports(code: str, project_root: str) -> list[str]:
         """Extract same-project imports from Python code.
-        
+
         Args:
             code: The Python source code
             project_root: The project root package name to filter for
-            
+
         Returns:
             List of import module names that belong to the same project
         """
@@ -39,19 +40,19 @@ class PythonImportsAnalyzer:
     @staticmethod
     def extract_import_name(filename: str, project_root: str) -> str:
         """Extract the import name for the current module.
-        
+
         Args:
             filename: The full file path
             project_root: The project root package name
-            
+
         Returns:
             The import name for this module
         """
         path = Path(filename)
-        
+
         # Get all parts of the path
         parts = path.parts
-        
+
         # Find where the project root starts
         try:
             root_index = parts.index(project_root)

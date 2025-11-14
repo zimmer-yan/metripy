@@ -1,68 +1,105 @@
-from collections import defaultdict
+"""TypeScript-specific AST parser implementation using tree-sitter"""
 
-from tree_sitter_languages import get_parser
+from typing import List, Optional
+
+from tree_sitter import Node
+
+from metripy.LangAnalyzer.Generic.CodeSmell.AstParser import AstParser
 
 
-class TypescriptAstParser:
+class TypescriptAstParser(AstParser):
+    """TypeScript-specific implementation of AST parser"""
+
     def __init__(self):
-        self.parser = get_parser("typescript")
+        super().__init__("typescript")
 
-    def _get_node_text(self, code: str, node) -> str:
-        return code[node.start_byte : node.end_byte].decode("utf-8")
+    def get_import_nodes(self) -> List[Node]:
+        """Get all import statements"""
+        return self.find_nodes_by_type("import_statement")
 
-    def extract_structure(self, code: str) -> dict:
-        tree = self.parser.parse(bytes(code, "utf8"))
-        root_node = tree.root_node
-        structure = defaultdict(list)
-        structure["classes"] = {}
-        structure["functions"] = []
-        structure["enums"] = []
+    def get_function_nodes(self) -> List[Node]:
+        """Get all function and method definitions"""
+        functions = self.find_nodes_by_type("function_declaration")
+        functions.extend(self.find_nodes_by_type("method_definition"))
+        functions.extend(self.find_nodes_by_type("arrow_function"))
+        return functions
 
-        def traverse(node, parent_class=None):
-            if node.type == "class_declaration":
-                class_name = None
-                for child in node.children:
-                    if child.type == "type_identifier":
-                        class_name = self._get_node_text(code.encode(), child)
-                        structure["classes"][class_name] = []
-                for child in node.children:
-                    traverse(child, class_name)
+    def get_class_nodes(self) -> List[Node]:
+        """Get all class definitions"""
+        return self.find_nodes_by_type("class_declaration")
 
-            elif node.type == "method_definition" and parent_class:
-                for child in node.children:
-                    if child.type == "property_identifier":
-                        method_name = self._get_node_text(code.encode(), child)
-                        structure["classes"][parent_class].append(method_name)
+    def get_variable_assignment_nodes(self) -> List[Node]:
+        """Get all variable declarations"""
+        nodes = self.find_nodes_by_type("lexical_declaration")
+        nodes.extend(self.find_nodes_by_type("variable_declaration"))
+        return nodes
 
-            elif node.type == "function_declaration":
-                for child in node.children:
-                    if child.type == "identifier":
-                        function_name = self._get_node_text(code.encode(), child)
-                        structure["functions"].append(function_name)
+    def get_identifier_nodes(self, context: str = "usage") -> List[Node]:
+        """Get identifier nodes"""
+        return self.find_nodes_by_type("identifier")
 
-            elif node.type == "lexical_declaration":
-                # Handle exported arrow functions like: export const foo = (...) => {...}
-                for child in node.children:
-                    if child.type == "variable_declarator":
-                        identifier = None
-                        for grandchild in child.children:
-                            if grandchild.type == "identifier":
-                                identifier = self._get_node_text(
-                                    code.encode(), grandchild
-                                )
-                            elif grandchild.type == "arrow_function":
-                                if identifier:
-                                    structure["functions"].append(identifier)
-
-            elif node.type == "enum_declaration":
-                enum_name = None
-                for child in node.children:
-                    if child.type == "identifier":
-                        enum_name = self._get_node_text(code.encode(), child)
-                        structure["enums"].append(enum_name)
-
+    def extract_function_name(self, node: Node) -> Optional[str]:
+        """Extract function name"""
+        if node.type == "function_declaration":
             for child in node.children:
-                traverse(child, parent_class)
+                if child.type == "identifier":
+                    return self.get_node_text(child)
+        elif node.type == "method_definition":
+            for child in node.children:
+                if child.type == "property_identifier":
+                    return self.get_node_text(child)
+        elif node.type == "arrow_function":
+            # Arrow functions might not have a direct name
+            # Need to look at parent context
+            return None
+        return None
 
-        traverse(root_node)
-        return dict(structure)
+    def extract_class_name(self, node: Node) -> Optional[str]:
+        """Extract class name"""
+        for child in node.children:
+            if child.type == "type_identifier":
+                return self.get_node_text(child)
+        return None
+
+    def extract_variable_name(self, node: Node) -> Optional[str]:
+        """Extract variable name from declaration"""
+        for child in node.children:
+            if child.type == "variable_declarator":
+                for grandchild in child.children:
+                    if grandchild.type == "identifier":
+                        return self.get_node_text(grandchild)
+        return None
+
+    def extract_import_name(self, node: Node) -> Optional[str]:
+        """Extract imported names from import statement"""
+        names = []
+        for child in node.children:
+            if child.type == "import_clause":
+                for grandchild in child.children:
+                    if grandchild.type == "identifier":
+                        names.append(self.get_node_text(grandchild))
+                    elif grandchild.type == "named_imports":
+                        for import_spec in grandchild.children:
+                            if import_spec.type == "import_specifier":
+                                for part in import_spec.children:
+                                    if part.type == "identifier":
+                                        names.append(self.get_node_text(part))
+        return ", ".join(names) if names else None
+
+    def get_function_parameters(self, function_node: Node) -> List[str]:
+        """Extract parameter names from function definition"""
+        params = []
+        for child in function_node.children:
+            if child.type == "formal_parameters":
+                for param_node in child.children:
+                    if (
+                        param_node.type == "required_parameter"
+                        or param_node.type == "optional_parameter"
+                    ):
+                        for grandchild in param_node.children:
+                            if grandchild.type == "identifier":
+                                params.append(self.get_node_text(grandchild))
+                                break
+                    elif param_node.type == "identifier":
+                        params.append(self.get_node_text(param_node))
+        return params

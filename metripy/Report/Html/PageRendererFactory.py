@@ -1,9 +1,11 @@
+from metripy.Report.Html.CodeSmellsPageRenderer import CodeSmellsPageRenderer
 from metripy.Report.Html.CouplingPageRenderer import CouplingPageRenderer
 from metripy.Report.Html.DependencyPageRenderer import DependencyPageRenderer
 from metripy.Report.Html.FilesPageRenderer import FilesPageRenderer
 from metripy.Report.Html.GitAnalysisPageRenderer import GitAnalysisPageRenderer
 from metripy.Report.Html.IndexPageRenderer import IndexPageRenderer
-from metripy.Report.Html.TopOffendersPageRenderer import TopOffendersPageRenderer
+from metripy.Report.Html.TopOffendersPageRenderer import \
+    TopOffendersPageRenderer
 from metripy.Report.Html.TrendsPageRenderer import TrendsPageRenderer
 
 
@@ -38,4 +40,11 @@ class PageRendererFactory:
         return TrendsPageRenderer(self.template_dir, self.output_dir, self.project_name)
 
     def create_coupling_page_renderer(self) -> CouplingPageRenderer:
-        return CouplingPageRenderer(self.template_dir, self.output_dir, self.project_name)
+        return CouplingPageRenderer(
+            self.template_dir, self.output_dir, self.project_name
+        )
+
+    def create_code_smells_page_renderer(self) -> CodeSmellsPageRenderer:
+        return CodeSmellsPageRenderer(
+            self.template_dir, self.output_dir, self.project_name
+        )

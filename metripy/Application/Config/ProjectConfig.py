@@ -1,3 +1,4 @@
+from metripy.Application.Config.CodeSmellConfig import CodeSmellConfig
 from metripy.Application.Config.GitConfig import GitConfig
 from metripy.Application.Config.ReportConfig import ReportConfig
 
@@ -15,6 +16,7 @@ class ProjectConfig:
         self.npm: bool = False
         self.reports: list[ReportConfig] = []
         self.history_path: str | None = None
+        self.code_smells: CodeSmellConfig = CodeSmellConfig()
 
     def to_dict(self) -> dict:
         return {
@@ -29,6 +31,7 @@ class ProjectConfig:
             "git": self.git.to_dict() if self.git else None,
             "reports": [report.to_dict() for report in self.reports],
             "history_path": self.history_path,
+            "code_smells": self.code_smells.to_dict(),
         }
 
     @staticmethod

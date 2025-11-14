@@ -1,3 +1,4 @@
+from metripy.LangAnalyzer.Generic.CodeSmell.CodeSmell import CodeSmell
 from metripy.Tree.ClassNode import ClassNode
 from metripy.Tree.FunctionNode import FunctionNode
 
@@ -25,8 +26,9 @@ class ModuleNode:
         self.maintainability_index = 0
         self.classes: list[ClassNode] = []
         self.functions: list[FunctionNode] = []
-        self.imports: list[str]|None = None
-        self.import_name: str|None = None
+        self.imports: list[str] | None = None
+        self.import_name: str | None = None
+        self.code_smells: list[CodeSmell] = []
 
     def to_dict(self) -> dict:
         return {
@@ -43,4 +45,5 @@ class ModuleNode:
             "functions": [f.to_dict() for f in self.functions],
             "imports": self.imports,
             "import_name": self.import_name,
+            "code_smells": [c.to_dict() for c in self.code_smells],
         }

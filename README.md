@@ -1,6 +1,13 @@
 # Metripy
 A multilanguage, multi project code metrics analysis tool. 
 
+[![PyPI version](https://img.shields.io/pypi/v/metripy.svg)](https://pypi.org/project/metripy/)
+[![Tests](https://img.shields.io/badge/tests-75%20passed-brightgreen)](./tests)
+[![Coverage](https://codecov.io/gh/zimmer-yan/metripy/branch/main/graph/badge.svg)](https://codecov.io/gh/zimmer-yan/metripy)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Downloads](https://img.shields.io/pypi/dm/metripy.svg)](https://pypi.org/project/metripy/)
+
+
 # Languages
 Supported languages
 - Python (with radon)

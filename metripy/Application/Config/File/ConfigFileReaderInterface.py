@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
 
 from metripy.Application.Config.Config import Config
+from metripy.Application.Config.File.PathResolver import PathResolver
 from metripy.Application.Config.GitConfig import GitConfig
 from metripy.Application.Config.ProjectConfig import ProjectConfig
 from metripy.Application.Config.ReportConfig import ReportConfig
-from metripy.Application.Config.File.PathResolver import PathResolver
+
 
 class ConfigFileReaderInterface(ABC):
     def __init__(self, filename: str):
@@ -76,5 +77,14 @@ class ConfigFileReaderInterface(ABC):
         # trends
         if history_path := data.get("trends"):
             project_config.history_path = self.resolve_path(history_path)
+
+        # code smells
+        code_smells = data.get("code_smells", True)
+        if not isinstance(code_smells, dict):
+            if code_smells == False or code_smells == None:
+                project_config.code_smells.disable_all()
+        else:
+            for code_smell, value in code_smells.items():
+                project_config.code_smells.set(code_smell, value)
 
         return project_config

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+
 class PathResolver:
     @staticmethod
     def resolve(path: str) -> str:

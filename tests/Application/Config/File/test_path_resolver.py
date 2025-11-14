@@ -1,6 +1,8 @@
-from unittest import TestCase
-from metripy.Application.Config.File.PathResolver import PathResolver
 from datetime import datetime
+from unittest import TestCase
+
+from metripy.Application.Config.File.PathResolver import PathResolver
+
 
 class TestPathResolver(TestCase):
     def setUp(self):

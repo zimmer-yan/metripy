@@ -1,5 +1,6 @@
 from typing import Self
 
+from metripy.LangAnalyzer.Generic.CodeSmell.CodeSmell import CodeSmell
 from metripy.Metric.Code.Segmentor import Segmentor
 from metripy.Metric.Trend.FileTrendMetric import FileTrendMetric
 from metripy.Tree.ClassNode import ClassNode
@@ -17,8 +18,9 @@ class FileMetrics:
         avgLocPerFunction: float,
         class_nodes: list[ClassNode],
         function_nodes: list[FunctionNode],
-        import_name: str|None,
-        imports: list[str]|None,
+        import_name: str | None,
+        imports: list[str] | None,
+        code_smells: list[CodeSmell],
     ):
         self.full_name = full_name
         self.loc = loc
@@ -30,11 +32,12 @@ class FileMetrics:
         self.function_nodes = function_nodes
         self.trend: FileTrendMetric | None = None
         self.import_name = import_name
-        self.imports: list[str]|None = imports
-        self.imported_by: list[str]|None = None
+        self.imports: list[str] | None = imports
+        self.imported_by: list[str] | None = None
         self.afferent_coupling: int = 0
         self.efferent_coupling: int = 0
         self.instability: float = 0
+        self.code_smells: list[CodeSmell] = code_smells
 
     def to_dict(self) -> dict:
         return {
@@ -60,7 +63,7 @@ class FileMetrics:
             "imports": self.imports,
             "afferent_coupling": self.afferent_coupling,
             "efferent_coupling": self.efferent_coupling,
-            "instability": round(self.instability, 2)
+            "instability": round(self.instability, 2),
         }
 
     @staticmethod
@@ -76,6 +79,7 @@ class FileMetrics:
             function_nodes=[FunctionNode.from_dict(d) for d in data["function_nodes"]],
             import_name=data.get("import_name"),
             imports=data.get("imports"),
+            code_smells=[CodeSmell.from_dict(d) for d in data.get("code_smells", [])],
         )
         metrics.afferent_coupling = data.get("afferent_coupling", 0)
         metrics.efferent_coupling = data.get("efferent_coupling", 0)

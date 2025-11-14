@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metripy"
-version = "0.3.10"
+version = "0.4.0"
 description = "A Python tool to generate multi project, multi language code metric reports"
 authors = [
     {name = "Yannick Zimmermann", email = "yannick.zimmermann@proton.me"}

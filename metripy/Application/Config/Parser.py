@@ -1,9 +1,8 @@
 import re
 
 from metripy.Application.Config.Config import Config
-from metripy.Application.Config.File.ConfigFileReaderFactory import (
-    ConfigFileReaderFactory,
-)
+from metripy.Application.Config.File.ConfigFileReaderFactory import \
+    ConfigFileReaderFactory
 
 
 class Parser:

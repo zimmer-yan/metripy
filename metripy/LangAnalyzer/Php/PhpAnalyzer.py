@@ -6,11 +6,15 @@ from pathlib import Path
 
 import lizard
 
+from metripy.Application.Config.ProjectConfig import ProjectConfig
 from metripy.Component.Output.ProgressBar import ProgressBar
 from metripy.LangAnalyzer.AbstractLangAnalyzer import AbstractLangAnalyzer
+from metripy.LangAnalyzer.Php.CodeSmell.PhpCodeSmellDetector import \
+    PhpCodeSmellDetector
 from metripy.LangAnalyzer.Php.PhpBasicAstParser import PhpBasicAstParser
 from metripy.LangAnalyzer.Php.PhpBasicLocAnalyzer import PhpBasicLocAnalyzer
 from metripy.LangAnalyzer.Php.PhpHalSteadAnalyzer import PhpHalSteadAnalyzer
+from metripy.LangAnalyzer.Php.PhpImportsAnalyzer import PhpImportsAnalyzer
 from metripy.Metric.Code.FileMetrics import FileMetrics
 from metripy.Tree.ClassNode import ClassNode
 from metripy.Tree.FunctionNode import FunctionNode
@@ -18,10 +22,12 @@ from metripy.Tree.ModuleNode import ModuleNode
 
 
 class PhpAnalyzer(AbstractLangAnalyzer):
-    def __init__(self):
+    def __init__(self, project_config: ProjectConfig):
         super().__init__()
+        self.config = project_config
         self.loc_analyzer = PhpBasicLocAnalyzer()
         self.halstead_analyzer = PhpHalSteadAnalyzer()
+        self.code_smell_detector = PhpCodeSmellDetector(self.config.code_smells)
 
     def get_lang_name(self) -> str:
         return "PHP"
@@ -185,6 +191,15 @@ class PhpAnalyzer(AbstractLangAnalyzer):
         )
         module_node.maintainability_index = maintainability_index
         self.modules[full_name] = module_node
+
+        # ignore for now
+        # self.duplicate_detector.add_code(filename, code)
+
+        imports_analyzer = PhpImportsAnalyzer(filename, code)
+        module_node.import_name = imports_analyzer.extract_import_name()
+        module_node.imports = imports_analyzer.extract_imports()
+
+        module_node.code_smells = self.code_smell_detector.detect_all(filename, code)
 
     def _calculate_maintainability_index(
         self, functions: list[FunctionNode], module_node: ModuleNode
