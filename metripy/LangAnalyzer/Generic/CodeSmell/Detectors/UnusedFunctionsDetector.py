@@ -3,9 +3,13 @@
 from typing import List, Set
 
 from metripy.LangAnalyzer.Generic.CodeSmell.CodeSmell import (
-    CodeSmell, CodeSmellSeverity, CodeSmellType)
-from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.BaseDetector import \
-    BaseCodeSmellDetector
+    CodeSmell,
+    CodeSmellSeverity,
+    CodeSmellType,
+)
+from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.BaseDetector import (
+    BaseCodeSmellDetector,
+)
 
 
 class UnusedFunctionsDetector(BaseCodeSmellDetector):

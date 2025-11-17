@@ -1,9 +1,12 @@
 from typing import Dict
 
 from metripy.LangAnalyzer.Generic.CodeSmell.CodeSmell import (
-    CodeSmellSeverity, CodeSmellType)
-from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.NamingConventionDetector import \
-    NamingConventionDetector
+    CodeSmellSeverity,
+    CodeSmellType,
+)
+from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.NamingConventionDetector import (
+    NamingConventionDetector,
+)
 
 
 class PhpNamingConventionDetector(NamingConventionDetector):
@@ -21,7 +24,11 @@ class PhpNamingConventionDetector(NamingConventionDetector):
                 "description": "camelCase",
                 "smell_type": CodeSmellType.CAMEL_CASE_VIOLATION_FUNCTION,
                 "severity": CodeSmellSeverity.MINOR,
-                "excludes": [],
+                "excludes": [
+                    r"^__construct$",
+                    r"^__destruct$",
+                    r"^__invoke$",
+                ],
             },
             "variable": {
                 "pattern": self.PATTERN_CAMEL_CASE,

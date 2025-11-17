@@ -81,7 +81,7 @@ class ConfigFileReaderInterface(ABC):
         # code smells
         code_smells = data.get("code_smells", True)
         if not isinstance(code_smells, dict):
-            if code_smells == False or code_smells == None:
+            if code_smells == False or code_smells is None:
                 project_config.code_smells.disable_all()
         else:
             for code_smell, value in code_smells.items():

@@ -35,7 +35,8 @@ class AstParser(ABC):
         """Get the text content of a node"""
         if not self.code:
             return ""
-        return self.code[node.start_byte : node.end_byte]
+        return node.text.decode("utf-8")
+        # return self.code[node.start_byte : node.end_byte]
 
     def find_nodes_by_type(
         self, node_type: str, root: Optional[Node] = None

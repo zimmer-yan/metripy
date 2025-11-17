@@ -4,8 +4,7 @@ from metripy.Report.Html.DependencyPageRenderer import DependencyPageRenderer
 from metripy.Report.Html.FilesPageRenderer import FilesPageRenderer
 from metripy.Report.Html.GitAnalysisPageRenderer import GitAnalysisPageRenderer
 from metripy.Report.Html.IndexPageRenderer import IndexPageRenderer
-from metripy.Report.Html.TopOffendersPageRenderer import \
-    TopOffendersPageRenderer
+from metripy.Report.Html.TopOffendersPageRenderer import TopOffendersPageRenderer
 from metripy.Report.Html.TrendsPageRenderer import TrendsPageRenderer
 
 

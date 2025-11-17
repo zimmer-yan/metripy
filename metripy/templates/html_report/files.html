@@ -839,6 +839,7 @@
             const segments = [
                 details.loc_segment,
                 details.complexity_segment,
+                details.cognitive_complexity_segment,
                 details.maintainability_segment,
                 details.method_size_segment
             ];
@@ -1103,9 +1104,14 @@
                             <span class="segment-indicator">${getSegmentLabel(details.maintainability_segment)}</span>
                         </div>
                         <div class="metric-badge ${details.complexity_segment}">
-                            <span class="label">Avg Complexity:</span>
+                            <span class="label">Avg Cyclomatic Complexity:</span>
                             <span class="value">${details.avgCcPerFunction.toFixed(2)}</span>
                             <span class="segment-indicator">${getSegmentLabel(details.complexity_segment)}</span>
+                        </div>
+                        <div class="metric-badge ${details.cognitive_complexity_segment}">
+                            <span class="label">Avg Cognitive Complexity:</span>
+                            <span class="value">${details.avg_cog_complexity_per_function.toFixed(2)}</span>
+                            <span class="segment-indicator">${getSegmentLabel(details.cognitive_complexity_segment)}</span>
                         </div>
                         <div class="metric-badge ${details.method_size_segment}">
                             <span class="label">Avg Method Size:</span>
@@ -1122,20 +1128,23 @@
                 details.class_nodes.forEach(node => {
                 const complexity = node.real_complexity;
                 const classComplexitySegment = node.complexity_segment;
-                html += `<li><strong>${node.name}</strong> <span class="complexity-indicator ${classComplexitySegment}">Complexity: ${node.real_complexity}</span>`;
+                html += `<li><strong>${node.name}</strong> <span class="complexity-indicator ${classComplexitySegment}">Total Cyclomatic Complexity: ${node.real_complexity}</span>`;
                 if (node.functions && node.functions.length > 0) {
                     html += `<ul class="methods">`;
                     node.functions.forEach(method => {
                         const complexity = method.complexity;
+                        const cognitiveComplexity = method.cognitive_complexity;
                         const maintainability = method.maintainability_index;
                         const loc = method.loc;
                         const methodComplexitySegment = method.complexity_segment;
                         const methodMaintainabilitySegment = method.maintainability_segment;
+                        const methodCognitiveComplexitySegment = method.cognitive_complexity_segment;
                         const methodLocSegment = method.loc_segment;
                         html += `<li>
                             <strong>${method.name}()</strong><br/>
                             <span style="margin-left: 1rem; font-size: 0.9em; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-                                <span class="complexity-indicator ${methodComplexitySegment}">Complexity: ${complexity}</span>
+                                <span class="complexity-indicator ${methodComplexitySegment}">Cyclomatic Complexity: ${complexity}</span>
+                                <span class="complexity-indicator ${methodCognitiveComplexitySegment}">Cognitive Complexity: ${method.cognitive_complexity}</span>
                                 <span class="complexity-indicator ${methodMaintainabilitySegment}">MI: ${maintainability !== undefined ? maintainability.toFixed(1) : 'N/A'}</span>
                                 <span class="complexity-indicator ${methodLocSegment}">LOC: ${loc}</span>
                             </span>
@@ -1157,12 +1166,14 @@
                 details.function_nodes.forEach(node => {
                 if (!methodNames.has(node.name)) {
                     const functionComplexitySegment = node.complexity_segment;
+                    const functionCognitiveComplexitySegment = node.cognitive_complexity_segment;
                     const functionMaintainabilitySegment = node.maintainability_segment;
                     const functionLocSegment = node.loc_segment;
                     html += `<li>
                         <strong>${node.name}()</strong><br/>
                         <span style="margin-left: 1rem; font-size: 0.9em; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-                            <span class="complexity-indicator ${functionComplexitySegment}">Complexity: ${node.complexity}</span>
+                            <span class="complexity-indicator ${functionComplexitySegment}">Cyclomatic Complexity: ${node.complexity}</span>
+                            <span class="complexity-indicator ${functionCognitiveComplexitySegment}">Cognitive Complexity: ${node.cognitive_complexity}</span>
                             <span class="complexity-indicator ${functionMaintainabilitySegment}">MI: ${node.maintainability !== undefined ? node.maintainability.toFixed(1) : 'N/A'}</span>
                             <span class="complexity-indicator ${functionLocSegment}">LOC: ${node.loc}</span>
                         </span>

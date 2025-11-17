@@ -5,14 +5,18 @@ from typing import List, Type
 from metripy.Application.Config.CodeSmellConfig import CodeSmellConfig
 from metripy.LangAnalyzer.Generic.CodeSmell.AstParser import AstParser
 from metripy.LangAnalyzer.Generic.CodeSmell.CodeSmell import CodeSmell
-from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.BaseDetector import \
-    BaseCodeSmellDetector
-from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.TooManyParametersDetector import \
-    TooManyParametersDetector
-from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.UnusedFunctionsDetector import \
-    UnusedFunctionsDetector
-from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.UnusedImportsDetector import \
-    UnusedImportsDetector
+from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.BaseDetector import (
+    BaseCodeSmellDetector,
+)
+from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.TooManyParametersDetector import (
+    TooManyParametersDetector,
+)
+from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.UnusedFunctionsDetector import (
+    UnusedFunctionsDetector,
+)
+from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.UnusedImportsDetector import (
+    UnusedImportsDetector,
+)
 
 
 class GenericCodeSmellDetector:
@@ -88,10 +92,10 @@ class GenericCodeSmellDetector:
         config: CodeSmellConfig, filename: str, code: str
     ) -> "GenericCodeSmellDetector":
         """Factory method to create detector for Python"""
-        from metripy.LangAnalyzer.Python.Ast.PythonAstParser import \
-            PythonAstParser
-        from metripy.LangAnalyzer.Python.CodeSmell.PythonNamingConventionDetector import \
-            PythonNamingConventionDetector
+        from metripy.LangAnalyzer.Python.Ast.PythonAstParser import PythonAstParser
+        from metripy.LangAnalyzer.Python.CodeSmell.PythonNamingConventionDetector import (
+            PythonNamingConventionDetector,
+        )
 
         parser = PythonAstParser()
         return GenericCodeSmellDetector(
@@ -108,8 +112,9 @@ class GenericCodeSmellDetector:
     ) -> "GenericCodeSmellDetector":
         """Factory method to create detector for PHP"""
         from metripy.LangAnalyzer.Php.Ast.PhpAstParser import PhpAstParser
-        from metripy.LangAnalyzer.Php.CodeSmell.PhpNamingConventionDetector import \
-            PhpNamingConventionDetector
+        from metripy.LangAnalyzer.Php.CodeSmell.PhpNamingConventionDetector import (
+            PhpNamingConventionDetector,
+        )
 
         parser = PhpAstParser()
         return GenericCodeSmellDetector(
@@ -125,10 +130,12 @@ class GenericCodeSmellDetector:
         config: CodeSmellConfig, filename: str, code: str
     ) -> "GenericCodeSmellDetector":
         """Factory method to create detector for TypeScript"""
-        from metripy.LangAnalyzer.Typescript.Ast.TypescriptAstParser import \
-            TypescriptAstParser
-        from metripy.LangAnalyzer.Typescript.CodeSmell.TypescriptNamingConventionDetector import \
-            TypescriptNamingConventionDetector
+        from metripy.LangAnalyzer.Typescript.Ast.TypescriptAstParser import (
+            TypescriptAstParser,
+        )
+        from metripy.LangAnalyzer.Typescript.CodeSmell.TypescriptNamingConventionDetector import (
+            TypescriptNamingConventionDetector,
+        )
 
         parser = TypescriptAstParser()
         return GenericCodeSmellDetector(

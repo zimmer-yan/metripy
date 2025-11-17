@@ -1,3 +1,6 @@
+# v0.5.0
+- Added cognitive complexity (for python & php)
+
 # v0.4.2
 - Fix issue in test case
 

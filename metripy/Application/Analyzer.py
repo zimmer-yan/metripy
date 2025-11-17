@@ -11,8 +11,7 @@ from metripy.Import.Json.JsonImporter import JsonImporter
 from metripy.LangAnalyzer.AbstractLangAnalyzer import AbstractLangAnalyzer
 from metripy.LangAnalyzer.Php.PhpAnalyzer import PhpAnalyzer
 from metripy.LangAnalyzer.Python.PythonAnalyzer import PythonAnalyzer
-from metripy.LangAnalyzer.Typescript.TypescriptAnalyzer import \
-    TypescriptAnalyzer
+from metripy.LangAnalyzer.Typescript.TypescriptAnalyzer import TypescriptAnalyzer
 from metripy.Metric.Code.FileMetrics import FileMetrics
 from metripy.Metric.Git.GitMetrics import GitMetrics
 from metripy.Metric.ProjectMetrics import ProjectMetrics

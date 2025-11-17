@@ -16,6 +16,10 @@ class TestPhpAstParser(TestCase):
             return true;
         }
     }
+    function testFunction() {
+        echo 'Hello, World!';
+        return true;
+    }
     """
 
     def setUp(self):
@@ -54,3 +58,13 @@ class TestPhpAstParser(TestCase):
         methods = self.parser.get_class_methods(class_node)
         self.assertEqual(len(methods), 1)
         self.assertEqual(methods[0], "testMethod")
+
+    def test_get_function_nodes(self):
+        function_nodes = self.parser.get_function_nodes()
+        self.assertEqual(len(function_nodes), 2)
+        self.assertEqual(
+            self.parser.extract_function_name(function_nodes[1]), "testMethod"
+        )
+        self.assertEqual(
+            self.parser.extract_function_name(function_nodes[0]), "testFunction"
+        )

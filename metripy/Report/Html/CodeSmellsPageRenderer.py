@@ -14,7 +14,7 @@ class CodeSmellsPageRenderer(PageRenderer):
             for x in metrics.file_metrics
             if len(x.code_smells) > 0
         }
-        print(json.dumps(data, indent=2))
+
         self.render_template(
             "code_smells.html",
             {

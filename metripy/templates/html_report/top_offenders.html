@@ -235,6 +235,41 @@
             </section>
 
             <div class="section-divider"></div>
+            
+            <section class="two-column-section">
+                <div class="info-card">
+                    <h4>File Cognitive complexity</h4>
+                    
+                    <ul class="offender-list">
+                        {{#EACH file_cog_complexity_offenders AS offender}}
+                        <li class="offender status-{{offender.status}}">
+                            <div class="offender-name">{{offender.full_name}}</div>
+                            <div class="offender-details">
+                                <span class="label">Complexity:</span> {{offender.total_cog_complexity}}
+                            </div>
+                        </li>
+                        {{/EACH}}
+                    </ul>
+
+                </div>
+                <div class="info-card">
+                    <h4>Function Cognitive complexity</h4>
+
+                    <ul class="offender-list">
+                        {{#EACH function_cog_complexity_offenders AS offender}}
+                        <li class="offender status-{{offender.status}}">
+                            <div class="offender-name">{{offender.full_name}}</div>
+                            <div class="offender-details">
+                                <span class="label">Complexity:</span> {{offender.cognitive_complexity}}
+                            </div>
+                        </li>
+                        {{/EACH}}
+                    </ul>
+
+                </div>
+            </section>
+
+            <div class="section-divider"></div>
 
             <section class="two-column-section">
                 <div class="info-card">

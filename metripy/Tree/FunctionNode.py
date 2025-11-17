@@ -28,6 +28,7 @@ class FunctionNode:
         self.time = 0
         self.bugs = 0
         self.maintainability_index = 0
+        self.cognitive_complexity = 0
         self.trend: FunctionTrendMetric | None = None
 
     def get_loc(self) -> int:
@@ -87,6 +88,10 @@ class FunctionNode:
             "maintainability_segment": Segmentor.get_maintainability_segment(
                 self.maintainability_index
             ),
+            "cognitive_complexity": self.cognitive_complexity,
+            "cognitive_complexity_segment": Segmentor.get_complexity_segment(
+                self.cognitive_complexity
+            ),
         }
 
     def __dict__(self) -> dict:
@@ -111,5 +116,5 @@ class FunctionNode:
         node.time = data["time"]
         node.bugs = data["bugs"]
         node.maintainability_index = data["maintainability_index"]
-
+        node.cognitive_complexity = data.get("cognitive_complexity", 0)
         return node

@@ -1,6 +1,7 @@
 from metripy.Metric.Code.Segmentor import Segmentor
 from metripy.Metric.ProjectMetrics import ProjectMetrics
 from metripy.Report.Html.PageRenderer import PageRenderer
+from metripy.Tree.FunctionNode import FunctionNode
 
 
 class TopOffendersPageRenderer(PageRenderer):
@@ -18,7 +19,7 @@ class TopOffendersPageRenderer(PageRenderer):
             :10
         ]
 
-        all_functions: list = []
+        all_functions: list[FunctionNode] = []
         for fm in metrics.file_metrics:
             all_functions.extend(fm.function_nodes)
 
@@ -32,7 +33,12 @@ class TopOffendersPageRenderer(PageRenderer):
             all_functions, key=lambda x: x.get_loc(), reverse=True
         )[:10]
 
-        # TODO maintainability index per function, we dont calc yet
+        orderedByTotalCogCc = sorted(
+            metrics.file_metrics, key=lambda x: x.total_cog_complexity, reverse=True
+        )[:10]
+        functionsOrderedByCogCc = sorted(
+            all_functions, key=lambda x: x.cognitive_complexity, reverse=True
+        )[:10]
 
         self.render_template(
             "top_offenders.html",
@@ -47,6 +53,15 @@ class TopOffendersPageRenderer(PageRenderer):
                         "status": Segmentor.get_complexity_segment(e.totalCc),
                     }
                     for e in orderedByTotalCc
+                ],
+                "file_cog_complexity_offenders": [
+                    {
+                        **e.to_dict(),
+                        "status": Segmentor.get_complexity_segment(
+                            e.total_cog_complexity
+                        ),
+                    }
+                    for e in orderedByTotalCogCc
                 ],
                 "file_mi_offenders": [
                     {
@@ -70,6 +85,15 @@ class TopOffendersPageRenderer(PageRenderer):
                         "status": Segmentor.get_complexity_segment(e.complexity),
                     }
                     for e in functionsOrderedByCc
+                ],
+                "function_cog_complexity_offenders": [
+                    {
+                        **e.to_dict(),
+                        "status": Segmentor.get_complexity_segment(
+                            e.cognitive_complexity
+                        ),
+                    }
+                    for e in functionsOrderedByCogCc
                 ],
                 "function_mi_offenders": [
                     {

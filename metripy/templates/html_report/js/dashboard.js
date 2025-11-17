@@ -265,6 +265,7 @@ class Dashboard {
         // Update metric values with animation
         this.animateValue('total-loc', this.data.totalLoc);
         this.animateValue('avg-complexity', this.data.avgComplexity, 1);
+        this.animateValue('avg-cog-complexity', this.data.avgCogComplexity, 1);
         this.animateValue('maintainability-index', this.data.maintainabilityIndex, 1);
         this.animateValue('avg-method-size', this.data.avgMethodSize, 1);
 
@@ -312,6 +313,9 @@ class Dashboard {
         
         // Update Complexity segmentation
         this.updateSegmentation('complexity', this.data.segmentation.complexity);
+
+        // Update Cognitive Complexity segmentation
+        this.updateSegmentation('cognitiveComplexity', this.data.segmentation.cognitiveComplexity);
         
         // Update Maintainability segmentation
         this.updateSegmentation('maintainability', this.data.segmentation.maintainability);
@@ -347,7 +351,7 @@ class Dashboard {
             const adjustment = 100 / totalPercentage;
             percentages = percentages.map(p => p * adjustment);
         }
-        
+        console.log(metricType);
         segmentOrder.forEach((dataCategory, index) => {
             const count = segmentData[dataCategory] || 0;
             const percentage = percentages[index];
@@ -355,7 +359,7 @@ class Dashboard {
             // Get the display name for DOM queries
             const displayName = displayMapping[dataCategory] || dataCategory;
             
-            
+            console.log(`[data-segment="${displayName}"]`);
             // Update segment bar width
             const segmentElement = document.querySelector(`[data-segment="${displayName}"]`);
             
@@ -409,6 +413,12 @@ class Dashboard {
                 'warning': 'complex', 
                 'critical': 'very-complex'
             },
+            cognitiveComplexity: {
+                'good': 'simple2',
+                'ok': 'moderate2',
+                'warning': 'complex2', 
+                'critical': 'very-complex2'
+            },
             maintainability: {
                 'good': 'excellent',
                 'ok': 'good',
@@ -438,6 +448,12 @@ class Dashboard {
                 'ok': `${count} files with 6-10 average cyclomatic complexity (acceptable complexity)`,
                 'warning': `${count} files with 11-20 average cyclomatic complexity (should consider refactoring)`,
                 'critical': `${count} files with 21+ average cyclomatic complexity (high risk, urgent attention needed)`
+            },
+            cognitiveComplexity: {
+                'good': `${count} files with 1-5 average cognitive complexity (easy to test and maintain)`,
+                'ok': `${count} files with 6-10 average cognitive complexity (acceptable complexity)`,
+                'warning': `${count} files with 11-20 average cognitive complexity (should consider refactoring)`,
+                'critical': `${count} files with 21+ average cognitive complexity (high risk, urgent attention needed)`
             },
             maintainability: {
                 'good': `${count} files with 80-100 maintainability score (highly maintainable code)`,

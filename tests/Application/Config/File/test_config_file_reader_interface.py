@@ -2,8 +2,9 @@ from unittest import TestCase
 
 from metripy.Application.Config.CodeSmellConfig import CodeSmellConfig
 from metripy.Application.Config.Config import Config
-from metripy.Application.Config.File.ConfigFileReaderInterface import \
-    ConfigFileReaderInterface
+from metripy.Application.Config.File.ConfigFileReaderInterface import (
+    ConfigFileReaderInterface,
+)
 from metripy.Application.Config.ReportConfig import ReportConfig
 
 

@@ -9,8 +9,11 @@ import lizard
 from metripy.Application.Config.ProjectConfig import ProjectConfig
 from metripy.Component.Output.ProgressBar import ProgressBar
 from metripy.LangAnalyzer.AbstractLangAnalyzer import AbstractLangAnalyzer
-from metripy.LangAnalyzer.Php.CodeSmell.PhpCodeSmellDetector import \
-    PhpCodeSmellDetector
+from metripy.LangAnalyzer.Php.Ast.PhpAstParser import PhpAstParser
+from metripy.LangAnalyzer.Php.CodeSmell.PhpCodeSmellDetector import PhpCodeSmellDetector
+from metripy.LangAnalyzer.Php.Metrics.PhpCognitiveComplexityCalculator import (
+    PhpCognitiveComplexityCalculator,
+)
 from metripy.LangAnalyzer.Php.PhpBasicAstParser import PhpBasicAstParser
 from metripy.LangAnalyzer.Php.PhpBasicLocAnalyzer import PhpBasicLocAnalyzer
 from metripy.LangAnalyzer.Php.PhpHalSteadAnalyzer import PhpHalSteadAnalyzer
@@ -200,6 +203,19 @@ class PhpAnalyzer(AbstractLangAnalyzer):
         module_node.imports = imports_analyzer.extract_imports()
 
         module_node.code_smells = self.code_smell_detector.detect_all(filename, code)
+
+        parser = PhpAstParser()
+        parser.parse(code)
+        cognitive_complexities = PhpCognitiveComplexityCalculator(
+            parser
+        ).calculate_for_all_functions()
+        for func_name, complexity in cognitive_complexities.items():
+            full_name = self.full_name(filename, func_name)
+            function_node = functions.get(full_name)
+            if function_node is not None:
+                function_node.cognitive_complexity = complexity
+            else:
+                raise ValueError(f"Function node not found for function {full_name}")
 
     def _calculate_maintainability_index(
         self, functions: list[FunctionNode], module_node: ModuleNode

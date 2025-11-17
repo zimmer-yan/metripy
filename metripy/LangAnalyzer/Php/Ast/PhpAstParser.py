@@ -36,7 +36,9 @@ class PhpAstParser(AstParser):
         return self.find_nodes_by_type("namespace_use_declaration")
 
     def get_function_nodes(self) -> List[Node]:
-        return self.find_nodes_by_type("function_declaration")
+        return self.find_nodes_by_type("function_definition") + self.find_nodes_by_type(
+            "method_declaration"
+        )
 
     def get_class_nodes(self) -> List[Node]:
         return self.find_nodes_by_type("class_declaration")

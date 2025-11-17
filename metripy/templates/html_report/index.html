@@ -86,12 +86,14 @@
             <header class="page-header">
                 <div class="header-content">
                     <h1>Code Metrics Overview</h1>
-                    <p class="subtitle">Comprehensive analysis of your codebase quality and maintainability</p>
+                    <p class="subtitle">Comprehensive analysis of your codebase quality and maintainability - these metrics only show the average values per file so outliers might be hidden</p>
                 </div>
             </header>
 
             <!-- Metrics Cards Row -->
             <section class="metrics-grid">
+
+                <!-- LOC Card -->
                 <div class="metric-card">
                     <div class="metric-header">
                         <div class="metric-icon loc">
@@ -143,19 +145,20 @@
                     </div>
                 </div>
 
+                <!-- Cyclomatic Complexity Card -->
                 <div class="metric-card">
                     <div class="metric-header">
                         <div class="metric-icon complexity">
                             <i class="fas fa-sitemap"></i>
                         </div>
                         <div class="metric-title">
-                            <h3>Avg. Complexity</h3>
+                            <h3>Avg. Cyclomatic Complexity</h3>
                             <p>Avg. Function Cyclomatic Complexity per file</p>
                         </div>
                     </div>
                     <div class="metric-value">
                         <span class="value" id="avg-complexity">{{total_code_metrics.avgCcPerFunction}}</span>
-                        <span class="unit">per function</span>
+                        <span class="unit">avg per function</span>
                         {{#IF has_total_code_metrics_trend}}
                         <span class="trend-badge {{total_code_metrics_trend.avgCcPerFunction_trend_type}}" title="vs last analysis">
                             <i class="fas fa-{{total_code_metrics_trend.avgCcPerFunction_trend_icon}}"></i>
@@ -194,6 +197,62 @@
                     </div>
                 </div>
 
+                <!-- Cognitive Complexity Card -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon complexity">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="metric-title">
+                            <h3>Avg. Cognitive Complexity</h3>
+                            <p>Avg. Function Cognitive Complexity per file</p>
+                        </div>
+                    </div>
+                    <div class="metric-value">
+                        <span class="value" id="avg-cog-complexity">{{total_code_metrics.avg_cog_complexity_per_function}}</span>
+                        <span class="unit">avg per function</span>
+                        {{#IF has_total_code_metrics_trend}}
+                        <span class="trend-badge {{total_code_metrics_trend.avg_cog_complexity_per_function_trend_type}}" title="vs last analysis">
+                            <i class="fas fa-{{total_code_metrics_trend.avg_cog_complexity_per_function_trend_icon}}"></i>
+                            <span class="trend-value">{{total_code_metrics_trend.avg_cog_complexity_per_function_delta}}</span>
+                        </span>
+                        {{/IF}}
+                    </div>
+                    <div class="metric-segmentation">
+                        <div class="segment-bar">
+                            <div class="segment good" data-segment="simple2"></div>
+                            <div class="segment okay" data-segment="moderate2"></div>
+                            <div class="segment warning" data-segment="complex2"></div>
+                            <div class="segment critical" data-segment="very-complex2"></div>
+                        </div>
+                        <div class="segment-labels">
+                            <div class="segment-label good">
+                                <div class="segment-count" data-count="simple2">0</div>
+                                <div class="segment-text">Simple</div>
+                            </div>
+                            <div class="segment-label okay">
+                                <div class="segment-count" data-count="moderate2">0</div>
+                                <div class="segment-text">Moderate</div>
+                            </div>
+                            <div class="segment-label warning">
+                                <div class="segment-count" data-count="complex2">0</div>
+                                <div class="segment-text">Complex</div>
+                            </div>
+                            <div class="segment-label critical">
+                                <div class="segment-count" data-count="very-complex2">0</div>
+                                <div class="segment-text">Very Complex</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-description">
+                        <p>Lower complexity (1-4) is better. Values above 10 indicate functions that are hard to test and maintain.</p>
+                    </div>
+                </div>
+
+            </section>
+            <section class="metrics-grid">
+
+                <!-- Maintainability Card -->
                 <div class="metric-card">
                     <div class="metric-header">
                         <div class="metric-icon maintainability">
@@ -245,6 +304,7 @@
                     </div>
                 </div>
 
+                <!-- Avg. Method Size Card -->
                 <div class="metric-card">
                     <div class="metric-header">
                         <div class="metric-icon avg-loc">
@@ -332,6 +392,7 @@
             avgComplexity: {{total_code_metrics.avgCcPerFunction}},
             maintainabilityIndex: {{total_code_metrics.maintainabilityIndex}},
             avgMethodSize: {{total_code_metrics.avgLocPerFunction}},
+            avgCogComplexity: {{total_code_metrics.avg_cog_complexity_per_function}},
             segmentation: {{segmentation_data}},
         };
     </script>

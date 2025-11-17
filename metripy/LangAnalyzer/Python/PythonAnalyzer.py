@@ -8,16 +8,15 @@ from radon.visitors import Class, Function
 from metripy.Application.Config.ProjectConfig import ProjectConfig
 from metripy.Component.Output.ProgressBar import ProgressBar
 from metripy.LangAnalyzer.AbstractLangAnalyzer import AbstractLangAnalyzer
-from metripy.LangAnalyzer.Generic.DuplicateSearch.DuplicateDetector import \
-    DuplicateDetector
-from metripy.LangAnalyzer.Python.CodeSmell.PythonCodeSmellDetector import \
-    PythonCodeSmellDetector
-from metripy.LangAnalyzer.Python.DuplicateSearch.PythonTokenizer import \
-    PythonTokenizer
-from metripy.LangAnalyzer.Python.PythonHalSteadAnalyzer import \
-    PythonHalSteadAnalyzer
-from metripy.LangAnalyzer.Python.PythonImportsAnalyzer import \
-    PythonImportsAnalyzer
+from metripy.LangAnalyzer.Generic.DuplicateSearch.DuplicateDetector import (
+    DuplicateDetector,
+)
+from metripy.LangAnalyzer.Python.CodeSmell.PythonCodeSmellDetector import (
+    PythonCodeSmellDetector,
+)
+from metripy.LangAnalyzer.Python.DuplicateSearch.PythonTokenizer import PythonTokenizer
+from metripy.LangAnalyzer.Python.PythonHalSteadAnalyzer import PythonHalSteadAnalyzer
+from metripy.LangAnalyzer.Python.PythonImportsAnalyzer import PythonImportsAnalyzer
 from metripy.Metric.Code.FileMetrics import FileMetrics
 from metripy.Tree.ClassNode import ClassNode
 from metripy.Tree.FunctionNode import FunctionNode
@@ -204,6 +203,24 @@ class PythonAnalyzer(AbstractLangAnalyzer):
         self.duplicate_detector.add_code(filename, code)
 
         module_node.code_smells = self.code_smell_detector.detect_all(filename, code)
+
+        from metripy.LangAnalyzer.Python.Ast.PythonAstParser import PythonAstParser
+        from metripy.LangAnalyzer.Python.Metrics.PythonCognitiveComplexityCalculator import (
+            PythonCognitiveComplexityCalculator,
+        )
+
+        parser = PythonAstParser()
+        parser.parse(code)
+        cognitive_complexities = PythonCognitiveComplexityCalculator(
+            parser
+        ).calculate_for_all_functions()
+        for func_name, complexity in cognitive_complexities.items():
+            full_name = self.full_name(filename, func_name)
+            function_node = functions.get(full_name)
+            if function_node is not None:
+                function_node.cognitive_complexity = complexity
+            else:
+                raise ValueError(f"Function node not found for function {full_name}")
 
     def get_metrics(self) -> list[FileMetrics]:
         return super().get_metrics()

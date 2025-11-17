@@ -3,9 +3,12 @@
 from typing import Dict
 
 from metripy.LangAnalyzer.Generic.CodeSmell.CodeSmell import (
-    CodeSmellSeverity, CodeSmellType)
-from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.NamingConventionDetector import \
-    NamingConventionDetector
+    CodeSmellSeverity,
+    CodeSmellType,
+)
+from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.NamingConventionDetector import (
+    NamingConventionDetector,
+)
 
 
 class PythonNamingConventionDetector(NamingConventionDetector):

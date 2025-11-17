@@ -49,10 +49,18 @@ class AbstractLangAnalyzer(ABC):
                 avgLocPerFunction = sum(
                     function.get_loc() for function in module.functions
                 ) / len(module.functions)
+                total_cog_complexity = sum(
+                    function.cognitive_complexity for function in module.functions
+                )
+                avg_cog_complexity_per_function = total_cog_complexity / len(
+                    module.functions
+                )
             else:
                 totalCc = 0
                 avgCcPerFunction = 0
                 avgLocPerFunction = 0
+                total_cog_complexity = 0
+                avg_cog_complexity_per_function = 0
             maintainabilityIndex = module.maintainability_index
 
             file_metric = FileMetrics(
@@ -67,6 +75,8 @@ class AbstractLangAnalyzer(ABC):
                 import_name=module.import_name,
                 imports=module.imports,
                 code_smells=module.code_smells,
+                total_cog_complexity=total_cog_complexity,
+                avg_cog_complexity_per_function=avg_cog_complexity_per_function,
             )
             metrics[full_name] = file_metric
 

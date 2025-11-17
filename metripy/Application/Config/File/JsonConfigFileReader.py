@@ -1,8 +1,9 @@
 import json
 
 from metripy.Application.Config.Config import Config
-from metripy.Application.Config.File.ConfigFileReaderInterface import \
-    ConfigFileReaderInterface
+from metripy.Application.Config.File.ConfigFileReaderInterface import (
+    ConfigFileReaderInterface,
+)
 
 
 class JsonConfigFileReader(ConfigFileReaderInterface):

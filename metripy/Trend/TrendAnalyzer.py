@@ -1,5 +1,6 @@
 from metripy.Metric.Code.AggregatedMetrics import AggregatedMetrics
 from metripy.Metric.Code.FileMetrics import FileMetrics
+from metripy.Metric.Code.SegmentedMetrics import SegmentedMetrics
 from metripy.Metric.ProjectMetrics import ProjectMetrics
 from metripy.Metric.Trend.AggregatedTrendMetric import AggregatedTrendMetric
 from metripy.Metric.Trend.ClassTrendMetric import ClassTrendMetric
@@ -24,6 +25,8 @@ class TrendAnalyzer:
             maintainabilityIndex=file_metric.maintainabilityIndex,
             historical_avgLocPerFunction=historical_file_metric.avgLocPerFunction,
             avgLocPerFunction=file_metric.avgLocPerFunction,
+            historical_avg_cog_complexity_per_function=historical_file_metric.avg_cog_complexity_per_function,
+            avg_cog_complexity_per_function=file_metric.avg_cog_complexity_per_function,
         )
 
     def create_class_trend_metric(
@@ -127,6 +130,12 @@ class TrendAnalyzer:
                 "complexity"
             ],
             segmented_complexity=aggregated_metric.segmentation_data["complexity"],
+            historical_segmented_cog_complexity=historical_aggregated_metric.segmentation_data.get(
+                "cognitiveComplexity", SegmentedMetrics()
+            ),
+            segmented_cog_complexity=aggregated_metric.segmentation_data[
+                "cognitiveComplexity"
+            ],
             historical_segmented_maintainability=historical_aggregated_metric.segmentation_data[
                 "maintainability"
             ],
@@ -137,6 +146,8 @@ class TrendAnalyzer:
                 "methodSize"
             ],
             segmented_method_size=aggregated_metric.segmentation_data["methodSize"],
+            historical_avg_cog_complexity_per_function=historical_aggregated_metric.avg_cog_complexity_per_function,
+            avg_cog_complexity_per_function=aggregated_metric.avg_cog_complexity_per_function,
         )
 
     def add_historical_project_trends(

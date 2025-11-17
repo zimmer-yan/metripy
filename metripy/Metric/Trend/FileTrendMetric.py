@@ -11,6 +11,8 @@ class FileTrendMetric:
         maintainabilityIndex: float,
         historical_avgLocPerFunction: float,
         avgLocPerFunction: float,
+        historical_avg_cog_complexity_per_function: float,
+        avg_cog_complexity_per_function: float,
     ):
         self.historical_loc = historical_loc
         self.loc_delta = loc - historical_loc
@@ -29,6 +31,13 @@ class FileTrendMetric:
         self.avgLocPerFunction_delta = avgLocPerFunction - historical_avgLocPerFunction
         self.historical_avgLocPerFunction = historical_avgLocPerFunction
 
+        self.historical_avg_cog_complexity_per_function = (
+            historical_avg_cog_complexity_per_function
+        )
+        self.avg_cog_complexity_per_function_delta = (
+            avg_cog_complexity_per_function - historical_avg_cog_complexity_per_function
+        )
+
     def to_dict(self) -> dict:
         return {
             "historical_loc": round(self.historical_loc, 2),
@@ -37,6 +46,12 @@ class FileTrendMetric:
             "totalCc_delta": round(self.totalCc_delta, 2),
             "historical_avgCcPerFunction": round(self.historical_avgCcPerFunction, 2),
             "avgCcPerFunction_delta": round(self.avgCcPerFunction_delta, 2),
+            "historical_avg_cog_complexity_per_function": round(
+                self.historical_avg_cog_complexity_per_function, 2
+            ),
+            "avg_cog_complexity_per_function_delta": round(
+                self.avg_cog_complexity_per_function_delta, 2
+            ),
             "historical_maintainabilityIndex": round(
                 self.historical_maintainabilityIndex, 2
             ),

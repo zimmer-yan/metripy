@@ -103,6 +103,7 @@ class TestAnalyzer(TestCase):
         mock_file_metric = MagicMock(spec=FileMetrics)
         mock_file_metric.loc = 123
         mock_file_metric.avgCcPerFunction = 12
+        mock_file_metric.avg_cog_complexity_per_function = 12
         mock_file_metric.maintainabilityIndex = 89
         mock_file_metric.avgLocPerFunction = 10
         mock_file_metrics = [mock_file_metric]

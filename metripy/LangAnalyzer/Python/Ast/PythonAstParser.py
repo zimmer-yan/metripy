@@ -66,6 +66,13 @@ class PythonAstParser(AstParser):
         return None
 
     def extract_import_name(self, node: Node) -> Optional[str]:
+        """Extract imported name from import node"""
+        name = self.extract_import_qualified_name(node)
+        if name:
+            return name.split(".")[-1]
+        return None
+
+    def extract_import_qualified_name(self, node: Node) -> Optional[str]:
         """Extract imported module/name from import node"""
         if node.type == "import_statement":
             # import foo or import foo as bar

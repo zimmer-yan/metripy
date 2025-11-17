@@ -35,6 +35,7 @@ class PageRenderer:
             {
                 **self.global_template_args,
                 **data,
+                "sidebar_active_" + template_name.split("/")[-1].split(".")[0]: True,
             }
         )
         engine = TemplateEngine(os.path.join(self.template_dir, template_name))

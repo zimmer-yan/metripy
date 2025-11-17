@@ -3,8 +3,9 @@ from unittest import TestCase
 from simhash import Simhash
 
 from metripy.LangAnalyzer.Generic.DuplicateSearch.CodeChunk import CodeChunk
-from metripy.LangAnalyzer.Generic.DuplicateSearch.DuplicateDetector import \
-    DuplicateDetector
+from metripy.LangAnalyzer.Generic.DuplicateSearch.DuplicateDetector import (
+    DuplicateDetector,
+)
 
 
 class TestDuplicateDetector(TestCase):
@@ -236,7 +237,9 @@ def func():
         # Should be sorted by similarity descending
         if len(duplicates) > 1:
             for i in range(len(duplicates) - 1):
-                self.assertGreaterEqual(duplicates[i]["similarity"], duplicates[i + 1]["similarity"])
+                self.assertGreaterEqual(
+                    duplicates[i]["similarity"], duplicates[i + 1]["similarity"]
+                )
 
     def test_multiple_files_duplicate_detection(self):
         """Test duplicate detection across multiple files"""

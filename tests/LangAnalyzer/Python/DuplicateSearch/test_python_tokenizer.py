@@ -1,7 +1,6 @@
 from unittest import TestCase
 
-from metripy.LangAnalyzer.Python.DuplicateSearch.PythonTokenizer import \
-    PythonTokenizer
+from metripy.LangAnalyzer.Python.DuplicateSearch.PythonTokenizer import PythonTokenizer
 
 
 class TestPythonTokenizer(TestCase):

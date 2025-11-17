@@ -23,6 +23,10 @@ class AggregatedTrendMetric:
         segmented_maintainability: SegmentedMetrics,
         historical_segmented_method_size: SegmentedMetrics,
         segmented_method_size: SegmentedMetrics,
+        historical_avg_cog_complexity_per_function: float,
+        avg_cog_complexity_per_function: float,
+        historical_segmented_cog_complexity: SegmentedMetrics,
+        segmented_cog_complexity: SegmentedMetrics,
     ):
         self.historical_loc = historical_loc
         self.loc_delta = loc - historical_loc
@@ -37,9 +41,17 @@ class AggregatedTrendMetric:
         self.historical_num_files = historical_num_files
         self.num_files_delta = num_files - historical_num_files
 
+        self.historical_avg_cog_complexity_per_function = (
+            historical_avg_cog_complexity_per_function
+        )
+        self.avg_cog_complexity_per_function_delta = (
+            avg_cog_complexity_per_function - historical_avg_cog_complexity_per_function
+        )
+
         self.historical_segmentation_data = {
             "loc": historical_segmented_loc,
             "complexity": historical_segmented_complexity,
+            "cog_complexity": historical_segmented_cog_complexity,
             "maintainability": historical_segmented_maintainability,
             "methodSize": historical_segmented_method_size,
         }
@@ -48,6 +60,9 @@ class AggregatedTrendMetric:
             "loc": SegmentedTrendMetric(historical_segmented_loc, segmented_loc),
             "complexity": SegmentedTrendMetric(
                 historical_segmented_complexity, segmented_complexity
+            ),
+            "cognitiveComplexity": SegmentedTrendMetric(
+                historical_segmented_cog_complexity, segmented_cog_complexity
             ),
             "maintainability": SegmentedTrendMetric(
                 historical_segmented_maintainability, segmented_maintainability
@@ -77,6 +92,15 @@ class AggregatedTrendMetric:
             ),
             "avgCcPerFunction_trend_icon": self.get_trend_icon(
                 self.avgCcPerFunction_delta
+            ),
+            "avg_cog_complexity_per_function_delta": round(
+                self.avg_cog_complexity_per_function_delta, 2
+            ),
+            "avg_cog_complexity_per_function_trend_type": self.get_trend_type(
+                self.avg_cog_complexity_per_function_delta, False
+            ),
+            "avg_cog_complexity_per_function_trend_icon": self.get_trend_icon(
+                self.avg_cog_complexity_per_function_delta
             ),
             "maintainabilityIndex_delta": round(self.maintainabilityIndex_delta, 2),
             "maintainabilityIndex_trend_type": self.get_trend_type(

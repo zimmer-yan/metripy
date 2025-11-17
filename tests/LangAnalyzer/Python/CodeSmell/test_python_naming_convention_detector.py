@@ -2,10 +2,13 @@ from unittest import TestCase
 
 from metripy.Application.Config.CodeSmellConfig import CodeSmellConfig
 from metripy.LangAnalyzer.Generic.CodeSmell.CodeSmell import (
-    CodeSmellSeverity, CodeSmellType)
+    CodeSmellSeverity,
+    CodeSmellType,
+)
 from metripy.LangAnalyzer.Python.Ast.PythonAstParser import PythonAstParser
-from metripy.LangAnalyzer.Python.CodeSmell.PythonNamingConventionDetector import \
-    PythonNamingConventionDetector
+from metripy.LangAnalyzer.Python.CodeSmell.PythonNamingConventionDetector import (
+    PythonNamingConventionDetector,
+)
 
 
 class TestPythonNamingConventionDetector(TestCase):

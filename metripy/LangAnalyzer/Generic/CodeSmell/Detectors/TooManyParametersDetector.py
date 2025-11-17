@@ -4,9 +4,13 @@ from typing import List
 
 from metripy.Application.Config.CodeSmellConfig import CodeSmellConfig
 from metripy.LangAnalyzer.Generic.CodeSmell.CodeSmell import (
-    CodeSmell, CodeSmellSeverity, CodeSmellType)
-from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.BaseDetector import \
-    BaseCodeSmellDetector
+    CodeSmell,
+    CodeSmellSeverity,
+    CodeSmellType,
+)
+from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.BaseDetector import (
+    BaseCodeSmellDetector,
+)
 
 
 class TooManyParametersDetector(BaseCodeSmellDetector):

@@ -6,8 +6,9 @@ from typing import Dict, List
 
 from metripy.Application.Config.CodeSmellConfig import CodeSmellConfig
 from metripy.LangAnalyzer.Generic.CodeSmell.CodeSmell import CodeSmell
-from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.BaseDetector import \
-    BaseCodeSmellDetector
+from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.BaseDetector import (
+    BaseCodeSmellDetector,
+)
 
 
 class NamingConventionDetector(BaseCodeSmellDetector):

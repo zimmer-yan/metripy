@@ -27,12 +27,16 @@ class ProjectMetrics:
         avgCcPerFunctions = []
         maintainabilityIndices = []
         avgLocPerFunctions = []
+        avg_cog_complexity_per_functions = []
         for file_metric in file_metrics:
             files += 1
             locs.append(file_metric.loc)
             avgCcPerFunctions.append(file_metric.avgCcPerFunction)
             maintainabilityIndices.append(file_metric.maintainabilityIndex)
             avgLocPerFunctions.append(file_metric.avgLocPerFunction)
+            avg_cog_complexity_per_functions.append(
+                file_metric.avg_cog_complexity_per_function
+            )
 
         if files == 0:
             return AggregatedMetrics()
@@ -42,6 +46,7 @@ class ProjectMetrics:
             avgCcPerFunction=self._avg(avgCcPerFunctions),
             maintainabilityIndex=self._avg(maintainabilityIndices),
             avgLocPerFunction=self._avg(avgLocPerFunctions),
+            avg_cog_complexity_per_function=self._avg(avg_cog_complexity_per_functions),
             num_files=files,
             segmented_loc=SegmentedMetrics().set_loc(locs),
             segmented_complexity=SegmentedMetrics().set_complexity(avgCcPerFunctions),
@@ -50,6 +55,9 @@ class ProjectMetrics:
             ),
             segmented_method_size=SegmentedMetrics().set_method_size(
                 avgLocPerFunctions
+            ),
+            segmented_cognitive_complexity=SegmentedMetrics().set_complexity(
+                avg_cog_complexity_per_functions
             ),
         )
 
