@@ -1,3 +1,6 @@
+# v0.7.0
+- Added CSV report output
+
 # v0.6.0
 - Added CLI report output
 - Fixed wrong values on index page
