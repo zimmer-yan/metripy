@@ -1,6 +1,7 @@
 from metripy.Application.Config.ReportConfig import ReportConfig
 from metripy.Component.Output.CliOutput import CliOutput
 from metripy.Report import ReporterInterface
+from metripy.Report.Cli.Reporter import Reporter as CliReporter
 from metripy.Report.Html.Reporter import Reporter as HtmlReporter
 from metripy.Report.Json.GitJsonReporter import GitJsonReporter
 from metripy.Report.Json.JsonReporter import JsonReporter
@@ -18,7 +19,7 @@ class ReporterFactory:
         elif config.type == "csv":
             raise NotImplementedError
         elif config.type == "cli":
-            raise NotImplementedError
+            return CliReporter(config, output)
         elif config.type == "json-git":
             return GitJsonReporter(config, output)
         else:

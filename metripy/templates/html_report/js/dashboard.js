@@ -14,23 +14,10 @@ class Dashboard {
         this.setupEventListeners();
         this.loadData();
         this.updateMetrics();
-        //this.setupNavigation();
         this.setupResponsiveMenu();
     }
 
     setupEventListeners() {
-        // Navigation links
-        /*document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.handleNavigation(e.target.closest('.nav-link'));
-            });
-        });*/
-
-        // Header action buttons removed
-
-        // Chart period controls removed - showing all data
-
         // Window resize handler
         window.addEventListener('resize', () => {
             this.handleResize();
@@ -80,67 +67,6 @@ class Dashboard {
         window.addEventListener('resize', createMenuToggle);
     }
 
-    handleNavigation(link) {
-        const href = link.getAttribute('href');
-        const section = href.replace('#', '');
-        
-        // Update active navigation
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        link.closest('.nav-item').classList.add('active');
-        
-        // Switch to section
-        this.switchSection(section);
-    }
-
-    switchSection(section) {
-        console.log(`Switching to section: ${section}`);
-        
-        // Here you can implement section switching logic
-        // For now, we'll just update the page title
-        const titles = {
-            overview: 'Code Metrics Overview',
-            files: 'File Analysis',
-            complexity: 'Complexity Analysis',
-            maintainability: 'Maintainability Report',
-            'git-analysis': 'Git Analysis',
-            trends: 'Trend Analysis'
-        };
-        
-        const titleElement = document.querySelector('.page-header h1');
-        if (titleElement && titles[section]) {
-            titleElement.textContent = titles[section];
-        }
-        
-        this.currentSection = section;
-        this.loadSectionData(section);
-    }
-
-    loadSectionData(section) {
-        // Load section-specific data
-        switch (section) {
-            case 'overview':
-                this.updateMetrics();
-                break;
-            case 'files':
-                this.loadFilesList();
-                break;
-            case 'complexity':
-                this.loadComplexityData();
-                break;
-            case 'maintainability':
-                this.loadMaintainabilityData();
-                break;
-            case 'git-analysis':
-                this.loadGitAnalysis();
-                break;
-            case 'trends':
-                this.loadTrendsData();
-                break;
-        }
-    }
-
     async loadData() {
         try {
             // Load git statistics from embedded data
@@ -153,13 +79,12 @@ class Dashboard {
                     ...window.METRICS_DATA
                 };
                 console.log('Loaded metrics data from template');
+                console.log(this.data);
                 
                 // Update the UI with the loaded data
                 this.updateMetrics();
             } else {
-                console.warn('METRICS_DATA not found in template, using fallback');
-                await this.simulateDataLoading(); // Fallback for development
-                this.updateMetrics();
+                console.warn('METRICS_DATA not found in template');
             }
             
         } catch (error) {
@@ -237,21 +162,7 @@ class Dashboard {
                     };
                 } else {
                     // Fallback to sample data if external data not available
-                    console.warn('METRICS_DATA not found, using fallback sample data');
-                    this.data = {
-                        ...this.data,
-                        totalLoc: 15420,
-                        avgComplexity: 2.8,
-                        maintainabilityIndex: 78.5,
-                        avgMethodSize: 12.3,
-                        gitCommits: existingGitCommits || [],
-                        segmentation: {
-                            loc: { good: 45, ok: 32, warning: 18, critical: 5 },
-                            complexity: { good: 52, ok: 28, warning: 15, critical: 5 },
-                            maintainability: { good: 35, ok: 42, warning: 18, critical: 5 },
-                            methodSize: { good: 48, ok: 35, warning: 12, critical: 5 }
-                        }
-                    };
+                    console.warn('METRICS_DATA not found');
                 }
                 resolve();
             }, 500);
@@ -351,7 +262,6 @@ class Dashboard {
             const adjustment = 100 / totalPercentage;
             percentages = percentages.map(p => p * adjustment);
         }
-        console.log(metricType);
         segmentOrder.forEach((dataCategory, index) => {
             const count = segmentData[dataCategory] || 0;
             const percentage = percentages[index];
@@ -359,7 +269,6 @@ class Dashboard {
             // Get the display name for DOM queries
             const displayName = displayMapping[dataCategory] || dataCategory;
             
-            console.log(`[data-segment="${displayName}"]`);
             // Update segment bar width
             const segmentElement = document.querySelector(`[data-segment="${displayName}"]`);
             
@@ -428,7 +337,7 @@ class Dashboard {
             methodSize: {
                 'good': 'concise',
                 'ok': 'optimal',
-                'warning': 'large',
+                'warning': 'large2',
                 'critical': 'too-large'
             }
         };
@@ -470,27 +379,6 @@ class Dashboard {
         };
 
         return tooltipMap[metricType]?.[dataCategory] || '';
-    }
-
-
-    loadComplexityData() {
-        console.log('Loading complexity data...');
-        // Implement complexity data loading
-    }
-
-    loadMaintainabilityData() {
-        console.log('Loading maintainability data...');
-        // Implement maintainability data loading
-    }
-
-    loadGitAnalysis() {
-        console.log('Loading git analysis...');
-        // Implement git analysis loading
-    }
-
-    loadTrendsData() {
-        console.log('Loading trends data...');
-        // Implement trends data loading
     }
 
     handleResize() {

@@ -17,7 +17,6 @@ class IndexPageRenderer(PageRenderer):
         dependencies = metrics.dependencies if metrics.dependencies is not None else []
         license_by_type = Dependency.get_lisence_distribution(dependencies)
 
-        print(json.dumps(metrics.total_code_metrics.to_dict_segmentation(), indent=4))
         self.render_template(
             "index.html",
             {

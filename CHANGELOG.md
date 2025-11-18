@@ -1,3 +1,7 @@
+# v0.6.0
+- Added CLI report output
+- Fixed wrong values on index page
+
 # v0.5.0
 - Added cognitive complexity (for python & php)
 

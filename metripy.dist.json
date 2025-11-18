@@ -18,7 +18,8 @@
             "reports": {
                 "html": "./build/report/metripy",
                 "json": "./build/json-report/metripy.json",
-                "json-git": "./build/json-report/metripy-git.json"
+                "json-git": "./build/json-report/metripy-git.json",
+                "cli": "."
             },
             "trends": "./build/historical-json-report/metripy.json"
         }

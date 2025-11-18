@@ -329,7 +329,7 @@
                         <div class="segment-bar">
                             <div class="segment good" data-segment="concise"></div>
                             <div class="segment okay" data-segment="optimal"></div>
-                            <div class="segment warning" data-segment="large"></div>
+                            <div class="segment warning" data-segment="large2"></div>
                             <div class="segment critical" data-segment="too-large"></div>
                         </div>
                         <div class="segment-labels">
@@ -342,7 +342,7 @@
                                 <div class="segment-text">Optimal</div>
                             </div>
                             <div class="segment-label warning">
-                                <div class="segment-count" data-count="large">0</div>
+                                <div class="segment-count" data-count="large2">0</div>
                                 <div class="segment-text">Large</div>
                             </div>
                             <div class="segment-label critical">
@@ -407,11 +407,9 @@
             console.warn('License types chart canvas not found');
             return;
         }
-        console.log("creating licenses chart")
         const ctx = canvas.getContext('2d');
         const chartData = {{license_distribution_json}};
-        console.log(Chart.version);
-        this.charts.licenseTypes = new Chart(ctx, {
+        new Chart(ctx, {
             type: 'pie',
             data: {
                 labels: Object.keys(chartData),
