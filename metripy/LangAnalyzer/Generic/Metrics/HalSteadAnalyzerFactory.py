@@ -1,7 +1,14 @@
-from metripy.LangAnalyzer.Python.Metrics.PythonHalSteadAnalyzer import PythonHalSteadAnalyzer
+from metripy.LangAnalyzer.Generic.Metrics.GenericHalSteadAnalyzer import (
+    GenericHalSteadAnalyzer,
+)
 from metripy.LangAnalyzer.Php.Metrics.PhpHalSteadAnalyzer import PhpHalSteadAnalyzer
-from metripy.LangAnalyzer.Generic.Metrics.GenericHalSteadAnalyzer import GenericHalSteadAnalyzer
-from metripy.LangAnalyzer.Typescript.TypescriptHalSteadAnalyzer import TypeScriptHalSteadAnalyzer
+from metripy.LangAnalyzer.Python.Metrics.PythonHalSteadAnalyzer import (
+    PythonHalSteadAnalyzer,
+)
+from metripy.LangAnalyzer.Typescript.TypescriptHalSteadAnalyzer import (
+    TypeScriptHalSteadAnalyzer,
+)
+
 
 class HalSteadAnalyzerFactory:
     _ANALYZERS = {

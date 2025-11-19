@@ -1,7 +1,8 @@
 import math
 import re
-from collections import Counter
 from abc import ABC, abstractmethod
+from collections import Counter
+
 
 class GenericHalSteadAnalyzer(ABC):
     @abstractmethod

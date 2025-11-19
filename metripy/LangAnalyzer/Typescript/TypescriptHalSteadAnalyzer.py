@@ -1,4 +1,6 @@
-from metripy.LangAnalyzer.Generic.Metrics.GenericHalSteadAnalyzer import GenericHalSteadAnalyzer
+from metripy.LangAnalyzer.Generic.Metrics.GenericHalSteadAnalyzer import (
+    GenericHalSteadAnalyzer,
+)
 
 
 class TypeScriptHalSteadAnalyzer(GenericHalSteadAnalyzer):

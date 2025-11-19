@@ -104,10 +104,8 @@ class TypescriptAstParser(AstParser):
                         params.append(self.get_node_text(param_node))
         return params
 
-
     def get_operator_types(self) -> List[str]:
         raise NotImplementedError
 
     def get_operand_types(self) -> List[str]:
         raise NotImplementedError
-        

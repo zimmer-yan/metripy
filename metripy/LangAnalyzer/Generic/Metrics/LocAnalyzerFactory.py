@@ -1,6 +1,8 @@
-from metripy.LangAnalyzer.Python.Metrics.PythonLocAnalyzer import PythonLocAnalyzer
-from metripy.LangAnalyzer.Php.Metrics.PhpLocAnalyzer import PhpLocAnalyzer
 from metripy.LangAnalyzer.Generic.Metrics.GenericLocAnalyzer import GenericLocAnalyzer
+from metripy.LangAnalyzer.Php.Metrics.PhpLocAnalyzer import PhpLocAnalyzer
+from metripy.LangAnalyzer.Python.Metrics.PythonLocAnalyzer import PythonLocAnalyzer
+
+
 class LocAnalyzerFactory:
     _ANALYZERS = {
         "Python": PythonLocAnalyzer(),

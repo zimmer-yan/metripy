@@ -3,7 +3,6 @@ import math
 import lizard
 
 from metripy.Application.Config.ProjectConfig import ProjectConfig
-from metripy.Component.Output.ProgressBar import ProgressBar
 from metripy.LangAnalyzer.AbstractLangAnalyzer import AbstractLangAnalyzer
 from metripy.LangAnalyzer.Typescript.TypescriptAstParser import TypescriptAstParser
 from metripy.LangAnalyzer.Typescript.TypescriptBasicComplexityAnalyzer import (

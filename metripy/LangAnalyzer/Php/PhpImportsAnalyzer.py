@@ -14,5 +14,5 @@ class PhpImportsAnalyzer:
     def extract_imports(self) -> list[str]:
         imports = []
         for node in self.parser.get_import_nodes():
-            imports.append(self.parser.extract_import_name(node))
+            imports.append(self.parser.extract_import_qualified_name(node))
         return imports

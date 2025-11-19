@@ -1,6 +1,6 @@
-from metripy.LangAnalyzer.Python.DuplicateSearch.PythonTokenizer import PythonTokenizer
 from metripy.LangAnalyzer.Generic.DuplicateSearch.Tokenizer import Tokenizer
 from metripy.LangAnalyzer.Php.DuplicateSearch.PhpTokenizer import PhpTokenizer
+from metripy.LangAnalyzer.Python.DuplicateSearch.PythonTokenizer import PythonTokenizer
 
 
 class TokenizerFactory:

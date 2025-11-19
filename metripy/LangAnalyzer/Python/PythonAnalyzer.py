@@ -6,13 +6,14 @@ from radon.visitors import Class, Function
 
 from metripy.Application.Config.ProjectConfig import ProjectConfig
 from metripy.LangAnalyzer.AbstractLangAnalyzer import AbstractLangAnalyzer
-from metripy.LangAnalyzer.Python.PythonImportsAnalyzer import PythonImportsAnalyzer
-from metripy.Tree.ClassNode import ClassNode
-from metripy.Tree.FunctionNode import FunctionNode
 from metripy.LangAnalyzer.Python.Ast.PythonAstParser import PythonAstParser
 from metripy.LangAnalyzer.Python.Metrics.PythonCognitiveComplexityCalculator import (
     PythonCognitiveComplexityCalculator,
 )
+from metripy.LangAnalyzer.Python.PythonImportsAnalyzer import PythonImportsAnalyzer
+from metripy.Tree.ClassNode import ClassNode
+from metripy.Tree.FunctionNode import FunctionNode
+
 
 class PythonAnalyzer(AbstractLangAnalyzer):
 

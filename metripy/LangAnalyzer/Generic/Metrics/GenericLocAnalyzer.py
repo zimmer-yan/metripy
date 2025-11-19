@@ -69,7 +69,9 @@ class GenericLocAnalyzer(ABC):
         pass
 
     @abstractmethod
-    def is_multiline_comment_end(self, line: str, started_on_same_line: bool=False) -> bool:
+    def is_multiline_comment_end(
+        self, line: str, started_on_same_line: bool = False
+    ) -> bool:
         """Detect end of a multi-line comment."""
         pass
 

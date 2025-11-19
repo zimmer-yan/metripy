@@ -1,7 +1,11 @@
+from typing import List
+
 from metripy.Application.Config.CodeSmellConfig import CodeSmellConfig
 from metripy.LangAnalyzer.Generic.CodeSmell.CodeSmell import CodeSmell
-from metripy.LangAnalyzer.Generic.CodeSmell.GenericCodeSmellDetector import GenericCodeSmellDetector
-from typing import List
+from metripy.LangAnalyzer.Generic.CodeSmell.GenericCodeSmellDetector import (
+    GenericCodeSmellDetector,
+)
+
 
 class TypescriptCodeSmellDetector:
     def __init__(self, config: CodeSmellConfig):

@@ -1,3 +1,6 @@
+# v0.7.2
+- Fix halstead and import tests
+
 # v0.7.1
 - Refactor to make analyzers more generic
 - Fix coupling for php

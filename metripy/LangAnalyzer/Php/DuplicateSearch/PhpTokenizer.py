@@ -1,4 +1,5 @@
 import re
+
 from metripy.LangAnalyzer.Generic.DuplicateSearch.Tokenizer import Tokenizer
 
 
@@ -9,13 +10,52 @@ class PhpTokenizer(Tokenizer):
     """
 
     PHP_KEYWORDS = {
-        "if", "else", "elseif", "endif", "for", "foreach", "while", "do",
-        "switch", "case", "default", "break", "continue", "return", "function",
-        "class", "interface", "trait", "extends", "implements", "namespace",
-        "use", "public", "private", "protected", "static", "abstract", "final",
-        "const", "global", "var", "echo", "print", "include", "require",
-        "include_once", "require_once", "new", "try", "catch", "finally",
-        "throw", "array", "true", "false", "null"
+        "if",
+        "else",
+        "elseif",
+        "endif",
+        "for",
+        "foreach",
+        "while",
+        "do",
+        "switch",
+        "case",
+        "default",
+        "break",
+        "continue",
+        "return",
+        "function",
+        "class",
+        "interface",
+        "trait",
+        "extends",
+        "implements",
+        "namespace",
+        "use",
+        "public",
+        "private",
+        "protected",
+        "static",
+        "abstract",
+        "final",
+        "const",
+        "global",
+        "var",
+        "echo",
+        "print",
+        "include",
+        "require",
+        "include_once",
+        "require_once",
+        "new",
+        "try",
+        "catch",
+        "finally",
+        "throw",
+        "array",
+        "true",
+        "false",
+        "null",
     }
 
     def __init__(self, normalize_identifiers: bool = False, ngram_size: int = 4):
@@ -42,7 +82,9 @@ class PhpTokenizer(Tokenizer):
         code = re.sub(r"<\?php|\?>", "", code)
 
         # Remove comments (single-line and multi-line)
-        code = re.sub(r"//.*?$|#.*?$|/\*.*?\*/", "", code, flags=re.MULTILINE | re.DOTALL)
+        code = re.sub(
+            r"//.*?$|#.*?$|/\*.*?\*/", "", code, flags=re.MULTILINE | re.DOTALL
+        )
 
         # Normalize strings
         code = re.sub(r'"[^"]*"|\'[^\']*\'', "STRING", code)
@@ -70,4 +112,7 @@ class PhpTokenizer(Tokenizer):
     def _create_ngrams(self, tokens: list[str]) -> list[str]:
         if len(tokens) < self.ngram_size:
             return [" ".join(tokens)] if tokens else []
-        return [" ".join(tokens[i:i+self.ngram_size]) for i in range(len(tokens)-self.ngram_size+1)]
+        return [
+            " ".join(tokens[i : i + self.ngram_size])
+            for i in range(len(tokens) - self.ngram_size + 1)
+        ]

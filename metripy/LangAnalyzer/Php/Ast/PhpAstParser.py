@@ -100,7 +100,7 @@ class PhpAstParser(AstParser):
     def extract_import_name(self, node: Node) -> Optional[str]:
         name = None
         for child in self.walk_tree(node):
-            if child.type == "qualified_name":
+            if child.type == "name":
                 name = self.get_node_text(child)
         return name
 

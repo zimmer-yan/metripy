@@ -18,6 +18,7 @@ from metripy.Tree.ClassNode import ClassNode
 from metripy.Tree.FunctionNode import FunctionNode
 from metripy.Tree.ModuleNode import ModuleNode
 
+
 class PhpAnalyzer(AbstractLangAnalyzer):
     def __init__(self, project_config: ProjectConfig):
         super().__init__(project_config)

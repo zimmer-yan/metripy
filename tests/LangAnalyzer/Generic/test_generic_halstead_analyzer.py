@@ -1,9 +1,27 @@
 from unittest import TestCase
 
-from metripy.LangAnalyzer.Generic.HalSteadAnalyzer import HalSteadAnalyzer
+from metripy.LangAnalyzer.Generic.Metrics.GenericHalSteadAnalyzer import (
+    GenericHalSteadAnalyzer,
+)
 
 
-class TestHalsteadAnalyzer(TestCase):
+class DummyHalSteadAnalyzer(GenericHalSteadAnalyzer):
+    def get_operators(self) -> list[str]:
+        return [
+            "+",
+            "=",
+            "def",
+            "return",
+            "for",
+            "in",
+            "print",
+            ":",
+            "(",
+            ")",
+        ]
+
+
+class TestGenericHalSteadAnalyzer(TestCase):
     EXAMPLE_CODE = """
     def add(a, b):
         return a + b
@@ -23,19 +41,7 @@ class TestHalsteadAnalyzer(TestCase):
     """
 
     def setUp(self):
-        self.operators = {
-            "+",
-            "=",
-            "def",
-            "return",
-            "for",
-            "in",
-            "print",
-            ":",
-            "(",
-            ")",
-        }
-        self.analyzer = HalSteadAnalyzer(operators=self.operators)
+        self.analyzer = DummyHalSteadAnalyzer()
 
     def test_analysis(self):
         metrics = self.analyzer.calculate_halstead_metrics(self.EXAMPLE_CODE)
@@ -54,8 +60,3 @@ class TestHalsteadAnalyzer(TestCase):
         self.assertEqual(metrics["calculated_length"], 97.21928094887363)
         self.assertEqual(metrics["bugs"], 0.07678134626668279)
         self.assertEqual(metrics["time"], 194.21955779819095)
-
-
-a = TestHalsteadAnalyzer()
-a.setUp()
-a.test_analysis()

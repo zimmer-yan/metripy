@@ -1,6 +1,8 @@
+from tree_sitter import Node
+
 from metripy.LangAnalyzer.Generic.Ast.AstParser import AstParser
 from metripy.LangAnalyzer.Python.Ast.PythonAstParser import PythonAstParser
-from tree_sitter import Node
+
 
 class AstDumper:
     def __init__(self, parser: AstParser):
@@ -13,6 +15,7 @@ class AstDumper:
         print(" " * depth + node.type + " | " + self.parser.get_node_text(node))
         for child in node.children:
             self.dump(child, depth + 1)
+
 
 if __name__ == "__main__":
     parser = PythonAstParser()

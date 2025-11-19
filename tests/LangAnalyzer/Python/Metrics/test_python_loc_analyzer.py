@@ -1,5 +1,7 @@
 from unittest import TestCase
+
 from metripy.LangAnalyzer.Python.Metrics.PythonLocAnalyzer import PythonLocAnalyzer
+
 
 class TestPythonLocAnalyzer(TestCase):
 

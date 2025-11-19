@@ -1,28 +1,46 @@
 from abc import ABC, abstractmethod
 
-from metripy.Metric.Code.FileMetrics import FileMetrics
-from metripy.Tree.ModuleNode import ModuleNode
-from metripy.Component.Output.ProgressBar import ProgressBar
 from metripy.Application.Config.ProjectConfig import ProjectConfig
-from metripy.LangAnalyzer.Generic.Metrics.LocAnalyzerFactory import LocAnalyzerFactory
+from metripy.Component.Output.ProgressBar import ProgressBar
+from metripy.LangAnalyzer.Generic.CodeSmell.CodeSmellDetectorFactory import (
+    CodeSmellDetectorFactory,
+)
+from metripy.LangAnalyzer.Generic.DuplicateSearch.DuplicateDetector import (
+    DuplicateDetector,
+)
+from metripy.LangAnalyzer.Generic.DuplicateSearch.TokenizerFactory import (
+    TokenizerFactory,
+)
+from metripy.LangAnalyzer.Generic.Metrics.GenericHalSteadAnalyzer import (
+    GenericHalSteadAnalyzer,
+)
 from metripy.LangAnalyzer.Generic.Metrics.GenericLocAnalyzer import GenericLocAnalyzer
-from metripy.LangAnalyzer.Generic.CodeSmell.CodeSmellDetectorFactory import CodeSmellDetectorFactory
-from metripy.LangAnalyzer.Generic.Metrics.HalSteadAnalyzerFactory import HalSteadAnalyzerFactory
-from metripy.LangAnalyzer.Generic.Metrics.GenericHalSteadAnalyzer import GenericHalSteadAnalyzer
-from metripy.LangAnalyzer.Generic.DuplicateSearch.DuplicateDetector import DuplicateDetector
-from metripy.LangAnalyzer.Generic.DuplicateSearch.TokenizerFactory import TokenizerFactory
+from metripy.LangAnalyzer.Generic.Metrics.HalSteadAnalyzerFactory import (
+    HalSteadAnalyzerFactory,
+)
+from metripy.LangAnalyzer.Generic.Metrics.LocAnalyzerFactory import LocAnalyzerFactory
+from metripy.Metric.Code.FileMetrics import FileMetrics
 from metripy.Tree.FunctionNode import FunctionNode
+from metripy.Tree.ModuleNode import ModuleNode
+
 
 class AbstractLangAnalyzer(ABC):
     def __init__(self, project_config: ProjectConfig):
         self.config = project_config
         self.files: list[str] = []
         self.modules: dict[str, ModuleNode] = {}
-        self.loc_analyzer: GenericLocAnalyzer = LocAnalyzerFactory.get_loc_analyzer(self.get_lang_name())
-        self.halstead_analyzer: GenericHalSteadAnalyzer = HalSteadAnalyzerFactory.get_halstead_analyzer(self.get_lang_name())
-        self.code_smell_detector = CodeSmellDetectorFactory.get_code_smell_detector(self.get_lang_name(), self.config.code_smells)
-        self.duplicate_detector = DuplicateDetector(tokenizer=TokenizerFactory.get_tokenizer(self.get_lang_name()))
-
+        self.loc_analyzer: GenericLocAnalyzer = LocAnalyzerFactory.get_loc_analyzer(
+            self.get_lang_name()
+        )
+        self.halstead_analyzer: GenericHalSteadAnalyzer = (
+            HalSteadAnalyzerFactory.get_halstead_analyzer(self.get_lang_name())
+        )
+        self.code_smell_detector = CodeSmellDetectorFactory.get_code_smell_detector(
+            self.get_lang_name(), self.config.code_smells
+        )
+        self.duplicate_detector = DuplicateDetector(
+            tokenizer=TokenizerFactory.get_tokenizer(self.get_lang_name())
+        )
 
     # need to be implemented by sub analyzers
     @abstractmethod
@@ -43,7 +61,9 @@ class AbstractLangAnalyzer(ABC):
         pass
 
     def set_files(self, files: list[str]) -> None:
-        self.files = list(filter(lambda file: file.endswith(self.get_supported_extensions()), files))
+        self.files = list(
+            filter(lambda file: file.endswith(self.get_supported_extensions()), files)
+        )
 
     def is_needed(self) -> bool:
         return len(self.files) > 0
@@ -69,8 +89,12 @@ class AbstractLangAnalyzer(ABC):
             loc_data.get("single_comments", 0),
         )
 
-    def add_function_halstead_metrics(self, function_node: FunctionNode, function_code: str) -> None:
-        function_metrics = self.halstead_analyzer.calculate_halstead_metrics(function_code)
+    def add_function_halstead_metrics(
+        self, function_node: FunctionNode, function_code: str
+    ) -> None:
+        function_metrics = self.halstead_analyzer.calculate_halstead_metrics(
+            function_code
+        )
         function_node.h1 = function_metrics["n1"]
         function_node.h2 = function_metrics["n2"]
         function_node.N1 = function_metrics["N1"]

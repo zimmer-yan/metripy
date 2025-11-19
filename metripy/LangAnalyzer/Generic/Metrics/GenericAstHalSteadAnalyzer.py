@@ -1,7 +1,10 @@
-from typing import Dict
-from tree_sitter import Node
-from metripy.LangAnalyzer.Generic.Ast.AstParser import AstParser
 import math
+from typing import Dict
+
+from tree_sitter import Node
+
+from metripy.LangAnalyzer.Generic.Ast.AstParser import AstParser
+
 
 class HalsteadAnalyzer:
     def __init__(self, parser: AstParser):
@@ -24,9 +27,15 @@ class HalsteadAnalyzer:
         E = D * V
 
         return {
-            "n1": n1, "n2": n2, "N1": N1, "N2": N2,
-            "Vocabulary": n, "Length": N,
-            "Volume": V, "Difficulty": D, "Effort": E
+            "n1": n1,
+            "n2": n2,
+            "N1": N1,
+            "N2": N2,
+            "Vocabulary": n,
+            "Length": N,
+            "Volume": V,
+            "Difficulty": D,
+            "Effort": E,
         }
 
     def _collect_tokens(self, node: Node):

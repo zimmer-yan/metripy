@@ -23,4 +23,6 @@ class Reporter(ReporterInterface):
         if metrics.git_metrics:
             self.output.writeln(GitMetricsFormatter().format(metrics.git_metrics))
         if metrics.dependencies:
-            self.output.writeln(DependencyMetricsFormatter().format(metrics.dependencies))
+            self.output.writeln(
+                DependencyMetricsFormatter().format(metrics.dependencies)
+            )
