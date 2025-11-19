@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from tree_sitter import Node
 
-from metripy.LangAnalyzer.Generic.CodeSmell.AstParser import AstParser
+from metripy.LangAnalyzer.Generic.Ast.AstParser import AstParser
 
 
 class PhpAstParser(AstParser):
@@ -100,7 +100,7 @@ class PhpAstParser(AstParser):
     def extract_import_name(self, node: Node) -> Optional[str]:
         name = None
         for child in self.walk_tree(node):
-            if child.type == "name":
+            if child.type == "qualified_name":
                 name = self.get_node_text(child)
         return name
 
@@ -274,3 +274,9 @@ class PhpAstParser(AstParser):
 
     def get_class_all_final_classes(self, node: Node) -> List[str]:
         return self.get_class_final_classes(node)
+
+    def get_operator_types(self) -> List[str]:
+        raise NotImplementedError
+
+    def get_operand_types(self) -> List[str]:
+        raise NotImplementedError

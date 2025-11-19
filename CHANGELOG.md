@@ -1,3 +1,7 @@
+# v0.7.1
+- Refactor to make analyzers more generic
+- Fix coupling for php
+
 # v0.7.0
 - Added CSV report output
 

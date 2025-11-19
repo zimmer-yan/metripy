@@ -2,61 +2,28 @@ from pathlib import Path
 
 from radon.complexity import cc_visit
 from radon.metrics import Halstead, HalsteadReport, h_visit, mi_visit
-from radon.raw import analyze
 from radon.visitors import Class, Function
 
 from metripy.Application.Config.ProjectConfig import ProjectConfig
-from metripy.Component.Output.ProgressBar import ProgressBar
 from metripy.LangAnalyzer.AbstractLangAnalyzer import AbstractLangAnalyzer
-from metripy.LangAnalyzer.Generic.DuplicateSearch.DuplicateDetector import (
-    DuplicateDetector,
-)
-from metripy.LangAnalyzer.Python.CodeSmell.PythonCodeSmellDetector import (
-    PythonCodeSmellDetector,
-)
-from metripy.LangAnalyzer.Python.DuplicateSearch.PythonTokenizer import PythonTokenizer
-from metripy.LangAnalyzer.Python.PythonHalSteadAnalyzer import PythonHalSteadAnalyzer
 from metripy.LangAnalyzer.Python.PythonImportsAnalyzer import PythonImportsAnalyzer
-from metripy.Metric.Code.FileMetrics import FileMetrics
 from metripy.Tree.ClassNode import ClassNode
 from metripy.Tree.FunctionNode import FunctionNode
-from metripy.Tree.ModuleNode import ModuleNode
-
+from metripy.LangAnalyzer.Python.Ast.PythonAstParser import PythonAstParser
+from metripy.LangAnalyzer.Python.Metrics.PythonCognitiveComplexityCalculator import (
+    PythonCognitiveComplexityCalculator,
+)
 
 class PythonAnalyzer(AbstractLangAnalyzer):
 
     def __init__(self, project_config: ProjectConfig):
-        super().__init__()
-        self.config = project_config
-        self.fallback_halstead_analyzer = PythonHalSteadAnalyzer()
-        self.duplicate_detector = DuplicateDetector(tokenizer=PythonTokenizer())
-        self.code_smell_detector = PythonCodeSmellDetector(self.config.code_smells)
+        super().__init__(project_config)
 
     def get_lang_name(self) -> str:
         return "Python"
 
-    def set_files(self, files: list[str]) -> None:
-        self.files = list(filter(lambda file: file.endswith(".py"), files))
-
-    def is_needed(self) -> bool:
-        return len(self.files) > 0
-
-    def run(self, progress_bar: ProgressBar) -> None:
-        for file in self.files:
-            with open(file, "r") as f:
-                code = f.read()
-                self.analyze(code, file)
-            progress_bar.advance()
-
-    @staticmethod
-    def full_name(
-        filename: str, item_name: str | None = None, class_name: str | None = None
-    ) -> str:
-        if class_name is None:
-            if item_name is None:
-                return filename
-            return f"{filename}:{item_name}"
-        return f"{filename}:{class_name}:{item_name}"
+    def get_supported_extensions(self) -> tuple[str]:
+        return (".py",)
 
     @staticmethod
     def extract_project_root(filename: str) -> str:
@@ -121,18 +88,7 @@ class PythonAnalyzer(AbstractLangAnalyzer):
             else:
                 raise ValueError(f"Unknown item type: {type(item)}")
 
-        module = analyze(code)
-        full_name = self.full_name(filename)
-        module_node = ModuleNode(
-            full_name,
-            module.loc,
-            module.lloc,
-            module.sloc,
-            module.comments,
-            module.multi,
-            module.blank,
-            module.single_comments,
-        )
+        module_node = self.create_module_node(filename, code)
         module_node.classes.extend(classes.values())
         module_node.functions.extend(functions.values())
 
@@ -167,24 +123,7 @@ class PythonAnalyzer(AbstractLangAnalyzer):
             # if MI is 0, we want to take another look, radon does not like boring functions
 
             lines = code_lines[function_node.lineno : function_node.line_end]
-            function_metrics = (
-                self.fallback_halstead_analyzer.calculate_halstead_metrics(
-                    "\n".join(lines)
-                )
-            )
-            function_node.h1 = function_metrics["n1"]
-            function_node.h2 = function_metrics["n2"]
-            function_node.N1 = function_metrics["N1"]
-            function_node.N2 = function_metrics["N2"]
-            function_node.vocabulary = function_metrics["vocabulary"]
-            function_node.length = function_metrics["length"]
-            function_node.volume = function_metrics["volume"]
-            function_node.difficulty = function_metrics["difficulty"]
-            function_node.effort = function_metrics["effort"]
-            function_node.calculated_length = function_metrics["calculated_length"]
-            function_node.bugs = function_metrics["bugs"]
-            function_node.time = function_metrics["time"]
-            function_node.calc_mi()
+            self.add_function_halstead_metrics(function_node, "\n".join(lines))
 
         maintainability_index = mi_visit(code, True)
         module_node.maintainability_index = maintainability_index
@@ -198,16 +137,11 @@ class PythonAnalyzer(AbstractLangAnalyzer):
         )
         module_node.imports = PythonImportsAnalyzer.extract_imports(code, project_root)
 
-        self.modules[full_name] = module_node
+        self.modules[module_node.full_name] = module_node
 
         self.duplicate_detector.add_code(filename, code)
 
         module_node.code_smells = self.code_smell_detector.detect_all(filename, code)
-
-        from metripy.LangAnalyzer.Python.Ast.PythonAstParser import PythonAstParser
-        from metripy.LangAnalyzer.Python.Metrics.PythonCognitiveComplexityCalculator import (
-            PythonCognitiveComplexityCalculator,
-        )
 
         parser = PythonAstParser()
         parser.parse(code)
@@ -221,9 +155,6 @@ class PythonAnalyzer(AbstractLangAnalyzer):
                 function_node.cognitive_complexity = complexity
             else:
                 raise ValueError(f"Function node not found for function {full_name}")
-
-    def get_metrics(self) -> list[FileMetrics]:
-        return super().get_metrics()
 
     def get_duplicates(self) -> list[dict]:
         return self.duplicate_detector.get_duplicates()

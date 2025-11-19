@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from metripy.Application.Config.CodeSmellConfig import CodeSmellConfig
-from metripy.LangAnalyzer.Generic.CodeSmell.AstParser import AstParser
+from metripy.LangAnalyzer.Generic.Ast.AstParser import AstParser
 from metripy.LangAnalyzer.Generic.CodeSmell.CodeSmell import CodeSmell
 
 

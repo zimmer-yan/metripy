@@ -23,7 +23,7 @@ from metripy.Tree.ModuleNode import ModuleNode
 class TypescriptAnalyzer(AbstractLangAnalyzer):
 
     def __init__(self, project_config: ProjectConfig):
-        super().__init__()
+        super().__init__(project_config)
         self.ast_parser = TypescriptAstParser()
         self.halstead_analyzer = TypeScriptHalSteadAnalyzer()
         self.basic_complexity_analyzer = TypescriptBasicComplexityAnalzyer()
@@ -31,28 +31,8 @@ class TypescriptAnalyzer(AbstractLangAnalyzer):
     def get_lang_name(self) -> str:
         return "Typescript"
 
-    def set_files(self, files: list[str]) -> None:
-        self.files = list(filter(lambda file: file.endswith((".ts", "js")), files))
-
-    def is_needed(self) -> bool:
-        return len(self.files) > 0
-
-    def run(self, progress_bar: ProgressBar) -> None:
-        for file in self.files:
-            with open(file, "r") as f:
-                code = f.read()
-                self.analyze(code, file)
-            progress_bar.advance()
-
-    @staticmethod
-    def full_name(
-        filename: str, item_name: str | None = None, class_name: str | None = None
-    ) -> str:
-        if class_name is None:
-            if item_name is None:
-                return filename
-            return f"{filename}:{item_name}"
-        return f"{filename}:{class_name}:{item_name}"
+    def get_supported_extensions(self) -> tuple[str]:
+        return (".ts", ".js")
 
     def analyze(self, code: str, filename: str) -> None:
         structure = self.ast_parser.extract_structure(code)

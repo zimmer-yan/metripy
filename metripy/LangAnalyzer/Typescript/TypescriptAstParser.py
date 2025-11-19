@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from tree_sitter import Node
 
-from metripy.LangAnalyzer.Generic.CodeSmell.AstParser import AstParser
+from metripy.LangAnalyzer.Generic.Ast.AstParser import AstParser
 
 
 class TypescriptAstParser(AstParser):
@@ -103,3 +103,11 @@ class TypescriptAstParser(AstParser):
                     elif param_node.type == "identifier":
                         params.append(self.get_node_text(param_node))
         return params
+
+
+    def get_operator_types(self) -> List[str]:
+        raise NotImplementedError
+
+    def get_operand_types(self) -> List[str]:
+        raise NotImplementedError
+        

@@ -20,5 +20,7 @@ class Reporter(ReporterInterface):
         self.output.writeln(TopOffendersFormatter().format(metrics.file_metrics))
         self.output.writeln(CouplingMetricsFormatter().format(metrics.file_metrics))
         self.output.writeln(CodeSmellsFormatter().format(metrics.file_metrics))
-        self.output.writeln(GitMetricsFormatter().format(metrics.git_metrics))
-        self.output.writeln(DependencyMetricsFormatter().format(metrics.dependencies))
+        if metrics.git_metrics:
+            self.output.writeln(GitMetricsFormatter().format(metrics.git_metrics))
+        if metrics.dependencies:
+            self.output.writeln(DependencyMetricsFormatter().format(metrics.dependencies))

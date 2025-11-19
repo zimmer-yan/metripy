@@ -1,9 +1,9 @@
-from metripy.LangAnalyzer.Generic.HalSteadAnalyzer import HalSteadAnalyzer
+from metripy.LangAnalyzer.Generic.Metrics.GenericHalSteadAnalyzer import GenericHalSteadAnalyzer
 
 
-class PythonHalSteadAnalyzer:
-    def __init__(self):
-        self.operators = [
+class PythonHalSteadAnalyzer(GenericHalSteadAnalyzer):
+    def get_operators(self) -> list[str]:
+        return [
             "+",
             "-",
             "*",
@@ -48,8 +48,3 @@ class PythonHalSteadAnalyzer:
             "{",
             "}",
         ]
-
-        self.analyzer = HalSteadAnalyzer(self.operators)
-
-    def calculate_halstead_metrics(self, code: str):
-        return self.analyzer.calculate_halstead_metrics(code)

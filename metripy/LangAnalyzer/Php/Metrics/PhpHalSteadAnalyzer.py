@@ -1,7 +1,7 @@
 from metripy.LangAnalyzer.Generic.Metrics.GenericHalSteadAnalyzer import GenericHalSteadAnalyzer
 
 
-class TypeScriptHalSteadAnalyzer(GenericHalSteadAnalyzer):
+class PhpHalSteadAnalyzer(GenericHalSteadAnalyzer):
     def get_operators(self) -> list[str]:
         return [
             "+",
@@ -11,6 +11,7 @@ class TypeScriptHalSteadAnalyzer(GenericHalSteadAnalyzer):
             "%",
             "++",
             "--",
+            "=",
             "==",
             "!=",
             "===",
@@ -22,28 +23,16 @@ class TypeScriptHalSteadAnalyzer(GenericHalSteadAnalyzer):
             "&&",
             "||",
             "!",
-            "=",
-            "+=",
-            "-=",
-            "*=",
-            "/=",
-            "%=",
+            ".",
+            "->",
+            "=>",
+            "::",
+            "?",
+            ":",
             "&",
             "|",
             "^",
             "~",
             "<<",
             ">>",
-            "?",
-            ":",
-            ".",
-            ",",
-            ";",
-            "=>",
-            "(",
-            ")",
-            "[",
-            "]",
-            "{",
-            "}",
         ]

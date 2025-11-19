@@ -9,7 +9,7 @@ class PhpImportsAnalyzer:
         self.parser.parse(code)
 
     def extract_import_name(self) -> str:
-        return self.parser.get_fqcn(self.filename).replace("\\", "\\\\")
+        return self.parser.get_fqcn(self.filename)
 
     def extract_imports(self) -> list[str]:
         imports = []

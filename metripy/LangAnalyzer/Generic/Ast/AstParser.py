@@ -127,6 +127,16 @@ class AstParser(ABC):
         """Extract parameter names from a function definition"""
         pass
 
+    @abstractmethod
+    def get_operator_types(self) -> List[str]:
+        """Get all operator types"""
+        pass
+
+    @abstractmethod
+    def get_operand_types(self) -> List[str]:
+        """Get all operand types"""
+        pass
+
     def get_code_line(self, node: Node) -> str:
         """Get the code line from a node"""
         return self.code[node.start_byte : node.end_byte]

@@ -1,11 +1,12 @@
 import math
 import re
 from collections import Counter
+from abc import ABC, abstractmethod
 
-
-class HalSteadAnalyzer:
-    def __init__(self, operators: set):
-        self.operators: set = operators
+class GenericHalSteadAnalyzer(ABC):
+    @abstractmethod
+    def get_operators(self) -> list[str]:
+        pass
 
     def calculate_halstead_metrics(self, code: str):
         # Tokenize the code
@@ -16,7 +17,7 @@ class HalSteadAnalyzer:
         operand_counts = Counter()
 
         for token in tokens:
-            if token in self.operators:
+            if token in self.get_operators():
                 operator_counts[token] += 1
             elif re.match(r"\b\w+\b", token):
                 operand_counts[token] += 1
