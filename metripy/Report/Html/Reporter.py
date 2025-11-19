@@ -103,6 +103,7 @@ class Reporter(ReporterInterface):
         self.render_dependencies_page(metrics)
         self.render_trends_page(metrics)
         self.render_code_smells_page(metrics)
+        self.render_metrics_page(metrics)
 
         self.output.writeln(
             f"<success>HTML report generated in {self.config.path} directory</success>"
@@ -164,3 +165,8 @@ class Reporter(ReporterInterface):
         self.output.writeln(
             "<success>Code smells page generated successfully</success>"
         )
+
+    def render_metrics_page(self, metrics: ProjectMetrics):
+        self.output.writeln("<info>Rendering metrics page</info>")
+        self.page_renderer_factory.create_metrics_page_renderer().render(metrics)
+        self.output.writeln("<success>Metrics page generated successfully</success>")

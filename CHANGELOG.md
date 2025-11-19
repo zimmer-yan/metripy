@@ -1,3 +1,6 @@
+# v0.7.3
+- Added metrics explanations page
+
 # v0.7.2
 - Fix halstead and import tests
 
