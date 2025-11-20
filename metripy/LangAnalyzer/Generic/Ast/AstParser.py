@@ -140,3 +140,13 @@ class AstParser(ABC):
     def get_code_line(self, node: Node) -> str:
         """Get the code line from a node"""
         return self.code[node.start_byte : node.end_byte]
+
+    @abstractmethod
+    def get_function_attributes(self, function_node: Node) -> List[str]:
+        """Get names of variables used in the function"""
+        pass
+
+    @abstractmethod
+    def get_function_self_calls(self, function_node: Node) -> List[str]:
+        """Get names class methods called in the function"""
+        pass

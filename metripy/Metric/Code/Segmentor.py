@@ -42,3 +42,13 @@ class Segmentor:
             return "warning"
         else:
             return "critical"
+
+    @staticmethod
+    def get_lcom4_segment(lcom4: float) -> str:
+        # only 1 good, 0 is useless and above 1 is bad
+        if lcom4 == 1:
+            return "good"
+        elif lcom4 == 0:
+            return "warning"
+        else:
+            return "critical"

@@ -119,6 +119,13 @@ class PythonAstParser(AstParser):
 
         return None
 
+    def get_class_methods(self, node: Node) -> List[Node]:
+        methods: List[Node] = []
+        for child in self.walk_tree(node):
+            if child.type == "function_definition":
+                methods.append(child)
+        return methods
+
     def get_function_parameters(self, function_node: Node) -> List[str]:
         """Extract parameter names from function definition"""
         params = []
@@ -134,6 +141,32 @@ class PythonAstParser(AstParser):
                                 params.append(self.get_node_text(grandchild))
                                 break
         return params
+
+    def get_function_attributes(self, function_node: Node) -> List[str]:
+        """Get names of variables used in the function"""
+        attributes = []
+        for child in self.walk_tree(function_node):
+            if child.type == "attribute" and not child.parent.type == "call":
+                attributes.append(self.get_node_text(child))
+        return attributes
+
+    def _get_function_calls(self, function_node: Node) -> List[str]:
+        """Get names of function variables"""
+        attributes = []
+        for child in self.walk_tree(function_node):
+            if child.type == "attribute" and child.parent.type == "call":
+                attributes.append(self.get_node_text(child))
+        return attributes
+
+    def get_function_self_calls(self, function_node: Node) -> List[str]:
+        """Get names class methods called in the function"""
+        calls = self._get_function_calls(function_node)
+        self_method_calls = []
+        for call in calls:
+            parts = call.split(".")
+            if parts[0] == "self" and len(parts) == 2:
+                self_method_calls.append(parts[1])
+        return self_method_calls
 
     def get_operator_types(self) -> List[str]:
         raise NotImplementedError

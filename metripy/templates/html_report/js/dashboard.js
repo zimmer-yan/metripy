@@ -179,6 +179,7 @@ class Dashboard {
         this.animateValue('avg-cog-complexity', this.data.avgCogComplexity, 1);
         this.animateValue('maintainability-index', this.data.maintainabilityIndex, 1);
         this.animateValue('avg-method-size', this.data.avgMethodSize, 1);
+        this.animateValue('avg-lcom4', this.data.avgLcom4, 1);
 
         // Complex files and recent analysis sections removed
         
@@ -233,6 +234,9 @@ class Dashboard {
         
         // Update Method Size segmentation
         this.updateSegmentation('methodSize', this.data.segmentation.methodSize);
+
+        // Update LCOM4 segmentation
+        this.updateSegmentation('lcom4', this.data.segmentation.lcom4);
     }
 
     updateSegmentation(metricType, segmentData) {
@@ -246,6 +250,10 @@ class Dashboard {
         const displayMapping = this.getDisplayMapping(metricType);
         const segmentOrder = this.getSegmentOrder(metricType);
         
+        console.log(metricType);
+        console.log(segmentData);
+        console.log(displayMapping);
+
         // Calculate all percentages first to ensure they add up to 100%
         let percentages = [];
         let totalPercentage = 0;
@@ -303,8 +311,12 @@ class Dashboard {
     }
 
     getSegmentOrder(metricType) {
-        // Use consistent naming across all metrics: good, ok, warning, critical
-        return ['good', 'ok', 'warning', 'critical'];
+        if (metricType === 'lcom4') {
+            return ['warning', 'good', 'critical'];
+        } else {
+            // Use consistent naming across all metrics: good, ok, warning, critical
+            return ['good', 'ok', 'warning', 'critical'];
+        }
     }
 
     // Map data categories to display names for each metric type
@@ -339,6 +351,11 @@ class Dashboard {
                 'ok': 'optimal',
                 'warning': 'large2',
                 'critical': 'too-large'
+            },
+            lcom4: {
+                'good': 'lcom4-concise',
+                'warning': 'lcom4-useless',
+                'critical': 'lcom4-complex'
             }
         };
         return displayMap[metricType] || {};

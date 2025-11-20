@@ -14,9 +14,15 @@ from metripy.LangAnalyzer.Generic.DuplicateSearch.TokenizerFactory import (
 from metripy.LangAnalyzer.Generic.Metrics.GenericHalSteadAnalyzer import (
     GenericHalSteadAnalyzer,
 )
+from metripy.LangAnalyzer.Generic.Metrics.GenericLcom4Analyzer import (
+    GenericLcom4Analyzer,
+)
 from metripy.LangAnalyzer.Generic.Metrics.GenericLocAnalyzer import GenericLocAnalyzer
 from metripy.LangAnalyzer.Generic.Metrics.HalSteadAnalyzerFactory import (
     HalSteadAnalyzerFactory,
+)
+from metripy.LangAnalyzer.Generic.Metrics.Lcom4AnalyzerFactory import (
+    Lcom4AnalyzerFactory,
 )
 from metripy.LangAnalyzer.Generic.Metrics.LocAnalyzerFactory import LocAnalyzerFactory
 from metripy.Metric.Code.FileMetrics import FileMetrics
@@ -34,6 +40,9 @@ class AbstractLangAnalyzer(ABC):
         )
         self.halstead_analyzer: GenericHalSteadAnalyzer = (
             HalSteadAnalyzerFactory.get_halstead_analyzer(self.get_lang_name())
+        )
+        self.lcom4_analyzer: GenericLcom4Analyzer = (
+            Lcom4AnalyzerFactory.get_lcom4_analyzer(self.get_lang_name())
         )
         self.code_smell_detector = CodeSmellDetectorFactory.get_code_smell_detector(
             self.get_lang_name(), self.config.code_smells
@@ -148,6 +157,13 @@ class AbstractLangAnalyzer(ABC):
                 avg_cog_complexity_per_function = 0
             maintainabilityIndex = module.maintainability_index
 
+            if self.lcom4_analyzer is not None and len(module.classes) > 0:
+                total_lcom4 = sum(class_node.lcom4 for class_node in module.classes)
+                avg_lcom4_per_class = total_lcom4 / len(module.classes)
+            else:
+                total_lcom4 = 0
+                avg_lcom4_per_class = 0
+
             file_metric = FileMetrics(
                 full_name=full_name,
                 loc=module.loc,
@@ -162,6 +178,7 @@ class AbstractLangAnalyzer(ABC):
                 code_smells=module.code_smells,
                 total_cog_complexity=total_cog_complexity,
                 avg_cog_complexity_per_function=avg_cog_complexity_per_function,
+                avg_lcom4_per_class=avg_lcom4_per_class,
             )
             metrics[full_name] = file_metric
 

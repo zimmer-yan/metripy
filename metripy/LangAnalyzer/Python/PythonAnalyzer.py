@@ -155,7 +155,18 @@ class PythonAnalyzer(AbstractLangAnalyzer):
             if function_node is not None:
                 function_node.cognitive_complexity = complexity
             else:
-                raise ValueError(f"Function node not found for function {full_name}")
+                # function in function, ignore
+                # print(f"Function node not found for function {full_name}")
+                continue
+
+        lcom4 = self.lcom4_analyzer.get_lcom4(parser)
+        for class_name, lcom4_value in lcom4.items():
+            full_name = self.full_name(filename, class_name)
+            class_node = classes.get(full_name)
+            if class_node is not None:
+                class_node.lcom4 = lcom4_value
+            else:
+                raise ValueError(f"Class node not found for class {full_name}")
 
     def get_duplicates(self) -> list[dict]:
         return self.duplicate_detector.get_duplicates()

@@ -19,6 +19,7 @@ class ClassNode:
         self.lineno = lineno
         self.col_offset = col_offset
         self.real_complexity = real_complexity
+        self.lcom4: int | None = None
         self.functions: list[FunctionNode] = []
 
         self.trend: ClassTrendMetric | None = None
@@ -31,6 +32,7 @@ class ClassNode:
             "lineno": self.lineno,
             "col_offset": self.col_offset,
             "real_complexity": self.real_complexity,
+            "lcom4": self.lcom4,
             "complexity_segment": Segmentor.get_complexity_segment(
                 self.real_complexity
             ),
@@ -49,5 +51,6 @@ class ClassNode:
             col_offset=data["col_offset"],
             real_complexity=data["real_complexity"],
         )
+        node.lcom4 = data.get("lcom4", None)
         node.functions = [FunctionNode.from_dict(d) for d in data["functions"]]
         return node

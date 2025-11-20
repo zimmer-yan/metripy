@@ -1134,7 +1134,8 @@
                 details.class_nodes.forEach(node => {
                 const complexity = node.real_complexity;
                 const classComplexitySegment = node.complexity_segment;
-                html += `<li><strong>${node.name}</strong> <span class="complexity-indicator ${classComplexitySegment}">Total Cyclomatic Complexity: ${node.real_complexity}</span>`;
+                const classLcom4Segment = node.lcom4 == 1 ? 'good' : 'critical';
+                html += `<li><strong>${node.name}</strong> <span class="complexity-indicator ${classComplexitySegment}">Total Cyclomatic Complexity: ${node.real_complexity}</span> <span class="complexity-indicator ${classLcom4Segment}">LCOM4: ${node.lcom4}</span>`;
                 if (node.functions && node.functions.length > 0) {
                     html += `<ul class="methods">`;
                     node.functions.forEach(method => {

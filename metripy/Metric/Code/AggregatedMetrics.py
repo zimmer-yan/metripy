@@ -12,18 +12,21 @@ class AggregatedMetrics:
         maintainabilityIndex: float = 0.0,
         avgLocPerFunction: float = 0.0,
         avg_cog_complexity_per_function: float = 0.0,
+        avg_lcom4_per_class: float = 0.0,
         num_files: int = 0,
         segmented_loc: SegmentedMetrics = SegmentedMetrics(),
         segmented_complexity: SegmentedMetrics = SegmentedMetrics(),
         segmented_maintainability: SegmentedMetrics = SegmentedMetrics(),
         segmented_method_size: SegmentedMetrics = SegmentedMetrics(),
         segmented_cognitive_complexity: SegmentedMetrics = SegmentedMetrics(),
+        segmented_lcom4: SegmentedMetrics = SegmentedMetrics(),
     ) -> None:
         self.loc = loc
         self.avgCcPerFunction = avgCcPerFunction
         self.maintainabilityIndex = maintainabilityIndex
         self.avgLocPerFunction = avgLocPerFunction
         self.avg_cog_complexity_per_function = avg_cog_complexity_per_function
+        self.avg_lcom4_per_class = avg_lcom4_per_class
         self.num_files = num_files
 
         self.segmentation_data = {
@@ -32,6 +35,7 @@ class AggregatedMetrics:
             "cognitiveComplexity": segmented_cognitive_complexity,
             "maintainability": segmented_maintainability,
             "methodSize": segmented_method_size,
+            "lcom4": segmented_lcom4,
         }
 
         self.trend: AggregatedTrendMetric | None = None
@@ -45,6 +49,7 @@ class AggregatedMetrics:
             "avg_cog_complexity_per_function": round(
                 self.avg_cog_complexity_per_function, 2
             ),
+            "avgLcom4": round(self.avg_lcom4_per_class, 2),
             "num_files": self.num_files,
             "trend": self.trend.to_dict() if self.trend else None,
             "trend_segmentation": (

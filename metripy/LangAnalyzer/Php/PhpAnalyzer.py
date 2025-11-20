@@ -161,6 +161,20 @@ class PhpAnalyzer(AbstractLangAnalyzer):
             else:
                 raise ValueError(f"Function node not found for function {full_name}")
 
+        lcom4 = self.lcom4_analyzer.get_lcom4(parser)
+        for class_name, lcom4_value in lcom4.items():
+            full_name = self.full_name(filename, class_name)
+            class_node = classes.get(full_name)
+            if class_node is not None:
+                class_node.lcom4 = lcom4_value
+            else:
+                raise ValueError(f"Class node not found for class {full_name}")
+
+        # for classes that dont have lcom4, interface, set to number of methods
+        for class_node in classes.values():
+            if class_node.lcom4 is None:
+                class_node.lcom4 = len(class_node.functions)
+
     def _calculate_maintainability_index(
         self, functions: list[FunctionNode], module_node: ModuleNode
     ) -> float:

@@ -1,3 +1,6 @@
+# v0.8.0
+- Added LCOM4 metrics
+
 # v0.7.3
 - Added metrics explanations page
 

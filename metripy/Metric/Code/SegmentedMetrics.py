@@ -99,3 +99,15 @@ class SegmentedMetrics:
             d[Segmentor.get_method_size_segment(value)] += 1
 
         return self._set_values(d)
+
+    def set_lcom4(self, values: list[int]) -> Self:
+        d = {
+            "good": self.good,
+            "ok": self.ok,
+            "warning": self.warning,
+            "critical": self.critical,
+        }
+        for value in values:
+            d[Segmentor.get_lcom4_segment(value)] += 1
+
+        return self._set_values(d)

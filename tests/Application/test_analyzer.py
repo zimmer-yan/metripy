@@ -106,6 +106,7 @@ class TestAnalyzer(TestCase):
         mock_file_metric.avg_cog_complexity_per_function = 12
         mock_file_metric.maintainabilityIndex = 89
         mock_file_metric.avgLocPerFunction = 10
+        mock_file_metric.avg_lcom4_per_class = 1.2
         mock_file_metrics = [mock_file_metric]
         mock_dependencies = [MagicMock(spec=Dependency)]
 

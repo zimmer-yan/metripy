@@ -22,6 +22,24 @@ class TestPhpAstParser(TestCase):
     }
     """
 
+    ATTRIBUTE_SCRIPT = """
+    <?php
+    class Example {
+        public function __construct() {
+            $this->a = 0;
+            $this->b = 0;
+        }
+
+        public function method1() {
+            return $this->a;
+        }
+
+        public function method2() {
+            return $this->method1();
+        }
+    }
+    """
+
     def setUp(self):
         self.parser = PhpAstParser()
         self.parser.parse(self.SIMPLE_SCRIPT)
@@ -57,7 +75,7 @@ class TestPhpAstParser(TestCase):
 
         methods = self.parser.get_class_methods(class_node)
         self.assertEqual(len(methods), 1)
-        self.assertEqual(methods[0], "testMethod")
+        self.assertEqual(self.parser.extract_function_name(methods[0]), "testMethod")
 
     def test_get_function_nodes(self):
         function_nodes = self.parser.get_function_nodes()
@@ -68,3 +86,25 @@ class TestPhpAstParser(TestCase):
         self.assertEqual(
             self.parser.extract_function_name(function_nodes[0]), "testFunction"
         )
+
+    def test_get_function_attributes(self):
+        parser = PhpAstParser()
+        parser.parse(self.ATTRIBUTE_SCRIPT)
+        function_nodes = parser.get_function_nodes()
+        self.assertEqual(len(function_nodes), 3)
+        self.assertEqual(
+            parser.get_function_attributes(function_nodes[0]), ["$this->a", "$this->b"]
+        )
+        self.assertEqual(
+            parser.get_function_attributes(function_nodes[1]), ["$this->a"]
+        )
+        self.assertEqual(parser.get_function_attributes(function_nodes[2]), [])
+
+    def test_get_function_self_calls(self):
+        parser = PhpAstParser()
+        parser.parse(self.ATTRIBUTE_SCRIPT)
+        function_nodes = parser.get_function_nodes()
+        self.assertEqual(len(function_nodes), 3)
+        self.assertEqual(parser.get_function_self_calls(function_nodes[0]), [])
+        self.assertEqual(parser.get_function_self_calls(function_nodes[1]), [])
+        self.assertEqual(parser.get_function_self_calls(function_nodes[2]), ["method1"])

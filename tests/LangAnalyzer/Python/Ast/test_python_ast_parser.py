@@ -18,6 +18,19 @@ class TestPythonAstParser(TestCase):
         return True
     """
 
+    ATTRIBUTE_SCRIPT = """
+    class Example:
+        def __init__(self):
+            self.a = 0
+            self.b = 0
+
+        def method1(self):
+            return self.a
+
+        def method2(self):
+            return self.method1()
+    """
+
     def setUp(self):
         self.parser = PythonAstParser()
         self.parser.parse(self.SIMPLE_SCRIPT)
@@ -46,3 +59,23 @@ class TestPythonAstParser(TestCase):
         self.assertEqual(
             self.parser.extract_function_name(function_nodes[1]), "test_function"
         )
+
+    def test_get_function_attributes(self):
+        parser = PythonAstParser()
+        parser.parse(self.ATTRIBUTE_SCRIPT)
+        function_nodes = parser.get_function_nodes()
+        self.assertEqual(len(function_nodes), 3)
+        self.assertEqual(
+            parser.get_function_attributes(function_nodes[0]), ["self.a", "self.b"]
+        )
+        self.assertEqual(parser.get_function_attributes(function_nodes[1]), ["self.a"])
+        self.assertEqual(parser.get_function_attributes(function_nodes[2]), [])
+
+    def test_get_function_self_calls(self):
+        parser = PythonAstParser()
+        parser.parse(self.ATTRIBUTE_SCRIPT)
+        function_nodes = parser.get_function_nodes()
+        self.assertEqual(len(function_nodes), 3)
+        self.assertEqual(parser.get_function_self_calls(function_nodes[0]), [])
+        self.assertEqual(parser.get_function_self_calls(function_nodes[1]), [])
+        self.assertEqual(parser.get_function_self_calls(function_nodes[2]), ["method1"])

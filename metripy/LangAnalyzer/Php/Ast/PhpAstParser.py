@@ -122,13 +122,11 @@ class PhpAstParser(AstParser):
                         properties.append(self.get_node_text(prop_node))
         return properties
 
-    def get_class_methods(self, node: Node) -> List[str]:
-        methods = []
+    def get_class_methods(self, node: Node) -> List[Node]:
+        methods: List[Node] = []
         for child in self.walk_tree(node):
             if child.type == "method_declaration":
-                for method_node in child.children:
-                    if method_node.type == "name":
-                        methods.append(self.get_node_text(method_node))
+                methods.append(child)
         return methods
 
     def get_class_constants(self, node: Node) -> List[str]:
@@ -280,3 +278,28 @@ class PhpAstParser(AstParser):
 
     def get_operand_types(self) -> List[str]:
         raise NotImplementedError
+
+    def get_function_attributes(self, function_node: Node) -> List[str]:
+        """Get names of variables used in the function"""
+        attributes: List[str] = []
+        for child in self.walk_tree(function_node):
+            if child.type == "member_access_expression":
+                attributes.append(self.get_node_text(child))
+        return attributes
+
+    def _get_member_calls(self, function_node: Node) -> List[str]:
+        calls: List[str] = []
+        for child in self.walk_tree(function_node):
+            if child.type == "member_call_expression":
+                calls.append(self.get_node_text(child))
+        return calls
+
+    def get_function_self_calls(self, function_node: Node) -> List[str]:
+        """Get names class methods called in the function"""
+        calls = self._get_member_calls(function_node)
+        self_method_calls: List[str] = []
+        for call in calls:
+            parts = call.split("->")
+            if parts[0] == "$this" and len(parts) == 2:
+                self_method_calls.append(parts[1][:-2])
+        return self_method_calls

@@ -23,6 +23,7 @@ class FileMetrics:
         code_smells: list[CodeSmell],
         total_cog_complexity: int,
         avg_cog_complexity_per_function: float,
+        avg_lcom4_per_class: float,
     ):
         self.full_name = full_name
         self.loc = loc
@@ -42,6 +43,7 @@ class FileMetrics:
         self.code_smells: list[CodeSmell] = code_smells
         self.total_cog_complexity = total_cog_complexity
         self.avg_cog_complexity_per_function = avg_cog_complexity_per_function
+        self.avg_lcom4_per_class = avg_lcom4_per_class
 
     def to_dict(self) -> dict:
         return {
@@ -73,6 +75,8 @@ class FileMetrics:
             "cognitive_complexity_segment": Segmentor.get_complexity_segment(
                 self.avg_cog_complexity_per_function
             ),
+            "avg_lcom4_per_class": self.avg_lcom4_per_class,
+            "lcom4_segment": Segmentor.get_lcom4_segment(self.avg_lcom4_per_class),
         }
 
     @staticmethod
@@ -93,6 +97,7 @@ class FileMetrics:
             avg_cog_complexity_per_function=data.get(
                 "avg_cog_complexity_per_function", 0
             ),
+            avg_lcom4_per_class=data.get("avg_lcom4_per_class", 0),
         )
         metrics.afferent_coupling = data.get("afferent_coupling", 0)
         metrics.efferent_coupling = data.get("efferent_coupling", 0)

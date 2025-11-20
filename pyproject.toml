@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metripy"
-version = "0.7.3"
+version = "0.8.0"
 description = "A Python tool to generate multi project, multi language code metric reports"
 authors = [
     {name = "Yannick Zimmermann", email = "yannick.zimmermann@proton.me"}
@@ -91,7 +91,6 @@ line-length = 88
 target-version = ['py39']
 
 [tool.poe.tasks]
-sort = "isort metripy tests"
 format = "black metripy tests"
 lint = "flake8 metripy/ tests/"
 ruffy = "ruff check metripy/ tests/"

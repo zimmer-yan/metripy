@@ -16,6 +16,7 @@ These metrics are file based and show the average values per file. Outliers migh
 {self._format_cognitive_complexity_metrics(metrics.total_code_metrics)}
 {self._format_maintainability_metrics(metrics.total_code_metrics)}
 {self._format_method_size_metrics(metrics.total_code_metrics)}
+{self._format_lcom4_metrics(metrics.total_code_metrics)}
 """
 
     def _format_loc_metrics(self, metrics: AggregatedMetrics) -> str:
@@ -63,4 +64,16 @@ Lines of Code:
 {round(metrics.avgLocPerFunction, 1)} lines avg per function
 {self.colored_stacked_bar(values, self.COLORS.values(), width=100)}
 {self.colored_stacked_info(values, labels, self.COLORS.values(), width=100)}
+"""
+
+    def _format_lcom4_metrics(self, metrics: AggregatedMetrics) -> str:
+        values = metrics.segmentation_data["lcom4"].to_dict()
+        # special format
+        values = [values["warning"], values["good"], values["critical"]]
+        labels = ["useless", "concise", "complex"]
+        colors = [self.COLORS["warning"], self.COLORS["good"], self.COLORS["critical"]]
+        return f"""LCOM4:
+{round(metrics.avg_lcom4_per_class, 1)} avg per class
+{self.colored_stacked_bar(values, colors, width=100)}
+{self.colored_stacked_info(values, labels, colors, width=100)}
 """

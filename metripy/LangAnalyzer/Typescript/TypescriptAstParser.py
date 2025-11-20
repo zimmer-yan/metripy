@@ -109,3 +109,9 @@ class TypescriptAstParser(AstParser):
 
     def get_operand_types(self) -> List[str]:
         raise NotImplementedError
+
+    def get_function_attributes(self, function_node: Node) -> List[str]:
+        raise NotImplementedError
+
+    def get_function_self_calls(self, function_node: Node) -> List[str]:
+        raise NotImplementedError
