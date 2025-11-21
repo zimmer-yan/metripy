@@ -1,18 +1,15 @@
-from metripy.LangAnalyzer.Php.Ast.PhpAstParser import PhpAstParser
+from metripy.LangAnalyzer.Generic.Metrics.GenericImportsAnalyzer import (
+    GenericImportsAnalyzer,
+)
+from metripy.LangAnalyzer.Generic.Ast.AstParser import AstParser
 
 
-class PhpImportsAnalyzer:
-    def __init__(self, filename: str, code: str):
-        self.filename = filename
-        self.code = code
-        self.parser = PhpAstParser()
-        self.parser.parse(code)
+class PhpImportsAnalyzer(GenericImportsAnalyzer):
+    def extract_import_name(self, filename: str, parser: AstParser) -> str:
+        return parser.get_fqcn(filename)
 
-    def extract_import_name(self) -> str:
-        return self.parser.get_fqcn(self.filename)
-
-    def extract_imports(self) -> list[str]:
+    def extract_imports(self, filename: str, parser: AstParser) -> list[str]:
         imports = []
-        for node in self.parser.get_import_nodes():
-            imports.append(self.parser.extract_import_qualified_name(node))
+        for node in parser.get_import_nodes():
+            imports.append(parser.extract_import_qualified_name(node))
         return imports

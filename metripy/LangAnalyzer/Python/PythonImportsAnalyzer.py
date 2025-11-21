@@ -1,53 +1,25 @@
-import ast
 from pathlib import Path
 
+from metripy.LangAnalyzer.Generic.Metrics.GenericImportsAnalyzer import (
+    GenericImportsAnalyzer,
+)
+from metripy.LangAnalyzer.Generic.Ast.AstParser import AstParser
 
-class PythonImportsAnalyzer:
-    @staticmethod
-    def extract_imports(code: str, project_root: str) -> list[str]:
-        """Extract same-project imports from Python code.
 
-        Args:
-            code: The Python source code
-            project_root: The project root package name to filter for
-
-        Returns:
-            List of import module names that belong to the same project
-        """
+class PythonImportsAnalyzer(GenericImportsAnalyzer):
+    def extract_imports(self, filename: str, parser: AstParser) -> list[str]:
+        """Extract the names of the imports of this file"""
         imports = []
-        try:
-            tree = ast.parse(code)
-            for node in ast.walk(tree):
-                if isinstance(node, ast.Import):
-                    for alias in node.names:
-                        # Check if it's a same-project import
-                        if alias.name.startswith(project_root):
-                            imports.append(alias.name)
-                elif isinstance(node, ast.ImportFrom):
-                    if node.module:
-                        # Check for same-project imports
-                        if node.module.startswith(project_root):
-                            imports.append(node.module)
-                    # Handle relative imports (. or ..)
-                    elif node.level > 0:
-                        # Relative import within the project
-                        imports.append("." * node.level + (node.module or ""))
-        except SyntaxError:
-            # If we can't parse the file, return empty list
-            raise ValueError(f"Failed to parse code: {code}")
+        for node in parser.get_import_nodes():
+            imports.append(parser.extract_import_qualified_name(node))
         return imports
 
-    @staticmethod
-    def extract_import_name(filename: str, project_root: str) -> str:
-        """Extract the import name for the current module.
+    def extract_import_name(self, filename: str, parser: AstParser) -> str:
+        """Extract the name of this file with which it is imported"""
+        project_root = [
+            p for p in Path(filename).parts if p.isalpha() and not p.startswith(".")
+        ][0]
 
-        Args:
-            filename: The full file path
-            project_root: The project root package name
-
-        Returns:
-            The import name for this module
-        """
         path = Path(filename)
 
         # Get all parts of the path

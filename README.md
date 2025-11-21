@@ -2,7 +2,7 @@
 A multilanguage, multi project code metrics analysis tool. 
 
 [![PyPI version](https://img.shields.io/pypi/v/metripy.svg)](https://pypi.org/project/metripy/)
-[![Tests](https://img.shields.io/badge/tests-122%20passed-brightgreen)](./tests)
+[![Tests](https://img.shields.io/badge/tests-138%20passed-brightgreen)](./tests)
 [![Coverage](https://codecov.io/gh/zimmer-yan/metripy/branch/main/graph/badge.svg)](https://codecov.io/gh/zimmer-yan/metripy)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Downloads](https://img.shields.io/pypi/dm/metripy.svg)](https://pypi.org/project/metripy/)
@@ -10,8 +10,8 @@ A multilanguage, multi project code metrics analysis tool.
 
 # Languages
 Supported languages
-- Python (with radon)
-- Php (experimental)
+- Python
+- Php
 - Typescript (experimental)
 - TBD
 
@@ -36,13 +36,36 @@ Generates an easy to read dashboard
 TODO: as this application generates multi project reports, add central dashboard to have project specific insights at first glance
 
 ## Csv
-Coming soon...
+Exports simple csv
 
 ## Json
-Coming soon...
+Dumps full result into json
 
 ## Cli
-Coming soon...
+Prints overview to cli, contains colorcoded tables and charts 
+
+# Metrics
+
+## Lines of code
+The total number of lines in your source code, including comments and blank lines.
+
+## Cyclomatic Complexity
+A measure of the number of independent paths through your code.
+
+## Cognitive Complexity
+A measure of how difficult code is to understand based on its control flow and nesting.
+
+## Maintainability Index
+A composite metric that estimates how easy it is to maintain code, based on LOC, complexity, and comments.
+
+## Average Method Size
+The average number of lines per method or function in your codebase.
+
+## Instability
+A metric that measures how likely a module is to change based on its dependencies (ratio of efferent to afferent couplings).
+
+## LCOM4
+A metric that measures how well the methods of a class are related to each other. It checks if methods share common attributes, indicating cohesion.
 
 # Configuration
 Configuration is for the moment only possible with the `--config=<file>.json` option. More TBD

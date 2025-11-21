@@ -72,24 +72,24 @@ class TestPhpCognitiveComplexityCalculator(TestCase):
     }
     """
 
+    def setUp(self):
+        self.calculator = PhpCognitiveComplexityCalculator()
+
     def test_simple_script(self):
         parser = PhpAstParser()
         parser.parse(self.SIMPLE_SCRIPT)
-        calculator = PhpCognitiveComplexityCalculator(parser)
-        result = calculator.calculate_for_all_functions()
+        result = self.calculator.calculate_for_all_functions(parser)
         self.assertEqual(result["test_function"], 1)
 
     def test_medium_script(self):
         parser = PhpAstParser()
         parser.parse(self.MEDIUM_SCRIPT)
-        calculator = PhpCognitiveComplexityCalculator(parser)
-        result = calculator.calculate_for_all_functions()
+        result = self.calculator.calculate_for_all_functions(parser)
         self.assertEqual(result["test_function"], 6)
 
     def test_complex_script(self):
         parser = PhpAstParser()
         parser.parse(self.COMPLEX_SCRIPT)
-        calculator = PhpCognitiveComplexityCalculator(parser)
-        result = calculator.calculate_for_all_functions()
+        result = self.calculator.calculate_for_all_functions(parser)
         # why 35 not 31?
         self.assertEqual(result["test_function"], 35)

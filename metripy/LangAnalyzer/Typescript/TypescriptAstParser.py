@@ -115,3 +115,9 @@ class TypescriptAstParser(AstParser):
 
     def get_function_self_calls(self, function_node: Node) -> List[str]:
         raise NotImplementedError
+
+    def get_class_methods(self, class_node: Node) -> List[Node]:
+        raise NotImplementedError
+
+    def extract_import_qualified_name(self, node: Node) -> Optional[str]:
+        raise NotImplementedError

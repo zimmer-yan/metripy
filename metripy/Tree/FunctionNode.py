@@ -7,13 +7,12 @@ from metripy.Metric.Trend.FunctionTrendMetric import FunctionTrendMetric
 
 class FunctionNode:
     def __init__(
-        self, full_name: str, name: str, lineno: int, col_offset: int, complexity: int
+        self, full_name: str, name: str, lineno: int, line_end: int, complexity: int
     ):
         self.full_name = full_name
         self.name = name
         self.lineno = lineno
-        self.line_end = 0
-        self.col_offset = col_offset
+        self.line_end = line_end
         self.complexity = complexity
         self.h1 = 0
         self.h2 = 0
@@ -69,7 +68,6 @@ class FunctionNode:
             "line_end": self.line_end,
             "loc": self.get_loc(),
             "loc_segment": Segmentor.get_method_size_segment(self.get_loc()),
-            "col_offset": self.col_offset,
             "complexity": self.complexity,
             "complexity_segment": Segmentor.get_complexity_segment(self.complexity),
             "h1": self.h1,
@@ -103,10 +101,9 @@ class FunctionNode:
             full_name=data["full_name"],
             name=data["name"],
             lineno=data["lineno"],
-            col_offset=data["col_offset"],
+            line_end=data["line_end"],
             complexity=data["complexity"],
         )
-        node.line_end = data["line_end"]
         node.vocabulary = data["vocabulary"]
         node.length = data["length"]
         node.calculated_length = data["calculated_length"]

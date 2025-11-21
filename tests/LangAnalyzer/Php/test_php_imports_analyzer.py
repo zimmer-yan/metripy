@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from metripy.LangAnalyzer.Php.PhpImportsAnalyzer import PhpImportsAnalyzer
+from metripy.LangAnalyzer.Php.Ast.PhpAstParser import PhpAstParser
 
 
 class TestPhpImportsAnalyzer(TestCase):
@@ -15,10 +16,14 @@ class TestPhpImportsAnalyzer(TestCase):
     }
     """
 
-    def test_extract(self):
-        analyzer = PhpImportsAnalyzer("test.php", self.SIMPLE_SCRIPT)
-        self.assertEqual(analyzer.extract_import_name(), "App\\Test\\TestClass1")
+    def setUp(self):
+        self.analyzer = PhpImportsAnalyzer()
+
+    def test_extract_import_name(self):
+        parser = PhpAstParser()
+        parser.parse(self.SIMPLE_SCRIPT)
+        self.assertEqual(self.analyzer.extract_import_name("test.php", parser), "App\\Test\\TestClass1")
         self.assertEqual(
-            analyzer.extract_imports(),
+            self.analyzer.extract_imports("test.php", parser),
             ["App\\Test\\TestClass2", "App\\Test\\TestClass3"],
         )

@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 from collections import Counter
 
 
+# TODO: radon only looks at unary, binary and boolean operators,
+#  assign and function head
 class GenericHalSteadAnalyzer(ABC):
     @abstractmethod
     def get_operators(self) -> list[str]:

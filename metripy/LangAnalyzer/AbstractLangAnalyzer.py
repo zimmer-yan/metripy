@@ -24,10 +24,33 @@ from metripy.LangAnalyzer.Generic.Metrics.HalSteadAnalyzerFactory import (
 from metripy.LangAnalyzer.Generic.Metrics.Lcom4AnalyzerFactory import (
     Lcom4AnalyzerFactory,
 )
+from metripy.LangAnalyzer.Generic.Metrics.CyclomaticComplexityAnalyzerFactory import (
+    CyclomaticComplexityAnalyzerFactory,
+)
+from metripy.LangAnalyzer.Generic.Metrics.GenericCyclomaticComplexityAnalyzer import (
+    GenericCyclomaticComplexityAnalyzer,
+)
 from metripy.LangAnalyzer.Generic.Metrics.LocAnalyzerFactory import LocAnalyzerFactory
 from metripy.Metric.Code.FileMetrics import FileMetrics
-from metripy.Tree.FunctionNode import FunctionNode
 from metripy.Tree.ModuleNode import ModuleNode
+from metripy.Tree.FunctionNode import FunctionNode
+from metripy.Tree.ClassNode import ClassNode
+
+from metripy.LangAnalyzer.Generic.Ast.AstParserFactory import AstParserFactory
+from metripy.LangAnalyzer.Generic.Ast.AstParser import AstParser
+from metripy.LangAnalyzer.Generic.Metrics.GenericCognitiveComplexityAnalyzer import (
+    GenericCognitiveComplexityCalculator,
+)
+from metripy.LangAnalyzer.Generic.Metrics.CognitiveComplexityAnalyzerFactory import (
+    CognitiveComplexityAnalyzerFactory,
+)
+from metripy.LangAnalyzer.Generic.Metrics.ImportsAnalyzerFactory import (
+    ImportsAnalyzerFactory,
+)
+from metripy.LangAnalyzer.Generic.Metrics.GenericImportsAnalyzer import (
+    GenericImportsAnalyzer,
+)
+import math
 
 
 class AbstractLangAnalyzer(ABC):
@@ -35,14 +58,30 @@ class AbstractLangAnalyzer(ABC):
         self.config = project_config
         self.files: list[str] = []
         self.modules: dict[str, ModuleNode] = {}
+        self.ast_parser: AstParser = AstParserFactory.get_ast_parser(
+            self.get_lang_name()
+        )
         self.loc_analyzer: GenericLocAnalyzer = LocAnalyzerFactory.get_loc_analyzer(
             self.get_lang_name()
+        )
+        self.cyclomatic_complexity_analyzer: GenericCyclomaticComplexityAnalyzer = (
+            CyclomaticComplexityAnalyzerFactory.get_cyclomatic_complexity_analyzer(
+                self.get_lang_name()
+            )
+        )
+        self.cognitive_complexity_analyzer: GenericCognitiveComplexityCalculator = (
+            CognitiveComplexityAnalyzerFactory.get_cognitive_complexity_analyzer(
+                self.get_lang_name()
+            )
         )
         self.halstead_analyzer: GenericHalSteadAnalyzer = (
             HalSteadAnalyzerFactory.get_halstead_analyzer(self.get_lang_name())
         )
         self.lcom4_analyzer: GenericLcom4Analyzer = (
             Lcom4AnalyzerFactory.get_lcom4_analyzer(self.get_lang_name())
+        )
+        self.imports_analyzer: GenericImportsAnalyzer = (
+            ImportsAnalyzerFactory.get_imports_analyzer(self.get_lang_name())
         )
         self.code_smell_detector = CodeSmellDetectorFactory.get_code_smell_detector(
             self.get_lang_name(), self.config.code_smells
@@ -128,6 +167,9 @@ class AbstractLangAnalyzer(ABC):
             return f"{filename}:{item_name}"
         return f"{filename}:{class_name}:{item_name}"
 
+    def get_duplicates(self) -> list[dict]:
+        return self.duplicate_detector.get_duplicates()
+
     def get_metrics(self) -> list[FileMetrics]:
         metrics: dict[str, FileMetrics] = {}
 
@@ -200,3 +242,128 @@ class AbstractLangAnalyzer(ABC):
             file_metric.instability = (ce / (ca + ce)) if (ca + ce) > 0 else 0
 
         return list(metrics.values())
+
+    def analyze(self, code: str, filename: str) -> None:
+        self.ast_parser.parse(code)
+        cyclomatic_complexity_data = self.cyclomatic_complexity_analyzer.calculate(
+            self.ast_parser
+        )
+
+        classes: dict[str, ClassNode] = {}
+        functions: dict[str, FunctionNode] = {}
+        for data_item in cyclomatic_complexity_data["classes"]:
+            class_node = ClassNode(
+                self.full_name(filename, data_item["name"]),
+                data_item["name"],
+                data_item["line_start"],
+                data_item["line_end"],
+                sum(
+                    [method_data["complexity"] for method_data in data_item["methods"]]
+                ),
+            )
+            classes[class_node.full_name] = class_node
+            for method_data in data_item["methods"]:
+                function_node = FunctionNode(
+                    self.full_name(filename, method_data["name"]),
+                    method_data["name"],
+                    method_data["line_start"],
+                    method_data["line_end"],
+                    method_data["complexity"],
+                )
+                class_node.functions.append(function_node)
+                functions[function_node.full_name] = function_node
+        for data_item in cyclomatic_complexity_data["functions"]:
+            function_node = FunctionNode(
+                self.full_name(filename, data_item["name"]),
+                data_item["name"],
+                data_item["line_start"],
+                data_item["line_end"],
+                data_item["complexity"],
+            )
+            functions[function_node.full_name] = function_node
+
+        module_node = self.create_module_node(filename, code)
+        module_node.classes.extend(classes.values())
+        module_node.functions.extend(functions.values())
+
+        code_lines = code.split("\n")
+        for func_name, function_node in functions.items():
+            lines = code_lines[function_node.lineno : function_node.line_end]
+            self.add_function_halstead_metrics(function_node, "\n".join(lines))
+
+        maintainability_index = self._calculate_maintainability_index(
+            functions.values(), module_node
+        )
+        module_node.maintainability_index = maintainability_index
+        self.modules[module_node.full_name] = module_node
+
+        # ignore for now - maybe only pass class code, so we dont get import duplicates
+        # self.duplicate_detector.add_code(filename, code)
+
+        module_node.import_name, module_node.imports = (
+            self.imports_analyzer.get_import_data(filename, self.ast_parser)
+        )
+
+        module_node.code_smells = self.code_smell_detector.detect_all(filename, code)
+
+        cognitive_complexities = (
+            self.cognitive_complexity_analyzer.calculate_for_all_functions(
+                self.ast_parser
+            )
+        )
+        for func_name, complexity in cognitive_complexities.items():
+            full_name = self.full_name(filename, func_name)
+            function_node = functions.get(full_name)
+            if function_node is not None:
+                function_node.cognitive_complexity = complexity
+            else:
+                raise ValueError(f"Function node not found for function {full_name}")
+
+        lcom4 = self.lcom4_analyzer.get_lcom4(self.ast_parser)
+        for class_name, lcom4_value in lcom4.items():
+            full_name = self.full_name(filename, class_name)
+            class_node = classes.get(full_name)
+            if class_node is not None:
+                class_node.lcom4 = lcom4_value
+            else:
+                raise ValueError(f"Class node not found for class {full_name}")
+
+        # for classes that dont have lcom4, interface, set to number of methods
+        for class_node in classes.values():
+            if class_node.lcom4 is None:
+                class_node.lcom4 = len(class_node.functions)
+
+    def _calculate_maintainability_index(
+        self, functions: list[FunctionNode], module_node: ModuleNode
+    ) -> float:
+        """Calculate maintainability index for PHP"""
+        if not functions:
+            return 100.0
+
+        total_volume = sum(func.volume for func in functions)
+        total_complexity = sum(func.complexity for func in functions)
+        total_length = sum(func.length for func in functions)
+
+        if total_volume == 0 or total_length == 0:
+            return 100.0
+
+        # PHP maintainability index calculation
+        mi_base = max(
+            (
+                171
+                - 5.2 * math.log(total_volume)
+                - 0.23 * total_complexity
+                - 16.2 * math.log(total_length)
+            )
+            * 100
+            / 171,
+            0,
+        )
+
+        # Comment weight
+        comment_weight = 0
+        if module_node.loc > 0:
+            comment_ratio = module_node.single_comments / module_node.loc
+            comment_weight = 50 * math.sin(math.sqrt(2.4 * comment_ratio))
+
+        return mi_base + comment_weight

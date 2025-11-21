@@ -123,6 +123,11 @@ class AstParser(ABC):
         pass
 
     @abstractmethod
+    def extract_import_qualified_name(self, node: Node) -> Optional[str]:
+        """Extract imported module/name from import node"""
+        pass
+
+    @abstractmethod
     def get_function_parameters(self, function_node: Node) -> List[str]:
         """Extract parameter names from a function definition"""
         pass
@@ -149,4 +154,9 @@ class AstParser(ABC):
     @abstractmethod
     def get_function_self_calls(self, function_node: Node) -> List[str]:
         """Get names class methods called in the function"""
+        pass
+
+    @abstractmethod
+    def get_class_methods(self, class_node: Node) -> List[Node]:
+        """Get all class methods"""
         pass

@@ -11,13 +11,13 @@ class ClassNode:
         full_name: str,
         name: str,
         lineno: int,
-        col_offset: int,
+        line_end: int,
         real_complexity: int,
     ):
         self.full_name = full_name
         self.name = name
         self.lineno = lineno
-        self.col_offset = col_offset
+        self.line_end = line_end
         self.real_complexity = real_complexity
         self.lcom4: int | None = None
         self.functions: list[FunctionNode] = []
@@ -30,7 +30,7 @@ class ClassNode:
             "full_name": self.full_name,
             "name": self.name,
             "lineno": self.lineno,
-            "col_offset": self.col_offset,
+            "line_end": self.line_end,
             "real_complexity": self.real_complexity,
             "lcom4": self.lcom4,
             "complexity_segment": Segmentor.get_complexity_segment(
@@ -48,7 +48,7 @@ class ClassNode:
             full_name=data["full_name"],
             name=data["name"],
             lineno=data["lineno"],
-            col_offset=data["col_offset"],
+            line_end=data.get("line_end", 0),
             real_complexity=data["real_complexity"],
         )
         node.lcom4 = data.get("lcom4", None)

@@ -1,3 +1,6 @@
+# v0.9.0
+- Refactored main analyzers to be as generic as possible
+
 # v0.8.0
 - Added LCOM4 metrics
 
