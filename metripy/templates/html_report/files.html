@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Files - Code Metrics Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="images/logo.svg" sizes="any" type="image/svg+xml">
+    <link rel="stylesheet" href="css/files.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <img src="images/logo.svg" alt="Metripy Logo" class="logo-icon">
+                    <h2>Metripy</h2>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Overview</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="files.html" class="nav-link">
+                            <i class="fas fa-file-code"></i>
+                            <span>Files</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="top_offenders.html" class="nav-link">
+                            <i class="fa-solid fa-stethoscope"></i>
+                            <span>Top Offenders</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="git_analysis.html" class="nav-link">
+                            <i class="fab fa-git-alt"></i>
+                            <span>Git Analysis</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="coupling.html" class="nav-link">
+                            <i class="fas fa-project-diagram"></i>
+                            <span>Coupling</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="dependencies.html" class="nav-link">
+                            <i class="fas fa-cubes"></i>
+                            <span>Dependencies</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="trends.html" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Trends</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="code_smells.html" class="nav-link">
+                            <i class="fas fa-bug"></i>
+                            <span>Code Smells</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="metrics.html" class="nav-link">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Explanations</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="project-info">
+                    <h4>Project: {{project_name}}</h4>
+                    <p>Last updated: {{last_updated}}</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div class="header-content">
+                    <h1>File Details</h1>
+                    <p class="subtitle">File details and analysis</p>
+                </div>
+            </header>
+            
+            <section class="two-column-section">
+                <div class="info-card">
+                    <h4>File List</h4>
+                    <div class="file-tree" id="filetree">
+                        <!-- filled by JS-->
+                    </div>
+                </div>
+                <div class="info-card">
+                    <h4>File View</h4>
+                    <div class="file-view" id="fileview">
+                        <!-- filled by JS-->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Embed data directly from template engine
+    </script>
+    <script>
+        const fileTreeData = {{filetree}};
+        const fileDetails = {{file_details}};
+        
+        function getIconClass(name, numChildren) {
+            const file_ext = name.split(".").pop();
+            if (numChildren) {
+                return 'fa-regular fa-folder';
+            } else if (file_ext === "php") {
+                return 'fa-brands fa-php';
+            } else if (file_ext === "py") {
+                return 'fa-brands fa-python';
+            } else {
+                return 'fa-regular fa-file';
+            }
+        }
+
+        // Helper function to determine the worst segment for a file
+        function getWorstSegment(fullName) {
+            const details = fileDetails[fullName];
+            if (!details) return null;
+
+            const segments = [
+                details.loc_segment,
+                details.complexity_segment,
+                details.cognitive_complexity_segment,
+                details.maintainability_segment,
+                details.method_size_segment
+            ];
+
+            // Priority: critical > warning > ok > good
+            if (segments.includes('critical')) return 'critical';
+            if (segments.includes('warning')) return 'warning';
+            if (segments.includes('ok')) return 'ok';
+            return 'good';
+        }
+
+        // Helper function to create health indicator HTML
+        function getHealthIndicatorHTML(fullName) {
+            const segment = getWorstSegment(fullName);
+            if (!segment) return '';
+            
+            if (segment === 'critical') {
+                return `<span class="file-health-indicator ${segment}" title="Needs immediate attention"></span><span class="file-priority-badge critical">!</span>`;
+            } else if (segment === 'warning') {
+                return `<span class="file-health-indicator ${segment}" title="Needs attention"></span>`;
+            } else if (segment === 'ok') {
+                return `<span class="file-health-indicator ${segment}" title="Could be improved"></span>`;
+            } else {
+                return `<span class="file-health-indicator ${segment}" title="Healthy"></span>`;
+            }
+        }
+
+        function renderTree(node) {
+            if (!node) return '';
+
+            const icon = getIconClass(node.name, node.children.length);
+            const isFile = node.children.length === 0;
+            const healthIndicator = isFile ? getHealthIndicatorHTML(node.full_name) : '';
+            
+            // Add health class to files
+            let className = node.children.length ? 'folder' : 'file';
+            if (isFile) {
+                const segment = getWorstSegment(node.full_name);
+                if (segment) {
+                    className += ` health-${segment}`;
+                }
+            }
+
+            let html = `<li><i class="${icon}"></i><span class="${className}" id="${node.full_name}"> ${node.name}</span>${healthIndicator}`;
+            if (node.children.length > 0) {
+                html += `<ul>`;
+                node.children.forEach(child => {
+                    html += renderTree(child);
+                });
+                html += `</ul>`;
+            }
+
+            html += `</li>`;
+            return html;
+        }
+
+        // Count files by health status
+        function countFilesByHealth() {
+            const counts = { good: 0, ok: 0, warning: 0, critical: 0, total: 0 };
+            
+            function countInNode(node) {
+                if (!node) return;
+                
+                if (node.children.length === 0) {
+                    // It's a file
+                    const segment = getWorstSegment(node.full_name);
+                    if (segment) {
+                        counts[segment]++;
+                        counts.total++;
+                    }
+                } else {
+                    // It's a folder, recurse
+                    node.children.forEach(child => countInNode(child));
+                }
+            }
+            
+            countInNode(fileTreeData);
+            return counts;
+        }
+
+        const healthCounts = countFilesByHealth();
+
+        const fileTree = document.getElementById('filetree');
+        const searchAndLegendHTML = `
+            <div class="file-search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="fileSearchInput" placeholder="Search files by name..." />
+            </div>
+            <div class="file-tree-legend">
+                <span class="legend-title">Filter:</span>
+                <div class="filter-controls">
+                    <div class="filter-btn good active" data-filter="good">
+                        <span class="legend-dot good"></span>
+                        <span>Healthy</span>
+                        <span class="filter-count">${healthCounts.good}</span>
+                    </div>
+                    <div class="filter-btn ok active" data-filter="ok">
+                        <span class="legend-dot ok"></span>
+                        <span>OK</span>
+                        <span class="filter-count">${healthCounts.ok}</span>
+                    </div>
+                    <div class="filter-btn warning active" data-filter="warning">
+                        <span class="legend-dot warning"></span>
+                        <span>Needs Attention</span>
+                        <span class="filter-count">${healthCounts.warning}</span>
+                    </div>
+                    <div class="filter-btn critical active" data-filter="critical">
+                        <span class="legend-dot critical"></span>
+                        <span>Critical</span>
+                        <span class="filter-count">${healthCounts.critical}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        fileTree.innerHTML = searchAndLegendHTML + `<ul>${renderTree(fileTreeData)}</ul>`
+
+        // Set up filtering functionality
+        const activeFilters = new Set(['good', 'ok', 'warning', 'critical']);
+        let searchTerm = '';
+        
+        function applyFilters() {
+            const allItems = fileTree.querySelectorAll('li');
+            const lowerSearchTerm = searchTerm.toLowerCase();
+            
+            // First pass: Filter only FILES based on search term and health filters
+            allItems.forEach(li => {
+                const fileSpan = li.querySelector('.file');
+                if (fileSpan) {
+                    // It's a file, apply search and health filters
+                    const fileName = fileSpan.textContent.toLowerCase();
+                    const matchesSearch = !searchTerm || fileName.includes(lowerSearchTerm);
+                    
+                    // Get the health class from the file span
+                    let fileHealth = null;
+                    if (fileSpan.classList.contains('health-good')) fileHealth = 'good';
+                    else if (fileSpan.classList.contains('health-ok')) fileHealth = 'ok';
+                    else if (fileSpan.classList.contains('health-warning')) fileHealth = 'warning';
+                    else if (fileSpan.classList.contains('health-critical')) fileHealth = 'critical';
+                    
+                    // Show or hide based on active filters AND search term
+                    if (fileHealth && activeFilters.has(fileHealth) && matchesSearch) {
+                        li.classList.remove('filtered-out');
+                    } else {
+                        li.classList.add('filtered-out');
+                    }
+                }
+            });
+            
+            // Second pass: Hide folders that have no visible children (process from bottom to top)
+            // Convert to array and reverse to process deepest folders first
+            const allFolders = Array.from(fileTree.querySelectorAll('li')).reverse();
+            allFolders.forEach(li => {
+                const folderSpan = li.querySelector('.folder');
+                if (folderSpan) {
+                    const ul = li.querySelector('ul');
+                    if (ul) {
+                        const visibleChildren = Array.from(ul.children).filter(
+                            child => !child.classList.contains('filtered-out')
+                        );
+                        if (visibleChildren.length === 0) {
+                            li.classList.add('filtered-out');
+                        } else {
+                            li.classList.remove('filtered-out');
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Debounce helper function
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Add search input handler with debouncing
+        const searchInput = document.getElementById('fileSearchInput');
+        const debouncedFilter = debounce((value) => {
+            searchTerm = value;
+            applyFilters();
+        }, 150);
+        
+        searchInput.addEventListener('input', (e) => {
+            debouncedFilter(e.target.value);
+        });
+
+        // Use event delegation for ALL clicks in fileTree (more efficient)
+        const fileView = document.getElementById('fileview');
+        
+        fileTree.addEventListener('click', (e) => {
+            const target = e.target;
+            
+            // Handle filter button clicks
+            const btn = target.closest('.filter-btn');
+            if (btn) {
+                const filter = btn.dataset.filter;
+                
+                // Toggle individual filter
+                if (activeFilters.has(filter)) {
+                    activeFilters.delete(filter);
+                    btn.classList.remove('active');
+                } else {
+                    activeFilters.add(filter);
+                    btn.classList.add('active');
+                }
+                
+                applyFilters();
+                return;
+            }
+            
+            // Handle folder clicks
+            if (target.classList.contains('folder')) {
+                const nextUl = target.nextElementSibling;
+                if (nextUl && nextUl.tagName === 'UL') {
+                    nextUl.style.display = nextUl.style.display === 'none' ? 'block' : 'none';
+                }
+                return;
+            }
+            
+            // Handle file clicks
+            if (target.classList.contains('file')) {
+                const details = fileDetails[target.id];
+
+                // Extract file name from full path
+                const fileName = target.id.split('/').pop();
+
+                // Collect all method names to filter from global functions
+                const methodNames = new Set();
+
+                const icon = getIconClass(fileName, 0);
+                
+                // Helper function to get segment label
+                const getSegmentLabel = (segment) => {
+                    const labels = {
+                        'good': '✓ Good',
+                        'ok': '○ OK',
+                        'warning': '⚠ Warning',
+                        'critical': '✗ Critical'
+                    };
+                    return labels[segment] || segment;
+                };
+                
+                let html = `
+                <div class="file-details">
+                    <h2><i class="${icon}"></i> ${fileName}</h2>
+                    <div class="metrics-summary" style="margin-bottom: var(--spacing-lg); display: flex; flex-wrap: wrap; gap: var(--spacing-sm);">
+                        <div class="metric-badge ${details.loc_segment}">
+                            <span class="label">Lines of Code:</span>
+                            <span class="value">${details.loc}</span>
+                            <span class="segment-indicator">${getSegmentLabel(details.loc_segment)}</span>
+                        </div>
+                        <div class="metric-badge ${details.maintainability_segment}">
+                            <span class="label">Maintainability:</span>
+                            <span class="value">${details.maintainabilityIndex}</span>
+                            <span class="segment-indicator">${getSegmentLabel(details.maintainability_segment)}</span>
+                        </div>
+                        <div class="metric-badge ${details.complexity_segment}">
+                            <span class="label">Avg Cyclomatic Complexity:</span>
+                            <span class="value">${details.avgCcPerFunction.toFixed(2)}</span>
+                            <span class="segment-indicator">${getSegmentLabel(details.complexity_segment)}</span>
+                        </div>
+                        <div class="metric-badge ${details.cognitive_complexity_segment}">
+                            <span class="label">Avg Cognitive Complexity:</span>
+                            <span class="value">${details.avg_cog_complexity_per_function.toFixed(2)}</span>
+                            <span class="segment-indicator">${getSegmentLabel(details.cognitive_complexity_segment)}</span>
+                        </div>
+                        <div class="metric-badge ${details.method_size_segment}">
+                            <span class="label">Avg Method Size:</span>
+                            <span class="value">${details.avgLocPerFunction.toFixed(2)}</span>
+                            <span class="segment-indicator">${getSegmentLabel(details.method_size_segment)}</span>
+                        </div>
+                    </div>
+
+                    <hr/>
+                    <h3>Classes</h3>
+                    <ul>
+                `;
+
+                details.class_nodes.forEach(node => {
+                const complexity = node.real_complexity;
+                const classComplexitySegment = node.complexity_segment;
+                const classLcom4Segment = node.lcom4 == 1 ? 'good' : 'critical';
+                html += `<li><strong>${node.name}</strong> <span class="complexity-indicator ${classComplexitySegment}">Total Cyclomatic Complexity: ${node.real_complexity}</span> <span class="complexity-indicator ${classLcom4Segment}">LCOM4: ${node.lcom4}</span>`;
+                if (node.functions && node.functions.length > 0) {
+                    html += `<ul class="methods">`;
+                    node.functions.forEach(method => {
+                        const complexity = method.complexity;
+                        const cognitiveComplexity = method.cognitive_complexity;
+                        const maintainability = method.maintainability_index;
+                        const loc = method.loc;
+                        const methodComplexitySegment = method.complexity_segment;
+                        const methodMaintainabilitySegment = method.maintainability_segment;
+                        const methodCognitiveComplexitySegment = method.cognitive_complexity_segment;
+                        const methodLocSegment = method.loc_segment;
+                        html += `<li>
+                            <strong>${method.name}()</strong><br/>
+                            <span style="margin-left: 1rem; font-size: 0.9em; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                                <span class="complexity-indicator ${methodComplexitySegment}">Cyclomatic Complexity: ${complexity}</span>
+                                <span class="complexity-indicator ${methodCognitiveComplexitySegment}">Cognitive Complexity: ${method.cognitive_complexity}</span>
+                                <span class="complexity-indicator ${methodMaintainabilitySegment}">MI: ${maintainability !== undefined ? maintainability.toFixed(1) : 'N/A'}</span>
+                                <span class="complexity-indicator ${methodLocSegment}">LOC: ${loc}</span>
+                            </span>
+                        </li>`;
+                        methodNames.add(method.name)
+                    });
+                    html += `</ul>`;
+                }
+                html += `</li>`;
+                });
+
+                html += `
+                    </ul>
+                    <hr/>
+                    <h3>Global Functions</h3>
+                    <ul>
+                `;
+
+                details.function_nodes.forEach(node => {
+                if (!methodNames.has(node.name)) {
+                    const functionComplexitySegment = node.complexity_segment;
+                    const functionCognitiveComplexitySegment = node.cognitive_complexity_segment;
+                    const maintainability = node.maintainability_index;
+                    const functionMaintainabilitySegment = node.maintainability_segment;
+                    const functionLocSegment = node.loc_segment;
+                    html += `<li>
+                        <strong>${node.name}()</strong><br/>
+                        <span style="margin-left: 1rem; font-size: 0.9em; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                            <span class="complexity-indicator ${functionComplexitySegment}">Cyclomatic Complexity: ${node.complexity}</span>
+                            <span class="complexity-indicator ${functionCognitiveComplexitySegment}">Cognitive Complexity: ${node.cognitive_complexity}</span>
+                            <span class="complexity-indicator ${functionMaintainabilitySegment}">MI: ${maintainability !== undefined ? maintainability.toFixed(1) : 'N/A'}</span>
+                            <span class="complexity-indicator ${functionLocSegment}">LOC: ${node.loc}</span>
+                        </span>
+                    </li>`;
+                }
+                });
+
+                html += `</ul></div>`;
+
+                fileView.innerHTML = html;
+            }
+        });
+    </script>
+</body>
+</html>

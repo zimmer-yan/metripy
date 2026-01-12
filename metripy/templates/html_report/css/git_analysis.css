@@ -1,0 +1,78 @@
+/* ===== GIT ANALYSIS PAGE SPECIFIC STYLES ===== */
+
+/* Table Container for Overflow */
+.table-container {
+    overflow-x: auto;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Hotspot and Contributor Tables */
+.hotspot-table,
+.contributor-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+/* File path column */
+.hotspot-table td:first-child,
+.hotspot-table th:first-child {
+    width: 40%;
+    max-width: 300px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+/* Owner/Developer column */
+.hotspot-table td:nth-child(2),
+.hotspot-table th:nth-child(2) {
+    width: 30%;
+    max-width: 200px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Numeric columns */
+.hotspot-table td:nth-child(3),
+.hotspot-table th:nth-child(3),
+.hotspot-table td:nth-child(4),
+.hotspot-table th:nth-child(4) {
+    width: 15%;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Contributor table columns */
+.contributor-table td:first-child,
+.contributor-table th:first-child {
+    width: 40%;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.contributor-table td,
+.contributor-table th {
+    text-align: left;
+    padding: 0.75rem;
+}
+
+/* Ensure tables don't overflow their containers */
+.git-analysis-page .info-card {
+    overflow: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hotspot-table td:first-child,
+    .hotspot-table th:first-child {
+        max-width: 150px;
+    }
+    
+    .hotspot-table,
+    .contributor-table {
+        font-size: 0.875rem;
+    }
+}
+

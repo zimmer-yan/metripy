@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Analysis - Code Metrics Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="images/logo.svg" sizes="any" type="image/svg+xml">
+    <link rel="stylesheet" href="css/dependencies.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <img src="images/logo.svg" alt="Metripy Logo" class="logo-icon">
+                    <h2>Metripy</h2>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Overview</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="files.html" class="nav-link">
+                            <i class="fas fa-file-code"></i>
+                            <span>Files</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="top_offenders.html" class="nav-link">
+                            <i class="fa-solid fa-stethoscope"></i>
+                            <span>Top Offenders</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="git_analysis.html" class="nav-link">
+                            <i class="fab fa-git-alt"></i>
+                            <span>Git Analysis</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="coupling.html" class="nav-link">
+                            <i class="fas fa-project-diagram"></i>
+                            <span>Coupling</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="dependencies.html" class="nav-link">
+                            <i class="fas fa-cubes"></i>
+                            <span>Dependencies</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="trends.html" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Trends</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="code_smells.html" class="nav-link">
+                            <i class="fas fa-bug"></i>
+                            <span>Code Smells</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="metrics.html" class="nav-link">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Explanations</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="project-info">
+                    <h4>Project: {{project_name}}</h4>
+                    <p>Last updated: {{last_updated}}</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div class="header-content">
+                    <h1>Dependency Details</h1>
+                    <p class="subtitle">Dependency details and stats</p>
+                </div>
+            </header>
+
+            {{#IF has_dependencies_data}}
+
+            <!-- License Chart Section -->
+            <section class="chart-section" style="grid-template-columns: 1fr; max-width: 600px;">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>License Distribution</h3>
+                        <p>Licenses used across dependencies</p>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="licenseTypesChart"></canvas>
+                    </div>
+                </div>
+            </section>
+            
+            <div class="info-card">
+                <div>
+                    {{#EACH dependencies AS dependency}}
+                    
+                        <div class="dependency">
+                            <div class="header">
+                              <h2><a href="{{dependency.repository}}">{{dependency.name}}</a></h2>
+                              <span class="status {{dependency.status}}">{{dependency.status}}</span>
+                            </div>
+                            <p class="description">{{dependency.description}}</p>
+                            <ul class="details">
+                              <li><strong>Type:</strong> {{dependency.type}}</li>
+                              <li><strong>Required Version:</strong> {{dependency.version}}</li>
+                              <li><strong>Latest Version:</strong> {{dependency.latest}}</li>
+                              <li><strong>GitHub Stars:</strong> ⭐ {{dependency.github_stars}}</li>
+                              <li><strong>Monthly Downloads:</strong> 📦 {{dependency.downloads_monthly}}</li>
+                              <li><strong>License:</strong> {{dependency.licenses}}</li>
+                            </ul>
+                          </div>
+                    {{/EACH}}
+                </div>
+            </div>
+
+            <!-- No Dependencies Data State -->
+            {{#ELSE}}
+            <div class="empty-state">
+                <i class="fas fa-chart-line"></i>
+                <h3>No Dependency Data Available</h3>
+                <p>Enable analysis of dependencies in your config file.</p>
+            </div>
+            {{/IF}}
+
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Embed data directly from template engine
+        window.DEPENDENCIES_DATA = {{dependencies_json}};
+    </script>
+    <script>
+        function createLicenseTypesChart() {
+            const canvas = document.getElementById('licenseTypesChart');
+            if (!canvas) {
+                console.warn('License types chart canvas not found');
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            
+            const chartData = {{license_distribution_json}};
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(chartData),
+                    datasets: [{
+                        label: "License Types",
+                        data: Object.values(chartData),
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        title: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Create chart when page loads
+        document.addEventListener('DOMContentLoaded', createLicenseTypesChart);
+    </script>
+</body>
+</html>

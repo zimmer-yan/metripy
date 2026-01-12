@@ -1,0 +1,169 @@
+/* ===== CODE SMELLS PAGE SPECIFIC STYLES ===== */
+
+/* Limit info card height for scrolling */
+.code-smells-page .info-card {
+    max-height: 730px;
+    overflow-y: auto;
+}
+
+/* Smell List Block */
+.smell-list {
+    list-style: none;
+    padding: 12px;
+    margin: 0 0 16px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: box-shadow var(--transition-fast);
+}
+
+.smell-list:hover {
+    box-shadow: var(--shadow-md);
+}
+
+/* Smell Item */
+.smell-item {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 14px;
+    gap: 4px;
+}
+
+.smell-item:last-child {
+    border-bottom: none;
+}
+
+.smell-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.smell-type {
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.smell-message {
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.smell-severity {
+    font-weight: bold;
+    text-transform: capitalize;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+/* Detail Card */
+.detail-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 12px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.detail-type {
+    font-weight: bold;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.detail-severity {
+    font-weight: bold;
+    text-transform: capitalize;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.detail-body p {
+    margin: 4px 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.detail-body code {
+    background: var(--bg-tertiary);
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+/* Severity Colors */
+.severity-info .smell-severity,
+.severity-info .detail-severity {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+.severity-minor .smell-severity,
+.severity-minor .detail-severity {
+    background-color: #fff3e0;
+    color: #fb8c00;
+}
+
+.severity-major .smell-severity,
+.severity-major .detail-severity {
+    background-color: #fbe9e7;
+    color: #d84315;
+}
+
+.severity-critical .smell-severity,
+.severity-critical .detail-severity {
+    background-color: #ffebee;
+    color: #b71c1c;
+}
+
+/* Code Block */
+.code-block {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    padding: 8px;
+    font-family: monospace;
+    font-size: 13px;
+    overflow-x: auto;
+}
+
+.code-line {
+    display: flex;
+    padding: 2px 4px;
+}
+
+.line-number {
+    width: 40px;
+    text-align: right;
+    color: var(--text-muted);
+    margin-right: 8px;
+    user-select: none;
+}
+
+.line-content {
+    white-space: pre;
+}
+
+.highlight-line {
+    background-color: #fff8e1;
+}
+
+.highlight-column {
+    background-color: rgba(255, 0, 0, 0.3);
+    border-radius: 2px;
+}
+

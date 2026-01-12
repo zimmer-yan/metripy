@@ -1,0 +1,59 @@
+from typing import Self
+
+from metripy.Metric.Code.Segmentor import Segmentor
+from metripy.Metric.Trend.ClassTrendMetric import ClassTrendMetric
+from metripy.Tree.FunctionNode import FunctionNode
+
+
+class ClassNode:
+    def __init__(
+        self,
+        full_name: str,
+        name: str,
+        lineno: int,
+        line_end: int,
+        real_complexity: int,
+    ):
+        self.full_name = full_name
+        self.name = name
+        self.lineno = lineno
+        self.line_end = line_end
+        self.real_complexity = real_complexity
+        self.lcom4: int | None = None
+        self.functions: list[FunctionNode] = []
+
+        self.trend: ClassTrendMetric | None = None
+
+    def get_loc(self) -> int:
+        return self.line_end - self.lineno
+
+    def to_dict(self) -> dict:
+        """Convert ClassNode to a dictionary for JSON serialization."""
+        return {
+            "full_name": self.full_name,
+            "name": self.name,
+            "lineno": self.lineno,
+            "line_end": self.line_end,
+            "real_complexity": self.real_complexity,
+            "lcom4": self.lcom4,
+            "complexity_segment": Segmentor.get_complexity_segment(
+                self.real_complexity
+            ),
+            "functions": [func.to_dict() for func in self.functions],
+        }
+
+    def __dict__(self) -> dict:
+        return self.to_dict()
+
+    @staticmethod
+    def from_dict(data: dict) -> Self:
+        node = ClassNode(
+            full_name=data["full_name"],
+            name=data["name"],
+            lineno=data["lineno"],
+            line_end=data.get("line_end", 0),
+            real_complexity=data["real_complexity"],
+        )
+        node.lcom4 = data.get("lcom4", None)
+        node.functions = [FunctionNode.from_dict(d) for d in data["functions"]]
+        return node

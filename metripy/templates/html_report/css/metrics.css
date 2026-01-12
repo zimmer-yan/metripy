@@ -1,0 +1,58 @@
+/* ===== METRICS EXPLANATION PAGE SPECIFIC STYLES ===== */
+
+.metrics-section {
+    padding: 10px;
+}
+
+.metrics-section h1 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: var(--text-primary);
+}
+
+/* Override metric-card for explanation page */
+.metrics-section .metric-card {
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: none;
+}
+
+.metrics-section .metric-card::before {
+    display: none;
+}
+
+.metrics-section .metric-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
+}
+
+.metrics-section .metric-card h2 {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.metrics-section .metric-card p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.metrics-section .metric-card a {
+    margin-top: auto;
+    text-decoration: none;
+    color: var(--primary-color);
+    font-weight: 600;
+    transition: color var(--transition-fast);
+}
+
+.metrics-section .metric-card a:hover {
+    color: var(--primary-dark);
+}
+

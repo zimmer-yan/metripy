@@ -1,0 +1,57 @@
+{
+    "configs": {
+        "metripy": {
+            "base_path": "./",
+            "includes": [
+                "metripy/"
+            ],
+            "excludes": [
+                "__pycache__"
+            ],
+            "extensions": [
+                "py"
+            ],
+            "pip": true,
+            "git": {
+                "branch": "main"
+            },
+            "reports": {
+                "html": "./build/report/metripy",
+                "json": "./build/json-report/metripy.json",
+                "json-git": "./build/json-report/metripy-git.json",
+                "csv": "./build/csv-report/metripy.csv",
+                "cli": ".",
+                "gl-codequality-report": "./build/gl-codequality-report/metripy.json"
+            },
+            "trends": "./build/historical-json-report/metripy.json"
+        }
+    },
+    "failure": {
+        "1": [
+            {
+                "value": "function_cyclomatic_complexity",
+                "severity": "critical",
+                "amount": 10
+            },
+            {
+                "value": "function_loc",
+                "severity": "critical",
+                "amount": 1
+            }
+        ],
+        "2": [
+            {
+                "value": "function_cyclomatic_complexity",
+                "severity": "critical",
+                "amount": 100
+            }
+        ],
+        "3": [
+            {
+                "value": "function_maintainability_index",
+                "severity": "critical",
+                "amount": 100
+            }
+        ]
+    }
+}
