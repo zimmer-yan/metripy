@@ -122,14 +122,20 @@ class TypescriptAstParser(AstParser):
     def get_function_attributes(self, function_node: Node) -> List[str]:
         self_calls = []
         for child in self.walk_tree(function_node):
-            if child.type == "member_expression" and not child.parent.type == "call_expression":
+            if (
+                child.type == "member_expression"
+                and not child.parent.type == "call_expression"
+            ):
                 self_calls.append(self.get_node_text(child))
         return self_calls
 
     def get_function_self_calls(self, function_node: Node) -> List[str]:
         self_calls = []
         for child in self.walk_tree(function_node):
-            if child.type == "member_expression" and child.parent.type == "call_expression":
+            if (
+                child.type == "member_expression"
+                and child.parent.type == "call_expression"
+            ):
                 # cut of "this." prefix
                 self_calls.append(self.get_node_text(child)[5:])
         return self_calls

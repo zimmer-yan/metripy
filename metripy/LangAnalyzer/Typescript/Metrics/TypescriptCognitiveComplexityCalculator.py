@@ -2,6 +2,7 @@ from metripy.LangAnalyzer.Generic.Metrics.GenericCognitiveComplexityAnalyzer imp
     GenericCognitiveComplexityCalculator,
 )
 
+
 class TypescriptCognitiveComplexityCalculator(GenericCognitiveComplexityCalculator):
     def get_node_map(self) -> dict[str, str]:
         return {

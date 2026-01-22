@@ -288,7 +288,7 @@ class AbstractLangAnalyzer(ABC):
 
         code_lines = code.split("\n")
         for func_name, function_node in functions.items():
-            lines = code_lines[function_node.lineno : function_node.line_end]
+            lines = code_lines[function_node.lineno:function_node.line_end]
             self.add_function_halstead_metrics(function_node, "\n".join(lines))
 
         maintainability_index = self._calculate_maintainability_index(

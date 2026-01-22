@@ -1,6 +1,7 @@
 from unittest import TestCase
 from metripy.LangAnalyzer.Typescript.Ast.TypescriptAstParser import TypescriptAstParser
 
+
 class TestTypescriptAstParser(TestCase):
     CLASS_SCRIPT = """
     class TestClass {
@@ -68,7 +69,6 @@ class TestTypescriptAstParser(TestCase):
         self.assertEqual(len(nodes), 1)
         self.assertEqual(self.parser.extract_function_name(nodes[0]), "foo")
 
-
     def test_get_function_attributes(self):
         self.parser.parse(self.ATTRIBUTE_SCRIPT)
         function_nodes = self.parser.get_function_nodes()
@@ -76,7 +76,9 @@ class TestTypescriptAstParser(TestCase):
         self.assertEqual(
             self.parser.get_function_attributes(function_nodes[0]), ["this.a", "this.b"]
         )
-        self.assertEqual(self.parser.get_function_attributes(function_nodes[1]), ["this.a"])
+        self.assertEqual(
+            self.parser.get_function_attributes(function_nodes[1]), ["this.a"]
+        )
         self.assertEqual(self.parser.get_function_attributes(function_nodes[2]), [])
 
     def test_get_function_self_calls(self):
@@ -85,13 +87,17 @@ class TestTypescriptAstParser(TestCase):
         self.assertEqual(len(function_nodes), 3)
         self.assertEqual(self.parser.get_function_self_calls(function_nodes[0]), [])
         self.assertEqual(self.parser.get_function_self_calls(function_nodes[1]), [])
-        self.assertEqual(self.parser.get_function_self_calls(function_nodes[2]), ["method1"])
+        self.assertEqual(
+            self.parser.get_function_self_calls(function_nodes[2]), ["method1"]
+        )
+
 
 if __name__ == "__main__":
     filename = "./../../PhpstormProjects/ymmd-ddev-stack/talent-ui/src/helpers.ts"
     parser = TypescriptAstParser()
     parser.parse(open(filename, "r").read())
     from metripy.DebugUtils.AstDumper import AstDumper
+
     dumper = AstDumper(parser)
     dumper.dump_all()
     exit()

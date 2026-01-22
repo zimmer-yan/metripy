@@ -25,14 +25,24 @@ class ConfigFileReaderInterface(ABC):
             for project_name, project_config in configs.items():
                 project_config = self.parse_config_json(project_name, project_config)
                 config.project_configs.append(project_config)
-        
+
         # failure
         if failure := data.get("failure"):
             for exit_code, failures in failure.items():
                 exit_code = int(exit_code)
                 config.failure[exit_code] = []
                 for failure in failures:
-                    config.failure[exit_code].append(FailureConfig(failure["value"], failure["severity"], failure.get("amount", 1)))
+                    config.failure[exit_code].append(
+                        FailureConfig(
+                            failure["value"],
+                            failure["severity"],
+                            failure.get("amount", 1),
+                        )
+                    )
+
+        # html_index
+        if html_index := data.get("html_index"):
+            config.html_index = self.resolve_path(html_index)
 
     def parse_config_json(self, project_name: str, data: dict) -> ProjectConfig:
         project_config = ProjectConfig(project_name)

@@ -1,5 +1,11 @@
-from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.NamingConventionDetector import NamingConventionDetector
-from metripy.LangAnalyzer.Generic.CodeSmell.CodeSmell import CodeSmellType, CodeSmellSeverity
+from metripy.LangAnalyzer.Generic.CodeSmell.Detectors.NamingConventionDetector import (
+    NamingConventionDetector,
+)
+from metripy.LangAnalyzer.Generic.CodeSmell.CodeSmell import (
+    CodeSmellType,
+    CodeSmellSeverity,
+)
+
 
 class TypescriptNamingConventionDetector(NamingConventionDetector):
     def _get_naming_rules(self) -> dict[str, dict]:

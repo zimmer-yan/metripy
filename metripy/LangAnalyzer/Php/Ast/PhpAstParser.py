@@ -4,12 +4,15 @@ from tree_sitter import Node
 
 from metripy.LangAnalyzer.Generic.Ast.AstParser import AstParser
 
+
 class Nodelike:
     def __init__(self, type: str, start_byte: int, end_byte: int, text: str):
         self.type = type
         self.start_byte = start_byte
         self.end_byte = end_byte
-        self.text = text.encode('utf-8')
+        self.text = text.encode("utf-8")
+
+
 class PhpAstParser(AstParser):
     def __init__(self):
         super().__init__("php")
@@ -82,28 +85,34 @@ class PhpAstParser(AstParser):
             comment_start_byte = comment.start_byte
             data = self.find_identifiers_in_comment(comment)
             for identifier, start_byte, end_byte in data:
-                node = Nodelike("name", comment_start_byte + start_byte, comment_start_byte + end_byte, identifier)
+                node = Nodelike(
+                    "name",
+                    comment_start_byte + start_byte,
+                    comment_start_byte + end_byte,
+                    identifier,
+                )
                 nodes.append(node)
         return nodes
 
     def find_identifiers_in_comment(self, comment: Node) -> List[tuple[str, int, int]]:
-        text = comment.text.decode('utf-8')
+        text = comment.text.decode("utf-8")
         import re
-        pattern = r'@param\s+([A-Za-z_]\w*)|@return\s+([A-Za-z_]\w*)|@throws\s+([A-Za-z_]\w*)|@var\s+([A-Za-z_]\w*)'
+
+        pattern = r"@param\s+([A-Za-z_]\w*)|@return\s+([A-Za-z_]\w*)|@throws\s+([A-Za-z_]\w*)|@var\s+([A-Za-z_]\w*)"
 
         results = []
         for m in re.finditer(pattern, text):
             # Find which group matched
             identifier = next(g for g in m.groups() if g)
-            
+
             # Compute byte offsets for the identifier only
             start_char = text.find(identifier, m.start(), m.end())
             end_char = start_char + len(identifier)
-            
+
             # Convert to byte offsets (safe because ASCII)
-            start_byte = len(text[:start_char].encode('utf-8'))
-            end_byte = len(text[:end_char].encode('utf-8'))
-            
+            start_byte = len(text[:start_char].encode("utf-8"))
+            end_byte = len(text[:end_char].encode("utf-8"))
+
             results.append((identifier, start_byte, end_byte))
         return results
 

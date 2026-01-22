@@ -170,12 +170,31 @@ Interactive, beautiful reports with:
 - License distribution
 - Trend indicators
 
+<img src="images/overview-tiles.png" alt="Overview Tiles" width="100%">
+
+<img src="images/overview-extra-info.png" alt="Overview Extra Information" width="100%">
+
+#### Top Offenders
+Quickly identify problematic areas in your codebase:
+
+<img src="images/top-offenders.png" alt="Top Offenders Overview" width="100%">
+
+Drill down into specific metrics:
+
+<img src="images/top-offenders-mi.png" alt="Top Offenders - Maintainability Index" width="100%">
+
+<img src="images/top-offenders-cyc_c.png" alt="Top Offenders - Cyclomatic Complexity" width="100%">
+
+<img src="images/top-offenders-cog_c.png" alt="Top Offenders - Cognitive Complexity" width="100%">
+
 #### Files Page
 - File tree with health indicators
 - Filterable by health status
 - Detailed file metrics
 - Class and function breakdown
 - Color-coded complexity
+
+<img src="images/files.png" alt="Files Page" width="100%">
 
 #### Git Analysis Page
 - Contributor statistics
@@ -190,11 +209,22 @@ Interactive, beautiful reports with:
 - License distribution
 - GitHub metrics
 
+<img src="images/dependencies.png" alt="Dependencies Page" width="100%">
+
 #### Trends Page
 - Health distribution evolution
 - Top improved files
 - Files needing attention
 - Historical comparisons
+
+<img src="images/trends.png" alt="Trends Page" width="100%">
+
+#### Code Smells Page
+- Detected code smell patterns
+- Severity classification
+- File and location details
+
+<img src="images/code_smells.png" alt="Code Smells Page" width="100%">
 
 ### CLI Report
 
@@ -307,6 +337,27 @@ Analyze multiple projects in a single run:
 - Consolidated or separate reports
 - Cross-project comparisons
 
+### HTML Project Index
+
+Generate a central overview page for all your projects:
+
+<img src="images/html-index.png" alt="HTML Index Overview" width="100%">
+
+The index page displays:
+- **Aggregate statistics** across all projects
+- **Project cards** with individual metrics and health badges
+- **Quick navigation** to detailed reports
+
+<img src="images/html-index-projects.png" alt="HTML Index Project Cards" width="100%">
+
+Configure with:
+```json
+{
+    "configs": { /* your projects */ },
+    "html_index": "./build/index.html"
+}
+```
+
 ### Flexible Configuration
 
 - JSON configuration files
@@ -367,7 +418,6 @@ Output reports wherever you need:
 
 - ⏳ More language support
 - ⏳ More report formats
-- ⏳ HTML reports multi-project landing page
 - ⏳ HTML report inter project comparisons
 - ⏳ Docker image
 - ⏳ Quality metrics for PRs

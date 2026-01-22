@@ -166,7 +166,7 @@ class PythonTokenizer(Tokenizer):
 
         ngrams = []
         for i in range(len(tokens) - self.ngram_size + 1):
-            ngram = " ".join(tokens[i : i + self.ngram_size])
+            ngram = " ".join(tokens[i:i + self.ngram_size])
             ngrams.append(ngram)
 
         return ngrams

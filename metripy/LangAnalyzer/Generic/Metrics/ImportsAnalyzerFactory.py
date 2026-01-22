@@ -3,7 +3,10 @@ from metripy.LangAnalyzer.Generic.Metrics.GenericImportsAnalyzer import (
 )
 from metripy.LangAnalyzer.Python.PythonImportsAnalyzer import PythonImportsAnalyzer
 from metripy.LangAnalyzer.Php.PhpImportsAnalyzer import PhpImportsAnalyzer
-from metripy.LangAnalyzer.Typescript.TypescriptImportsAnalyzer import TypescriptImportsAnalyzer
+from metripy.LangAnalyzer.Typescript.TypescriptImportsAnalyzer import (
+    TypescriptImportsAnalyzer,
+)
+
 
 class ImportsAnalyzerFactory:
     _ANALYZERS = {

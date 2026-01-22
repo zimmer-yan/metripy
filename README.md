@@ -31,9 +31,38 @@ More dependencies TBD
 # Report formats
 
 ## Html
-Generates an easy to read dashboard
+Generates an easy to read dashboard for each project.
 
-TODO: as this application generates multi project reports, add central dashboard to have project specific insights at first glance
+<img src="docs/images/overview-tiles.png" alt="Dashboard Overview" width="100%">
+
+### Project Index Page
+When analyzing multiple projects, you can generate a central index page that provides an overview of all projects at a glance.
+
+<img src="docs/images/html-index.png" alt="HTML Index Overview" width="100%">
+
+Configure with:
+
+```json
+{
+    "configs": { /* multiple project configs */ },
+    "html_index": "./build/index.html"
+}
+```
+
+The index page displays:
+- Aggregate statistics across all projects (total LOC, files, avg complexity, etc.)
+- Project cards with individual metrics and health status
+- Links to each project's detailed HTML report
+
+<img src="docs/images/html-index-projects.png" alt="Project Cards" width="100%">
+
+### Files Analysis
+
+<img src="docs/images/files.png" alt="Files Analysis" width="100%">
+
+### Top Offenders
+
+<img src="docs/images/top-offenders.png" alt="Top Offenders" width="100%">
 
 ## Csv
 Exports simple csv
@@ -104,7 +133,8 @@ Sample configuraiton:
             }
         },
         // next project name: { next config... } 
-    }
+    },
+    "html_index": "./build/index.html" // optional: generates a central overview page for all projects
 }
 ```
 

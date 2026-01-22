@@ -6,6 +6,7 @@ class Config:
     def __init__(self):
         self.project_configs: list[ProjectConfig] = []
         self.failure: dict[int, list[FailureConfig]] = {}
+        self.html_index: str | None = None
         self.quiet: bool = False
         self.version: bool = False
         self.help: bool = False
@@ -17,8 +18,10 @@ class Config:
                 project_config.to_dict() for project_config in self.project_configs
             ],
             "failure": {
-                exit_code: [failure.to_dict() for failure in failures] for exit_code, failures in self.failure.items()
+                exit_code: [failure.to_dict() for failure in failures]
+                for exit_code, failures in self.failure.items()
             },
+            "html_index": self.html_index,
         }
 
     def set(self, param: str, value: any) -> None:
@@ -31,7 +34,7 @@ class Config:
         elif param == "debug":
             self.debug = value
         elif param.startswith("configs."):
-            self._set_project_value(param[len("configs.") :], value)
+            self._set_project_value(param[len("configs."):], value)
         else:
             # ignore unknown parameters
             return

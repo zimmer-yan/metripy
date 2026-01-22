@@ -26,6 +26,7 @@
             "trends": "./build/historical-json-report/metripy.json"
         }
     },
+    "html_index": "./build/html-index/index.html",
     "failure": {
         "1": [
             {

@@ -41,11 +41,14 @@ metripy --config=metripy.json
     "configs": {
         "project-name-1": { /* project config */ },
         "project-name-2": { /* project config */ }
-    }
+    },
+    "html_index": "./build/index.html"
 }
 ```
 
 The `configs` object contains named project configurations. Each key is a project name.
+
+The optional `html_index` generates a central overview page linking to all project reports.
 
 ## Project Configuration
 
@@ -218,6 +221,40 @@ Generates a JSON report compatible with GitLab's Code Quality feature. Issues ar
 }
 ```
 
+### HTML Project Index
+
+When analyzing multiple projects, generate a central overview page:
+
+```json
+{
+    "configs": { /* multiple project configs */ },
+    "html_index": "./build/project-index/index.html"
+}
+```
+
+The index page provides an overview of all analyzed projects at a glance:
+
+<img src="images/html-index.png" alt="HTML Index Overview" width="100%">
+
+**Features:**
+- **Aggregate statistics**: Total LOC, files, average complexity, maintainability index, and cognitive complexity across all projects
+- **Project cards**: Each project displays its metrics with a health status badge
+- **Navigation**: Click any project card to view its detailed HTML report
+
+<img src="images/html-index-projects.png" alt="HTML Index Project Cards" width="100%">
+
+**Health Status Calculation:**
+
+Health status is calculated using a weighted composite score:
+- Maintainability Index (40%)
+- Cyclomatic Complexity (25%)
+- Cognitive Complexity (25%)
+- LCOM4 (10%)
+
+The resulting score maps to: `excellent` (≥80), `good` (≥60), `fair` (≥40), `poor` (<40).
+
+**Note**: The `html_index` option is defined at the root level, not inside individual project configs.
+
 ### Trend Tracking
 
 Enable historical tracking to see trends over time:
@@ -301,9 +338,12 @@ Analyze multiple projects in one run:
                 "html": "./build/report/shared"
             }
         }
-    }
+    },
+    "html_index": "./build/report/index.html"
 }
 ```
+
+The `html_index` generates a central dashboard linking to all project reports with aggregate statistics.
 
 ## Git-Only Configuration
 

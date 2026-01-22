@@ -9,7 +9,7 @@ class TestPhpAstParser(TestCase):
     namespace App\\Test;
     use App\\ParentClass;
     use App\\Interface1;
-    
+
     class TestClass extends ParentClass implements Interface1 {
         public function testMethod(int $x, string $y): bool {
             echo 'Hello, World!';
@@ -43,7 +43,7 @@ class TestPhpAstParser(TestCase):
     USAGE_SCRIPT = """
     <?
     namespace App\\Test;
-    
+
     class TestClass {
         /**
          * @var Bar
@@ -132,9 +132,7 @@ class TestPhpAstParser(TestCase):
     def test_get_identifier_nodes_usage(self):
         parser = PhpAstParser()
         parser.parse(self.USAGE_SCRIPT)
-        from metripy.DebugUtils.AstDumper import AstDumper
-        dumper = AstDumper(parser)
-        #dumper.dump_all()
+
         identifier_nodes = parser.get_identifier_nodes("usage")
         names = [parser.get_node_text(node) for node in identifier_nodes]
         self.assertIn("Foo", names)

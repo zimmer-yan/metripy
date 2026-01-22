@@ -6,9 +6,9 @@ from metripy.LangAnalyzer.Python.Ast.PythonAstParser import PythonAstParser
 class TestPythonAstParser(TestCase):
     SIMPLE_SCRIPT = """
     import app.ParentClass
-    import app.Interface1
-    
-    class TestClass(ParentClass, Interface1):
+    from app.Interface1 import Interface1
+
+    class TestClass(ParentClass.ParentClass, Interface1):
         def test_method(self, x: int, y: str) -> bool:
             print("Hello, World!")
             return True

@@ -11,6 +11,7 @@ from metripy.LangAnalyzer.Typescript.Metrics.TypescriptCyclomaticComplexityAnaly
     TypescriptCyclomaticComplexityAnalyzer,
 )
 
+
 class CyclomaticComplexityAnalyzerFactory:
     _ANALYZERS = {
         "Python": PythonCyclomaticComplexityAnalyzer(),

@@ -113,6 +113,6 @@ class PhpTokenizer(Tokenizer):
         if len(tokens) < self.ngram_size:
             return [" ".join(tokens)] if tokens else []
         return [
-            " ".join(tokens[i : i + self.ngram_size])
+            " ".join(tokens[i:i + self.ngram_size])
             for i in range(len(tokens) - self.ngram_size + 1)
         ]

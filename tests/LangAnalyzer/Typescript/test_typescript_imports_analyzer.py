@@ -1,6 +1,10 @@
 from unittest import TestCase
-from metripy.LangAnalyzer.Typescript.TypescriptImportsAnalyzer import TypescriptImportsAnalyzer
+from metripy.LangAnalyzer.Typescript.TypescriptImportsAnalyzer import (
+    TypescriptImportsAnalyzer,
+)
 from metripy.LangAnalyzer.Typescript.Ast.TypescriptAstParser import TypescriptAstParser
+
+
 class TestTypescriptImportsAnalyzer(TestCase):
     SIMPLE_SCRIPT = """
     import { TestClass } from "./test.ts";

@@ -37,6 +37,7 @@ class TestApplicationRun(TestCase):
         mock_config.help = False
         mock_config.quiet = False
         mock_config.debug = False
+        mock_config.html_index = None  # Skip project index rendering
         mock_parser.return_value.parse.return_value = mock_config
         mock_finder.return_value.fetch.return_value = {
             "TestProject": ["file1.py", "file2.py"]
@@ -50,7 +51,9 @@ class TestApplicationRun(TestCase):
 
         # Run application
         app = Application()
-        app.run(["--config", "test_config.yml"])
+        with self.assertRaises(SystemExit) as context:
+            app.run(["--config", "test_config.yml"])
+        self.assertEqual(context.exception.code, 0)
 
         # Assertions
         mock_output.writeln.assert_any_call(

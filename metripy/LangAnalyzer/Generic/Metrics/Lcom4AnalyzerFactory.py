@@ -3,7 +3,10 @@ from metripy.LangAnalyzer.Generic.Metrics.GenericLcom4Analyzer import (
 )
 from metripy.LangAnalyzer.Php.Metrics.PhpLcom4Analyzer import PhpLcom4Analyzer
 from metripy.LangAnalyzer.Python.Metrics.PythonLcom4Analyzer import PythonLcom4Analyzer
-from metripy.LangAnalyzer.Typescript.Metrics.TypescriptLcom4Analyzer import TypescriptLcom4Analyzer
+from metripy.LangAnalyzer.Typescript.Metrics.TypescriptLcom4Analyzer import (
+    TypescriptLcom4Analyzer,
+)
+
 
 class Lcom4AnalyzerFactory:
     _ANALYZERS = {

@@ -1,3 +1,8 @@
+# v1.0.0
+- Added ability to create general project overview index page
+- Improved docs
+- Fix python coupling
+
 # v0.9.0
 - Refactored main analyzers to be as generic as possible
 

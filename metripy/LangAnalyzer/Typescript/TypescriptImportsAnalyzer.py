@@ -1,6 +1,9 @@
-from metripy.LangAnalyzer.Generic.Metrics.GenericImportsAnalyzer import GenericImportsAnalyzer
+from metripy.LangAnalyzer.Generic.Metrics.GenericImportsAnalyzer import (
+    GenericImportsAnalyzer,
+)
 from metripy.LangAnalyzer.Generic.Ast.AstParser import AstParser
 from pathlib import Path
+
 
 class TypescriptImportsAnalyzer(GenericImportsAnalyzer):
     def extract_imports(self, filename: str, parser: AstParser) -> list[str]:
@@ -28,16 +31,14 @@ class TypescriptImportsAnalyzer(GenericImportsAnalyzer):
             else:
                 rel = filename_path.parent / Path(import_name)
             rel_name = rel.__str__()
-            if (filename.startswith("./")):
+            if filename.startswith("./"):
                 rel_name = "./" + rel_name
             full_imports.append(self.extract_import_name(rel_name, parser))
         return full_imports
 
     def extract_import_name(self, filename: str, parser: AstParser) -> str:
         """Extract the name of this file with which it is imported"""
-        project_root = [
-            p for p in Path(filename).parts if not p.startswith(".")
-        ][0]
+        project_root = [p for p in Path(filename).parts if not p.startswith(".")][0]
 
         path = Path(filename)
 

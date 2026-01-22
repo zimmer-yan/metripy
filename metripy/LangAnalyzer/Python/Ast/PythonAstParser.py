@@ -93,6 +93,12 @@ class PythonAstParser(AstParser):
                             return self.get_node_text(grandchild)
 
         elif node.type == "import_from_statement":
+            for child in node.children:
+                # from foo import bar
+                if child.type == "dotted_name":
+                    return self.get_node_text(child)
+            # v disregard
+
             # from foo import bar or from foo import bar as baz
             imported_names = []
             for child in node.children:

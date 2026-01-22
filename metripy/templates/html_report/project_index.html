@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metripy - Projects Overview</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="images/logo.svg" sizes="any" type="image/svg+xml">
+    <style>
+        /* Project Index Specific Styles */
+        .index-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-2xl);
+            min-height: 100vh;
+        }
+
+        .index-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+            padding: var(--spacing-2xl);
+            background: linear-gradient(135deg, var(--sidebar-bg) 0%, var(--sidebar-bg-light) 100%);
+            border-radius: var(--radius-xl);
+            color: var(--text-white);
+        }
+
+        .index-header .logo {
+            justify-content: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .index-header .logo-icon {
+            width: 64px;
+            height: 64px;
+        }
+
+        .index-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .index-header .subtitle {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+        }
+
+        /* Aggregate Stats Cards */
+        .aggregate-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .stat-card {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+            text-align: center;
+            transition: all var(--transition-normal);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .stat-card .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--text-white);
+            margin: 0 auto var(--spacing-md);
+        }
+
+        .stat-card .stat-icon.projects { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .stat-card .stat-icon.loc { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); }
+        .stat-card .stat-icon.files { background: linear-gradient(135deg, var(--color-info), var(--color-info-dark)); }
+        .stat-card .stat-icon.complexity { background: linear-gradient(135deg, var(--color-ok), var(--color-ok-dark)); }
+        .stat-card .stat-icon.maintainability { background: linear-gradient(135deg, var(--color-good), var(--color-good-dark)); }
+        .stat-card .stat-icon.cognitive { background: linear-gradient(135deg, #ec4899, #db2777); }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Projects Section */
+        .projects-section {
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--spacing-xl);
+        }
+
+        .project-card {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            border: 1px solid var(--border-light);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--color-info));
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .project-card.health-excellent::before { background: linear-gradient(90deg, var(--color-good), var(--color-good-dark)); }
+        .project-card.health-good::before { background: linear-gradient(90deg, var(--color-ok), var(--color-ok-dark)); }
+        .project-card.health-fair::before { background: linear-gradient(90deg, var(--color-warning), var(--color-warning-dark)); }
+        .project-card.health-poor::before { background: linear-gradient(90deg, var(--color-critical), var(--color-critical-dark)); }
+
+        .project-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .project-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .project-name i {
+            color: var(--primary-color);
+        }
+
+        .health-badge {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .health-badge.excellent {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--color-good-dark);
+        }
+
+        .health-badge.good {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--color-ok-dark);
+        }
+
+        .health-badge.fair {
+            background-color: rgba(249, 115, 22, 0.1);
+            color: var(--color-warning-dark);
+        }
+
+        .health-badge.poor {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--color-critical-dark);
+        }
+
+        .project-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .project-stat {
+            text-align: center;
+            padding: var(--spacing-sm);
+            background: var(--bg-primary);
+            border-radius: var(--radius-md);
+        }
+
+        .project-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .project-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .project-actions {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .project-link {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--primary-color);
+            color: var(--text-white);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all var(--transition-fast);
+        }
+
+        .project-link:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .project-link.disabled {
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Footer */
+        .index-footer {
+            text-align: center;
+            margin-top: var(--spacing-2xl);
+            padding: var(--spacing-lg);
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .index-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .index-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .index-container {
+                padding: var(--spacing-lg);
+            }
+
+            .index-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .aggregate-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .aggregate-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="index-container">
+        <!-- Header -->
+        <header class="index-header">
+            <div class="logo">
+                <img src="images/logo.svg" alt="Metripy Logo" class="logo-icon">
+                <h1>Metripy</h1>
+            </div>
+            <p class="subtitle">Code Metrics Overview - All Projects</p>
+        </header>
+
+        <!-- Aggregate Statistics -->
+        <section class="aggregate-stats">
+            <div class="stat-card">
+                <div class="stat-icon projects">
+                    <i class="fas fa-folder-tree"></i>
+                </div>
+                <div class="stat-value">{{aggregate_stats.num_projects}}</div>
+                <div class="stat-label">Projects</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon loc">
+                    <i class="fas fa-file-code"></i>
+                </div>
+                <div class="stat-value">{{aggregate_stats.total_loc}}</div>
+                <div class="stat-label">Total Lines of Code</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon files">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="stat-value">{{aggregate_stats.total_files}}</div>
+                <div class="stat-label">Total Files</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon complexity">
+                    <i class="fas fa-sitemap"></i>
+                </div>
+                <div class="stat-value">{{aggregate_stats.avg_cc}}</div>
+                <div class="stat-label">Avg. Cyclomatic Complexity</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon maintainability">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <div class="stat-value">{{aggregate_stats.avg_mi}}</div>
+                <div class="stat-label">Avg. Maintainability Index</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon cognitive">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="stat-value">{{aggregate_stats.avg_cog}}</div>
+                <div class="stat-label">Avg. Cognitive Complexity</div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section class="projects-section">
+            <h2 class="section-title">
+                <i class="fas fa-layer-group"></i>
+                Analyzed Projects
+            </h2>
+
+            <div class="projects-grid">
+                {{#EACH projects AS project}}
+                <div class="project-card health-{{project.health_class}}">
+                    <div class="project-card-header">
+                        <div class="project-name">
+                            <i class="fas fa-cube"></i>
+                            {{project.name}}
+                        </div>
+                        <span class="health-badge {{project.health_class}}">{{project.health_class}}</span>
+                    </div>
+
+                    <div class="project-stats">
+                        <div class="project-stat">
+                            <div class="project-stat-value">{{project.loc}}</div>
+                            <div class="project-stat-label">Lines of Code</div>
+                        </div>
+                        <div class="project-stat">
+                            <div class="project-stat-value">{{project.num_files}}</div>
+                            <div class="project-stat-label">Files</div>
+                        </div>
+                        <div class="project-stat">
+                            <div class="project-stat-value">{{project.avg_cc}}</div>
+                            <div class="project-stat-label">Avg. CC</div>
+                        </div>
+                        <div class="project-stat">
+                            <div class="project-stat-value">{{project.avg_mi}}</div>
+                            <div class="project-stat-label">Avg. MI</div>
+                        </div>
+                        <div class="project-stat">
+                            <div class="project-stat-value">{{project.avg_cog}}</div>
+                            <div class="project-stat-label">Avg. Cog</div>
+                        </div>
+                        <div class="project-stat">
+                            <div class="project-stat-value">{{project.avg_lcom4}}</div>
+                            <div class="project-stat-label">Avg. LCOM4</div>
+                        </div>
+                    </div>
+
+                    <div class="project-actions">
+                        {{#IF project.report_link}}
+                        <a href="{{project.report_link}}" class="project-link">
+                            <i class="fas fa-chart-bar"></i>
+                            View Full Report
+                        </a>
+                        {{#ELSE}}
+                        <span class="project-link disabled">
+                            <i class="fas fa-ban"></i>
+                            No HTML Report
+                        </span>
+                        {{/IF}}
+                    </div>
+                </div>
+                {{/EACH}}
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="index-footer">
+            <p>Generated by <a href="https://github.com/metripy/metripy" target="_blank">Metripy</a> v{{version}} on {{last_updated}}</p>
+        </footer>
+    </div>
+</body>
+</html>

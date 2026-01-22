@@ -9,8 +9,9 @@ from metripy.Component.Output.CliOutput import CliOutput
 from metripy.Metric.ProjectMetrics import ProjectMetrics
 from metripy.Report.ReporterFactory import ReporterFactory
 from metripy.Report.ReporterInterface import ReporterInterface
-from metripy.Application.Config.FailureConfig import FailureConfig
+from metripy.Report.Html.ProjectIndexRenderer import ProjectIndexRenderer
 from metripy.Application.FailureEvaluator import FailureEvaluator
+
 
 class Application:
     def run(self, argv) -> None:
@@ -38,6 +39,8 @@ class Application:
         files = finder.fetch(config.project_configs)
 
         project_metrics_list: list[ProjectMetrics] = []
+        # projectname, projectmetrics, htmlreportpath
+        project_index_data: list[tuple[str, ProjectMetrics, str | None]] = []
 
         for project_config in config.project_configs:
             debugger.debug(project_config.name)
@@ -54,9 +57,19 @@ class Application:
                 f"<success>Done analying Project {project_config.name}</success>"
             )
 
+            # Track HTML report path for this project
+            html_report_path = None
+            for report_config in project_config.reports:
+                if report_config.type == "html":
+                    html_report_path = report_config.path
+                    break
+
             if not project_config.reports:
                 output.writeln(
                     f"<success>Skipping reports of {project_config.name}!</success>"
+                )
+                project_index_data.append(
+                    (project_config.name, project_metrics, html_report_path)
                 )
                 continue
 
@@ -72,6 +85,21 @@ class Application:
                 f"<success>Reports generated for {project_config.name}</success>"
             )
 
-        exit_code = FailureEvaluator(config.failure, output).get_exit_code(project_metrics_list)    
+            project_index_data.append(
+                (project_config.name, project_metrics, html_report_path)
+            )
+
+        # Generate HTML index page if configured
+        if config.html_index:
+            output.writeln("<info>Generating HTML project index...</info>")
+            index_renderer = ProjectIndexRenderer(config.html_index)
+            index_renderer.render(project_index_data)
+            output.writeln(
+                f"<success>HTML project index generated: {config.html_index}</success>"
+            )
+
+        exit_code = FailureEvaluator(config.failure, output).get_exit_code(
+            project_metrics_list
+        )
 
         exit(exit_code)

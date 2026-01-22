@@ -491,10 +491,10 @@ body {
 /* ===== STATUS COLORS (Shared across components) ===== */
 
 /* Solid backgrounds */
-.good, .segment.good, .segment-piece.good { background-color: var(--color-good); }
-.okay, .segment.okay, .segment-piece.okay { background-color: var(--color-ok); }
-.warning, .segment.warning, .segment-piece.warning { background-color: var(--color-warning); }
-.critical, .segment.critical, .segment-piece.critical { background-color: var(--color-critical); }
+.segment.good, .segment-piece.good { background-color: var(--color-good); }
+.segment.okay, .segment-piece.okay { background-color: var(--color-ok); }
+.segment.warning, .segment-piece.warning { background-color: var(--color-warning); }
+.segment.critical, .segment-piece.critical { background-color: var(--color-critical); }
 
 /* Gradient backgrounds for segment pieces */
 .segment-piece.good { background: linear-gradient(90deg, var(--color-good), var(--color-good-dark)); }

@@ -2,6 +2,7 @@ from metripy.LangAnalyzer.Generic.Metrics.GenericCyclomaticComplexityAnalyzer im
     GenericCyclomaticComplexityAnalyzer,
 )
 
+
 class TypescriptCyclomaticComplexityAnalyzer(GenericCyclomaticComplexityAnalyzer):
     def get_decision_types(self) -> list[str]:
         return [

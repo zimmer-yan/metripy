@@ -33,7 +33,7 @@ class TestPhpLocAnalyzer(TestCase):
         }
 
         public function complex_method() {
-            /* 
+            /*
             this method is very complex
             it needs a lot of comments
             */
