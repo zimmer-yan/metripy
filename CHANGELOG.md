@@ -1,3 +1,7 @@
+# v1.0.1
+- Fix zero division in segmented metric percentages
+- Add pip install note and Python 3.11/3.12 badges to README
+
 # v1.0.0
 - Added ability to create general project overview index page
 - Improved docs
